@@ -27,7 +27,7 @@ function is_attack_value_missing($move_data, $is_estimate = false)
 
         foreach ($variation['timeline'] as $action) {
             // typeキーがあり、かつ 'attack' を含む（attack, all_attack, random_attack等）
-            if (isset($action['type']) && (strpos($action['type'], 'attack') !== false||strpos($action['type'], 'heal') !== false)) {
+            if (isset($action['type']) && (strpos($action['type'], 'attack') !== false || strpos($action['type'], 'heal') !== false)) {
                 // valueが 0, "0", "", null の場合は未入力とみなす
                 if (empty($action['value'])) {
                     return true;
@@ -113,7 +113,7 @@ function is_attack_value_missing($move_data, $is_estimate = false)
                                         $all_koto_missing = true;
                                         foreach ($data['kotowaza'] as $k_level) {
                                             // 1つでも入力済み（missingではない）があればフラグを下ろして終了
-                                            if (!is_attack_value_missing($k_level,false)) {
+                                            if (!is_attack_value_missing($k_level, $is_estimate)) {
                                                 $all_koto_missing = false;
                                                 break;
                                             }
