@@ -30,8 +30,6 @@
     object-fit: cover;
     object-position: 50% 33%;
     /* 顔の位置合わせ */
-    transform: scale(1);
-    /* 迫力あるズーム */
     transition: transform 0.5s ease;
     /* ホバー時の動き用 */
 }

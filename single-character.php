@@ -154,15 +154,19 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
 
     // --- 進化前画像 ---
     $pre_img_id = get_field('pre_evo_image');
-    $pre_img_html = $pre_img_id ? wp_get_attachment_image($pre_img_id, 'full') : '';
+    $pre_img_html = $pre_img_id ? wp_get_attachment_image($pre_img_id, 'medium_large') : '';
 
     // --- 進化後（通常）画像 ---
     $main_img_id = get_field('character_image');
-    $main_img_url = $main_img_id ? wp_get_attachment_image_url($main_img_id, 'full') : '';
+    // URLだけでなく、IDから画像サイズ情報を取得するように変更（CLS対策）
+    $main_img_data = $main_img_id ? wp_get_attachment_image_src($main_img_id, 'medium_large') : null;
+    $main_img_url = $main_img_data ? $main_img_data[0] : '';
+    $main_width   = $main_img_data ? $main_img_data[1] : 768; // デフォルトサイズ
+    $main_height  = $main_img_data ? $main_img_data[2] : 768;
 
     // --- 進化後（アナザー/モードシフト）画像 ---
     $sub_img_id = get_field('another_character_image');
-    $sub_img_url = $sub_img_id ? wp_get_attachment_image_url($sub_img_id, 'full') : '';
+    $sub_img_url = $sub_img_id ? wp_get_attachment_image_url($sub_img_id, 'medium_large') : '';
 
     // --- 切り替え用リスト作成 ---
     $variations = [];
@@ -175,7 +179,6 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     ?>
 
     <div class="visual-flex-container">
-
         <?php if ($pre_img_html): ?>
             <div class="img-box pre-evo-box">
                 <?php echo $pre_img_html; ?>
@@ -189,13 +192,17 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
                 <img id="js-main-char-img"
                     src="<?php echo esc_url($variations[0]['url']); ?>"
                     alt="キャラクター画像"
-                    style="width:100%; height:100%; object-fit:cover;">
+                    width="<?php echo $main_width; ?>"
+                    height="<?php echo $main_height; ?>"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                    style="width:100%; height:auto; object-fit:cover;">
             <?php else: ?>
                 <div class="no-image">
                     <p>NO IMAGE</p>
                 </div>
             <?php endif; ?>
-
             <span class="img-label">進化後</span>
         </div>
     </div>
@@ -1195,7 +1202,12 @@ if ($has_terms) {
                             <?php
                             $thumb_id = get_field('character_image');
                             if ($thumb_id) {
-                                echo wp_get_attachment_image($thumb_id, 'medium', false, ['class' => 'grid-char-img']);
+                                echo wp_get_attachment_image($thumb_id, 'thumbnail', false, [
+                                    'class'   => 'grid-char-img',
+                                    'loading' => 'lazy', // LCPを邪魔しないよう遅延読み込み
+                                    'width'   => 150,    // サイズを明記して計算負荷を減らす
+                                    'height'  => 150,
+                                ]);
                             } else {
                                 echo '<div class="grid-no-img">No Img</div>';
                             }
@@ -1236,7 +1248,12 @@ if ($new_query->have_posts()):
                         <?php
                         $thumb_id = get_field('character_image');
                         if ($thumb_id) {
-                            echo wp_get_attachment_image($thumb_id, 'medium', false, ['class' => 'grid-char-img']);
+                            echo wp_get_attachment_image($thumb_id, 'thumbnail', false, [
+                                'class'   => 'grid-char-img',
+                                'loading' => 'lazy', // LCPを邪魔しないよう遅延読み込み
+                                'width'   => 150,    // サイズを明記して計算負荷を減らす
+                                'height'  => 150,
+                            ]);
                         } else {
                             echo '<div class="grid-no-img">No Img</div>';
                         }

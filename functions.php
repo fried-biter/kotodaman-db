@@ -24,7 +24,7 @@ function get_term_icon_html($term, $class_name = 'term-icon')
 
     if ($icon_id) {
         // 画像があればIMGタグを返す
-        return wp_get_attachment_image($icon_id, 'full', false, ['class' => $class_name, 'alt' => $term->name]);
+        return wp_get_attachment_image($icon_id, 'small', false, ['class' => $class_name, 'alt' => $term->name]);
     } else {
         // 画像がなければ文字（名前）を返す
         return $term->name;
@@ -722,30 +722,30 @@ add_shortcode('debug_koto_json', function ($atts) {
     // 1. IDの決定
     $default_id = get_the_ID();
     $atts = shortcode_atts(['id' => $default_id], $atts);
-    
+
     // このショートコードインスタンス専用のパラメータ名 (例: debug_id_1)
     $param_name = 'debug_id_' . $instance_count;
-    
+
     // GETパラメータがあればそれを優先
     $target_id = isset($_GET[$param_name]) ? intval($_GET[$param_name]) : intval($atts['id']);
 
     // 2. データ取得
     $json = get_post_meta($target_id, '_spec_json', true);
-    
+
     // HTML要素用のユニークID (ターゲットID + インスタンス番号)
     $html_id_suffix = $target_id . '_' . $instance_count;
 
     // 3. 出力バッファリング開始
     ob_start();
-    ?>
+?>
     <div class="debug-json-box" style="border:1px solid #ccc; padding:15px; background:#f9f9f9; margin:20px 0;">
         <!-- ID切り替えフォーム -->
         <form method="get" action="" style="margin-bottom:10px; display:flex; gap:10px; align-items:center;">
-            <label style="font-weight:bold;">確認したい記事ID: 
+            <label style="font-weight:bold;">確認したい記事ID:
                 <input type="number" name="<?php echo esc_attr($param_name); ?>" value="<?php echo esc_attr($target_id); ?>" style="width:100px; padding:5px;">
             </label>
-            
-            <?php 
+
+            <?php
             // 他のパラメータを維持するためのhiddenフィールド
             foreach ($_GET as $key => $val) {
                 if ($key !== $param_name && !is_array($val)) {
@@ -755,7 +755,7 @@ add_shortcode('debug_koto_json', function ($atts) {
             ?>
 
             <button type="submit" style="padding:5px 15px; cursor:pointer; background:#2271b1; color:#fff; border:none; border-radius:3px;">表示</button>
-            
+
             <?php if ($json): ?>
                 <button type="button" id="copy-json-btn-<?php echo esc_attr($html_id_suffix); ?>" style="padding:5px 15px; cursor:pointer; background:#fff; border:1px solid #2271b1; color:#2271b1; border-radius:3px;">📋 JSONをコピー</button>
             <?php endif; ?>
@@ -764,29 +764,29 @@ add_shortcode('debug_koto_json', function ($atts) {
         <?php if (!$json): ?>
             <p style="color:red; font-weight:bold;">ID: <?php echo esc_html($target_id); ?> のJSONデータが見つかりません。<br>記事を保存し直すか、一括更新を実行してください。</p>
         <?php else: ?>
-            <?php 
-                $data = json_decode($json, true);
-                // 見やすく整形 (JSON形式)
-                $pretty_json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            <?php
+            $data = json_decode($json, true);
+            // 見やすく整形 (JSON形式)
+            $pretty_json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
             ?>
             <textarea id="json-textarea-<?php echo esc_attr($html_id_suffix); ?>" style="width:100%; height:500px; font-family:monospace; font-size:12px; line-height:1.5; white-space:pre; background:#fff; border:1px solid #ddd; padding:10px;" readonly><?php echo esc_textarea($pretty_json); ?></textarea>
-            
+
             <script>
-            document.getElementById('copy-json-btn-<?php echo esc_js($html_id_suffix); ?>').addEventListener('click', function() {
-                var copyText = document.getElementById("json-textarea-<?php echo esc_js($html_id_suffix); ?>");
-                copyText.select();
-                copyText.setSelectionRange(0, 99999); // スマホ対応
-                
-                navigator.clipboard.writeText(copyText.value).then(function() {
-                    alert("JSONデータをクリップボードにコピーしました！");
-                }).catch(function(err) {
-                    console.error('コピーに失敗しました', err);
+                document.getElementById('copy-json-btn-<?php echo esc_js($html_id_suffix); ?>').addEventListener('click', function() {
+                    var copyText = document.getElementById("json-textarea-<?php echo esc_js($html_id_suffix); ?>");
+                    copyText.select();
+                    copyText.setSelectionRange(0, 99999); // スマホ対応
+
+                    navigator.clipboard.writeText(copyText.value).then(function() {
+                        alert("JSONデータをクリップボードにコピーしました！");
+                    }).catch(function(err) {
+                        console.error('コピーに失敗しました', err);
+                    });
                 });
-            });
             </script>
         <?php endif; ?>
     </div>
-    <?php
+<?php
     return ob_get_clean();
 });
 
@@ -1081,4 +1081,20 @@ add_action('wp_footer', function () {
 // ACFフロントエディター（管理画面版）の読み込み
 require_once get_stylesheet_directory() . '/lib/acf/acf-editor.php';
 require_once get_stylesheet_directory() . '/lib/character-search/koto-json-reformer.php';
-?>
+
+$current_domain = $_SERVER['HTTP_HOST'];
+if (str_ends_with($current_domain, 'kotodaman-db.com')) {
+    // 保存先の指定
+    add_filter('acf/settings/save_json', function ($path) {
+        // 子テーマ直下の acf-json フォルダを自動取得
+        $path = get_stylesheet_directory() . '/acf-json';
+        return $path;
+    }, 20);
+
+    // 読み込み先の指定
+    add_filter('acf/settings/load_json', function ($paths) {
+        // 配列を一度クリアして、子テーマの acf-json だけを登録
+        $paths = array(get_stylesheet_directory() . '/acf-json');
+        return $paths;
+    }, 20);
+}
