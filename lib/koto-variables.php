@@ -54,3 +54,19 @@ function koto_get_species_map()
         '妖' => 'yokai',
     ];
 }
+function koto_get_event_map()
+{
+    // グループとイベントの「slug => name」の変換辞書を作成
+    $event_terms = get_terms(['taxonomy' => 'event', 'hide_empty' => false]);
+    $event_map = [];
+    if (!is_wp_error($event_terms)) foreach ($event_terms as $t) $event_map[$t->slug] = $t->name;
+    return $event_map;
+}
+
+function koto_get_group_map()
+{
+    $group_terms = get_terms(['taxonomy' => 'affiliation', 'hide_empty' => false]);
+    $group_map = [];
+    if (!is_wp_error($group_terms)) foreach ($group_terms as $t) $group_map[$t->slug] = $t->name;
+    return $group_map;
+}
