@@ -11,7 +11,7 @@ function koto_get_column_config()
             'sort'  => null,
             'show'  => true,
             'header_class' => 'th-icon',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'id'   => [
             'label' => 'ID',
@@ -19,7 +19,7 @@ function koto_get_column_config()
             'sort'  => 'id',
             'show'  => false,
             'header_class' => 'th-id',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'name' => [
             'label' => 'キャラ名',
@@ -28,7 +28,7 @@ function koto_get_column_config()
             'type'  => 'CHAR',
             'show'  => true,
             'header_class' => 'th-name',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'moji' => [
             'label' => '文字',
@@ -36,7 +36,7 @@ function koto_get_column_config()
             'sort'  => null,
             'show'  => true,
             'header_class' => 'th-moji',
-            'related_filters'=>['search_char']
+            'related_filters' => ['search_char']
         ],
         'attr' => [
             'label' => '属性',
@@ -46,7 +46,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-attr',
-            'related_filters'=>['tx_attr[]']
+            'related_filters' => ['tx_attr[]']
         ],
         'species' => [
             'label' => '種族',
@@ -56,7 +56,23 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-species',
-            'related_filters'=>['tx_species[]']
+            'related_filters' => ['tx_species[]']
+        ],
+        'group' => [
+            'label' => 'グループ',
+            'class' => 'col-group',
+            'sort'  => null,
+            'show'  => false, // 基本は隠しておく
+            'header_class' => 'th-group',
+            'related_filters' => ['tx_group[]'] // グループ検索と連動！
+        ],
+        'event' => [
+            'label' => 'イベント',
+            'class' => 'col-event',
+            'sort'  => null,
+            'show'  => false, // 基本は隠しておく
+            'header_class' => 'th-event',
+            'related_filters' => ['tx_event[]'] // イベント検索と連動！
         ],
         'hp99' => [
             'label' => 'HP<span class="th-sub">99</span>',
@@ -67,7 +83,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => true,
             'header_class' => 'th-stat',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'atk99' => [
             'label' => 'ATK<span class="th-sub">99</span>',
@@ -78,7 +94,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => true,
             'header_class' => 'th-stat',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'hp120' => [
             'label' => 'HP<span class="th-sub">120</span>',
@@ -89,7 +105,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-stat th-120',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'atk120' => [
             'label' => 'ATK<span class="th-sub">120</span>',
@@ -100,7 +116,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-stat th-120',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'ls_hp' => [
             'label' => 'L HP', // 以前のコードに合わせて「最大」は外でつけるか、ここでつけるか。search-character.phpで調整済み
@@ -111,7 +127,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-stat',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'ls_atk' => [
             'label' => 'L ATK',
@@ -122,7 +138,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-stat',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'buff_board' => [
             'label' => '盤バフ', // 短めに
@@ -133,7 +149,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => true,
             'header_class' => 'th-buff',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'buff_hand' => [
             'label' => '手バフ', // 短めに
@@ -144,7 +160,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-buff',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'debuff' => [
             'label' => 'デバフ',
@@ -154,7 +170,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => true,
             'header_class' => 'th-debuff',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'gimmick' => [
             'label' => 'ギミック',
@@ -162,7 +178,7 @@ function koto_get_column_config()
             'sort'  => null,
             'show'  => true,
             'header_class' => 'th-gimmick',
-            'related_filters'=>['tx_gimmick[]']
+            'related_filters' => ['tx_gimmick[]']
         ],
         'cv' => [
             'label' => 'CV',
@@ -170,7 +186,7 @@ function koto_get_column_config()
             'sort'  => null,
             'show'  => false,
             'header_class' => 'th-cv',
-            'related_filters'=>['tx_cv']
+            'related_filters' => ['tx_cv']
         ],
         'acq' => [
             'label' => '入手',
@@ -178,7 +194,7 @@ function koto_get_column_config()
             'sort'  => null,
             'show'  => false,
             'header_class' => 'th-acq',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'date' => [
             'label' => '実装日',
@@ -188,7 +204,7 @@ function koto_get_column_config()
             'type'  => 'DATE',
             'show'  => true,
             'header_class' => 'th-date',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
         'power' => [
             'label' => '火力指数',
@@ -198,7 +214,7 @@ function koto_get_column_config()
             'type'  => 'NUMERIC',
             'show'  => false,
             'header_class' => 'th-power',
-            'related_filters'=>[]
+            'related_filters' => []
         ],
     ];
 }

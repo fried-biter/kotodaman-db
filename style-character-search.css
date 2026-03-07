@@ -46,6 +46,7 @@
     -webkit-text-stroke: 0.4px #555;
     paint-order: stroke;
     font-size: 1.25em;
+    margin-right: 1px;
 }
 
 .char-link-item {
@@ -407,6 +408,7 @@
     -webkit-text-stroke: 0.4px #555;
     paint-order: stroke;
     font-size: 1.25em;
+    margin-right: 1px;
 }
 
 .td-attr,
@@ -612,11 +614,6 @@
 .char-link-item {
     text-decoration: none;
     color: #333;
-}
-
-.char-font {
-    font-weight: bold;
-    margin-right: 1px;
 }
 
 /* ページネーション */
