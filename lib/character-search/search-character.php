@@ -22,7 +22,7 @@ get_header(); ?>
         <h1 class="archive-title">検索結果</h1>
     </header>
 
-    <div class="character-search-box" style="position: sticky; top: 0; z-index: 10;">
+    <div class="character-search-box">
         <?php get_search_form(); ?>
     </div>
     <?php

@@ -1,4 +1,13 @@
 /* (既存のスタイル...省略なしで必要な部分だけ上書き) */
+
+.character-search-box {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: transparent;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
 .koto-icon {
     display: inline-block;
     vertical-align: middle;
@@ -524,7 +533,6 @@
     .koto-archive-container {
         padding-left: 0 !important;
         padding-right: 0 !important;
-        overflow-x: hidden;
         width: 95%;
     }
 
