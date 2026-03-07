@@ -43,6 +43,8 @@ function koto_get_flat_char_data($post_id)
         'first_trait' => '1',
         'second_trait' => '2',
         'blessing'    => 'bl',
+        'super_chang' => 'schange',
+        'super_copy' => 'scopy'
     ];
     $charas = array_map(function ($item) use ($attr_num, $unlock_map) {
         return [
