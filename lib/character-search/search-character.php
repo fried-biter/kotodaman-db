@@ -22,22 +22,10 @@ get_header(); ?>
         <h1 class="archive-title">検索結果</h1>
     </header>
 
-    <div class="character-search-box">
+    <div class="character-search-box" style="position: sticky; top: 0; z-index: 10;">
         <?php get_search_form(); ?>
     </div>
     <?php
-    // JS移行に伴い削除
-    // // ▼▼▼ 修正: 検索時はメインクエリをそのまま使う ▼▼▼
-    // if (is_search()) {
-    //     global $wp_query;
-    //     $the_query = $wp_query;
-    // } else {
-    //     // 固定ページとして使う場合のみ、独自のクエリを発行
-    //     $paged = (get_query_var('paged')) ? get_query_var('paged') : ((get_query_var('page')) ? get_query_var('page') : 1);
-    //     $args = get_koto_character_args($_GET, $paged);
-    //     $the_query = new WP_Query($args);
-    // }
-
     // ★設定読み込み (chara-list-functions.php で定義)
     $config = koto_get_column_config();
 
