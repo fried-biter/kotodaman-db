@@ -1098,3 +1098,16 @@ if (str_ends_with($current_domain, 'kotodaman-db.com')) {
         return $paths;
     }, 20);
 }
+
+// 解説：
+// register_meta は、特定のメタデータ（_spec_json）の「振る舞い」を定義する関数です。
+// これにより、WordPress の標準的なデータ露出ルートを塞ぎます。
+
+add_action('init', function () {
+    register_meta('post', '_spec_json', [
+        'object_subtype' => 'character', // 投稿タイプ「character」に限定
+        'show_in_rest'   => false,        // 【重要】REST API（JSON形式での外部露出）を無効化
+        'single'        => true,
+        'type'          => 'string',
+    ]);
+});
