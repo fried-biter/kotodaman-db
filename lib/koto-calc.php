@@ -69,11 +69,11 @@ function get_character_spec_data($post_id)
 
     // 超化値
     $chouka_hp  = get_field('hp_chouka', $post_id);
-    if ($chouka_hp === '' || $chouka_hp === null) $chouka_hp = 1000;
+    if ($chouka_hp === '' || $chouka_hp === null) $chouka_hp = 0;
     $chouka_hp = (int)$chouka_hp;
 
     $chouka_atk = get_field('atk_chouka', $post_id);
-    if ($chouka_atk === '' || $chouka_atk === null) $chouka_atk = 500;
+    if ($chouka_atk === '' || $chouka_atk === null) $chouka_atk = 0;
     $chouka_atk = (int)$chouka_atk;
 
     // 手動入力値
