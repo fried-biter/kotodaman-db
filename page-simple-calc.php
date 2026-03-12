@@ -294,6 +294,12 @@ get_header();
         cursor: pointer;
         font-size: 12px;
     }
+
+    .history-item.highlight {
+        background-color: #fff8e1;
+        border: 2px solid #e9a242;
+        transition: background-color 0.5s ease;
+    }
 </style>
 
 <div class="calc-container">
@@ -474,7 +480,6 @@ get_header();
 
     // パラメータ取得
     function getParams() {
-        // リーダー (配列)
         const leaderCount = parseInt(document.getElementById('leader_count_selector').value);
         let leaderBuffs = [];
         for (let i = 1; i <= leaderCount; i++) {
@@ -484,14 +489,10 @@ get_header();
 
         // キラー + フィールド (全て加算)
         const kMain = parseFloat(document.getElementById('killer_percent_main').value) || 0;
-        const k17 = parseFloat(document.getElementById('killer_percent_17').value) || 0; // 初期値17
-        const k4 = parseFloat(document.getElementById('killer_percent_4').value) || 0; // 初期値4
+        const k17 = parseFloat(document.getElementById('killer_percent_17').value) || 0;
+        const k4 = parseFloat(document.getElementById('killer_percent_4').value) || 0;
         const fieldP = parseFloat(document.getElementById('field_percent').value) || 0;
-
-        // 合計％を計算
         const totalPercent = kMain + k17 + k4 + fieldP;
-
-        // 倍率に変換 (100%UP = 2.0倍)
         const correctionMult = 1 + (totalPercent / 100);
 
         return {
@@ -499,22 +500,16 @@ get_header();
             baseAtk: parseFloat(document.getElementById('base_atk').value) || 0,
             addAtk: parseFloat(document.getElementById('add_atk').value) || 0,
             parcentage_atk: parseFloat(document.getElementById('parcentage_atk').value) || 0,
-
             leaders: leaderBuffs,
-
             comboCount: parseFloat(document.getElementById('combo_count').value) || 1.0,
             buffCount: parseInt(document.getElementById('buff_count').value) || 0,
             debuffCount: parseInt(document.getElementById('debuff_count').value) || 0,
-
             elemMult: parseFloat(document.getElementById('elem_mult').value) || 1.0,
-
-            correctionMult: correctionMult, // キラーとフィールドを合算した倍率
-
+            correctionMult: correctionMult,
             extraMult: parseFloat(document.getElementById('other_mult_extra').value) || 1.0
         };
     }
 
-    // 計算ロジック
     function calculateDamageFlow(p, rate) {
         // 1. 基礎ATK (リーダーごとの切り上げ加算)
         let totalLeaderBonus = 0;
@@ -527,11 +522,7 @@ get_header();
 
         let buffMult = 1 + (p.buffCount * 0.25);
         let debuffMult = 1 + (p.debuffCount * 0.10);
-
-        // 全て乗算 (correctionMultにキラーとフィールドが含まれている)
         let totalOtherMult = p.elemMult * p.correctionMult * p.extraMult * buffMult * debuffMult;
-
-        // 最終ダメージ
         let finalDmg = Math.ceil(step2_Combo * rate * totalOtherMult);
 
         return {
@@ -581,27 +572,28 @@ get_header();
         }
 
         const resultRate = p.dmg / denominator;
-
         addHistory(resultRate.toFixed(4));
+
+        document.getElementById('historyContainer').scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+        });
     }
 
     function addHistory(rateStr) {
         historyIdCounter++;
-
-        calcHistory.push({
+        calcHistory.unshift({
             id: historyIdCounter,
             rate: rateStr,
             name: ""
         });
-
         saveHistory();
-        renderHistory();
+        renderHistory(historyIdCounter);
     }
 
-    function renderHistory() {
+    function renderHistory(highlightId = null) {
         const container = document.getElementById('historyContainer');
         const list = document.getElementById('historyList');
-
         list.innerHTML = '';
 
         if (calcHistory.length === 0) {
@@ -614,6 +606,13 @@ get_header();
         calcHistory.forEach(item => {
             const li = document.createElement('li');
             li.className = 'history-item';
+
+            if (item.id === highlightId) {
+                li.classList.add('highlight');
+                setTimeout(() => {
+                    li.classList.remove('highlight');
+                }, 2000);
+            }
 
             const input = document.createElement('input');
             input.type = 'text';
@@ -668,11 +667,9 @@ get_header();
         }
 
         const res = calculateDamageFlow(p, rate);
-
         document.getElementById('verifyResultVal').innerText = res.final_dmg;
         document.getElementById('verifyResultArea').style.display = 'block';
 
-        // 実数値が入力されている場合のみ誤差を表示
         if (p.dmg > 0) {
             let diff = res.final_dmg - p.dmg;
             let diffText = diff === 0 ?
@@ -680,9 +677,13 @@ get_header();
                 "<span style='color:red;'>実数値との差: " + (diff > 0 ? "+" : "") + diff + "</span>";
             document.getElementById('verifyDiff').innerHTML = diffText;
         } else {
-            // 実数値がない場合はシミュレーション結果のみ表示
             document.getElementById('verifyDiff').innerHTML = "";
         }
+
+        document.querySelector('.verify-area').scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+        });
     }
 
     // 全てのinputにおいて、ダブルクリックで空白にする
