@@ -68,6 +68,10 @@ get_header(); ?>
         </div>
     </details>
 
+    <div class="search-hit-info" style="margin-bottom: 10px; font-weight: bold;">
+        該当件数: <span id="hit-count-num">0</span> 件
+    </div>
+
     <p class="scroll-hint-text">表は横にスクロールできます ➡</p>
 
     <div class="koto-table-wrapper">
