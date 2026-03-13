@@ -75,6 +75,7 @@ function koto_get_flat_char_data($post_id)
     $t1_tags = get_post_meta($post_id, '_trait_tags_str_1', true) ?: '';
     $t2_tags = get_post_meta($post_id, '_trait_tags_str_2', true) ?: '';
     $blessing_tags = get_post_meta($post_id, '_trait_tags_str_blessing', true) ?: '';
+    $other_tags = get_post_meta($post_id, '_search_tags_str', true) ?: '';
 
     return [
         'id'           => $post_id,
@@ -101,6 +102,7 @@ function koto_get_flat_char_data($post_id)
         'atk120'       => $spec['_val_120_atk'],
         'hptal'        => $spec['talent_hp'],
         'atktal'       => $spec['talent_atk'],
+        'pri'          => $spec['priority'],
         'hnd_buff'     => $spec['buff_counts_hand'],
         'bd_buff'     => $spec['buff_counts_board'],
         'debuf'           => $spec['debuff_counts'],
@@ -108,9 +110,8 @@ function koto_get_flat_char_data($post_id)
         'gim_t'        => array_values(array_unique($gimmick_slugs)),
         'ls_hp'        => ($spec['max_ls_hp'] ?? 0),
         'ls_atk'       => ($spec['max_ls_atk'] ?? 0),
-        'est'          => !empty($spec['is_estimate']) ? 1 : 0,
-        'koto_est'     => !empty($spec['is_koto_estimate']) ? 1 : 0,
         // スキル/とくせいは文字列として保持しておく (例: " type_attack_single type_atk_buff ")
+        'other_t'      => $other_tags,
         'waza_t'       => $waza_tags,
         'sugo_t'       => $sugo_tags,
         'koto_t'       => $koto_tags,

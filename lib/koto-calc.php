@@ -841,20 +841,8 @@ function on_save_character_specs($post_id)
     // ▲▲並べ替え用ここまで
 
     // ★修正: 検索用タグ文字列の保存
-    // 1. 全結合タグ (既存の検索機能用: 共通 + わざ + すごわざ)
-    $all_tags = array_merge(
-        $spec_data['search_tags'] ?? [],
-        $spec_data['waza_search_tags'] ?? [],
-        $spec_data['sugo_search_tags'] ?? [],
-        $spec_data['kotowaza_search_tags'] ?? [],
-        $spec_data['trait_search_tags_1'] ?? [],
-        $spec_data['trait_search_tags_2'] ?? [],
-        $spec_data['trait_search_tags_blessing'] ?? []
-    );
-    $all_tags = array_values(array_unique($all_tags));
-
-    if (!empty($all_tags)) {
-        $tags_str = ' ' . implode(' ', $all_tags) . ' ';
+    if (!empty($spec['search_tags'])) {
+        $tags_str = ' ' . implode(' ', $spec['search_tags']) . ' ';
         update_post_meta($post_id, '_search_tags_str', $tags_str);
     } else {
         delete_post_meta($post_id, '_search_tags_str');
