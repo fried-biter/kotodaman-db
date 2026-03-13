@@ -556,6 +556,7 @@
         background: #fff;
         width: 100%;
         max-width: 600px;
+        height: 85%;
         max-height: 90vh;
         border-radius: 8px;
         display: flex;
