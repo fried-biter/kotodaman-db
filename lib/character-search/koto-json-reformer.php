@@ -1,11 +1,105 @@
 <?php
 // =========================================================
+// ヘルパー関数
+// =========================================================
+// parse_target_groupの戻り値を展開してslug配列を生成する関数
+function flatten_target_group($item)
+{
+    // 戻り値となるtypeの確保と初期化
+    $type = $item['type'] ?? '';
+    $slgs = [];
+    $objs = $item['obj'] ?? [];
+
+    // 対象が自身・全体の場合はループを回さず早期リターン
+    if ($type === 'self' || $type === 'all') {
+        return [
+            'ty' => $type,
+            'slgs' => ''
+        ];
+    }
+
+    // 必要な場合のみ連想配列（辞書）を取得する遅延評価
+    $attr_num = ($type === 'attr') ? koto_get_attr_num() : [];
+    $species_num = ($type === 'species') ? koto_get_species_num() : [];
+
+    // 各要素から必要な値を抽出
+    foreach ($objs as $obj) {
+        $slug = $obj['slug'] ?? '';
+        $name = $obj['name'] ?? '';
+
+        if ($type === 'other') {
+            $slgs[] = $name;
+        } elseif ($type === 'attr') {
+            // 連想配列にキーが存在しない場合のフォールバックを追加
+            $slgs[] = $slug ? ($attr_num[$slug] ?? 1) : 1;
+        } elseif ($type === 'species') {
+            $slgs[] = $slug ? ($species_num[$slug] ?? 1) : 1;
+        } else {
+            $slgs[] = $slug;
+        }
+    }
+
+    // 値が「0」のデータを保持しつつ、空文字（''）のみを厳密に除外
+    $filtered_slgs = array_filter($slgs, function ($val) {
+        return $val !== '';
+    });
+
+    return [
+        'ty' => $type,
+        'slgs' => $filtered_slgs
+    ];
+}
+
+function flatten_leader($item)
+{
+    return [
+        'ty' => $item['type'] ?? '',
+        'cond' => array_map(function ($c) {
+            return [
+                'ty' => $c['type'] ?? '',
+                'vals' => $c['val'] ?? [],
+                'tgts' => array_map(function ($t) {
+                    // ターゲットの基本情報を取得し、編成条件の数値を統合する
+                    $parsed = flatten_target_group($t);
+                    $parsed['ttl'] = $t['total_tf'] ?? false;
+                    $parsed['num'] = $t['need_num'] ?? 0;
+                    return $parsed;
+                }, $c['cond_targets'] ?? [])
+            ];
+        }, $item['conditions'] ?? []),
+        'lm_wave' => $item['limit_wave'] ?? 0,
+        'per_unit' => $item['per_unit'] ?? false,
+        'effs' => array_map(function ($e) {
+            // ステータス補正値や耐性を1つの連想配列（辞書型）にまとめる
+            $merged_vals = [];
+            foreach ($e['value_raws'] ?? [] as $val) {
+                $key = ($val['status'] === 'resistance') ? ($val['resist'] ?? '') : ($val['status'] ?? '');
+                if ($key !== '') {
+                    $merged_vals[$key] = $val['value'] ?? 0;
+                }
+            }
+
+            return [
+                'tgts' => array_map('flatten_target_group', $e['targets'] ?? []),
+                'vals' => $merged_vals
+            ];
+        }, $item['main_eff'] ?? []),
+        'oth_val' => $item['exp'] ?? ($item['buff_count'] ?? 0),
+        'convs' => $item['converge_rate'] ?? [],
+        'trn' => $item['turn_count'] ?? 0,
+    ];
+}
+
+
+// =========================================================
 // 1. 1キャラ分のデータを抽出する共通関数（★キー名の短縮などはここを編集）
 // =========================================================
 function koto_get_flat_char_data($post_id)
 {
     $json_str = get_post_meta($post_id, '_spec_json', true);
     $spec = $json_str ? json_decode($json_str, true) : [];
+    $attr_num = koto_get_attr_num();
+    $species_num = koto_get_species_num();
 
     if (!is_array($spec) || empty($spec)) {
         return null;
@@ -30,8 +124,6 @@ function koto_get_flat_char_data($post_id)
             }
         }
     }
-    $attr_num = koto_get_attr_num();
-    $species_num = koto_get_species_num();
     $sub_attributes = array_map(function ($item) use ($attr_num) {
         return $attr_num[$item] ?? 0;
     }, $spec['sub_attributes']);
@@ -77,6 +169,11 @@ function koto_get_flat_char_data($post_id)
     $blessing_tags = get_post_meta($post_id, '_trait_tags_str_blessing', true) ?: '';
     $other_tags = get_post_meta($post_id, '_search_tags_str', true) ?: '';
 
+    // リーダーとくせい
+    $leader_raws = $spec['leader'] ?? [];
+    $learder_flat = [];
+    $learder_flat = array_map('flatten_leader', $leader_raws);
+
     return [
         'id'           => $post_id,
         'thumb_url'    => $thumb_url,
@@ -108,6 +205,7 @@ function koto_get_flat_char_data($post_id)
         'debuf'           => $spec['debuff_counts'],
         'gimmicks'     => array_values(array_unique($gimmicks)),
         'gim_t'        => array_values(array_unique($gimmick_slugs)),
+        'leader'       => $learder_flat,
         'ls_hp'        => ($spec['max_ls_hp'] ?? 0),
         'ls_atk'       => ($spec['max_ls_atk'] ?? 0),
         // スキル/とくせいは文字列として保持しておく (例: " type_attack_single type_atk_buff ")

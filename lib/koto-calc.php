@@ -1156,7 +1156,7 @@ function parse_target_group($grp)
     $result = ['type' => '', 'obj' => []];
 
     // $grp が空、または配列でない、または target_type が空の場合はすぐに返す
-    if (empty($grp) || !is_array($grp) || empty($grp['target_type'])) {
+    if (empty($grp) || !is_array($grp)) {
         $result['obj'][] = ['slug' => '', 'name' => ''];
         return $result;
     }
@@ -1171,7 +1171,10 @@ function parse_target_group($grp)
     }
 
     $result['type'] = $type;
-    if ($type !== 'self' && $type !== 'all') {
+    if ($type === 'self' || $type === 'all') {
+        $result['obj'][] = ['slug' => '', 'name' => ''];
+        return $result;
+    } else {
         if ($type === 'other') {
             $result['obj'][] = [
                 'slug' => '',
