@@ -33,6 +33,14 @@
                     <input type="text" name="search_char" class="term-tree-search"
                         value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
                         placeholder="例：あい（「あ」または「い」を持つキャラ）" />
+                    <p class="section-title">文字の軸</p>
+                    <div class="simple-tag-row">
+                        <label><input type="checkbox" name="tx_axis[]" value="axis_i"> <span>イ軸</span></label>
+                        <label><input type="checkbox" name="tx_axis[]" value="axis_u"> <span>ウ軸</span></label>
+                        <label><input type="checkbox" name="tx_axis[]" value="axis_youon"> <span>ゃゅょ軸</span></label>
+                        <label><input type="checkbox" name="tx_axis[]" value="char_connector"> <span>つなげ文字</span></label>
+                        <label><input type="checkbox" name="tx_axis[]" value="char_small_yuyo"> <span>小さいゆよ</span></label>
+                    </div>
                 </div>
 
                 <div class="search-section">
@@ -43,6 +51,14 @@
                 <div class="search-section">
                     <div class="section-title">種族</div>
                     <?php if (function_exists('render_simple_checkbox_list')) render_simple_checkbox_list('species', 'tx_species', true); ?>
+                </div>
+
+                <div class="search-section">
+                    <p class="section-title">入手方法</p>
+                    <div class="simple-tag-row">
+                        <label><input type="checkbox" name="tx_acq[]" value="ガチャ"> <span>ガチャ</span></label>
+                        <label><input type="checkbox" name="tx_acq[]" value="その他"> <span>その他</span></label>
+                    </div>
                 </div>
 
                 <div class="search-divider"></div>
@@ -86,6 +102,14 @@
 
                 <div class="search-section">
                     <div class="section-title">わざ・すごわざ・コトワザ</div>
+                    <p class="section-sub-title">行動順</p>
+                    <div class="simple-checkbox">
+                        <label><input type="checkbox" name="tx_priority[]" value="1"> <span>フィールド</span></label>
+                        <label><input type="checkbox" name="tx_priority[]" value="2"> <span>バフ/デバフ</span></label>
+                        <label><input type="checkbox" name="tx_priority[]" value="3"> <span>回復</span></label>
+                        <label><input type="checkbox" name="tx_priority[]" value="4"> <span>全体攻撃</span></label>
+                        <label><input type="checkbox" name="tx_priority[]" value="5"> <span>単体攻撃</span></label>
+                    </div>
 
                     <div class="scope-selector">
                         <span class="scope-label">検索対象:</span>
@@ -93,6 +117,7 @@
                         <label><input type="checkbox" name="scope_skill[]" value="sugo" checked> すごわざ</label>
                         <label><input type="checkbox" name="scope_skill[]" value="kotowaza" checked> コトワザ</label>
                     </div>
+                    
 
                     <div class="tag-accordion-group">
                         <details class="tag-details">
@@ -673,6 +698,12 @@
         padding-left: 8px;
         color: #333;
     }
+    .section-sub-title{
+        font-weight: bold;
+        font-size: 13px;
+        margin: 10px 0 5px;
+        color: #555;
+    }
 
     .icon-only-list {
         display: flex;
@@ -835,5 +866,12 @@
         flex-wrap: wrap;
         gap: 10px;
         justify-content: flex-start;
+    }
+
+    .simple-checkbox {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        font-size: 13px;
     }
 </style>
