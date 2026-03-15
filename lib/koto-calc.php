@@ -189,7 +189,10 @@ function get_character_spec_data($post_id)
     $data['cv'] = get_field('voice_actor', $post_id) ?: '';
     if (strpos($data['cv'], '%') !== false) {
         $parts = explode('%', $data['cv']);
-        $data['cv'] = '進化前:'.$parts[0].' / 進化後:'.$parts[1];
+        // 配列の要素数が足りない場合の考慮
+        $before = $parts[0] ?? '';
+        $after  = $parts[1] ?? '';
+        $data['cv'] = "進化前:{$before} / 進化後:{$after}";
     }
     $data['acquisition'] = get_field('get_place', $post_id) ?: '';
     $data['max_ls_hp'] = (int)(get_field('max_ls_hp', $post_id) ?: 0);
