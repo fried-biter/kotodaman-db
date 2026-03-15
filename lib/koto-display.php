@@ -354,7 +354,7 @@ function get_koto_trait_text_from_row($row)
             } elseif ($sub === 'critical_damage') {
                 $effect_text = "{$target_prefix}{$prefix}クリティカル時のダメージ{$rate}{$unit}UP";
             } elseif ($sub === 'healing_effect') {
-                $effect_text = "{$target_prefix}{$prefix}受ける回復効果{$rate}{$unit}UP";
+                $effect_text = "{$target_prefix}{$prefix}の回復効果を{$rate}{$unit}UP";
             } else {
                 $param = strtoupper($sub);
                 $effect_text = "{$prefix}{$target_prefix}{$param}{$rate}{$unit}UP";
@@ -981,22 +981,21 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             $omni_text = $is_omni ? "全属性に有利な" : "";
                             $hit_count = isset($item['hit_count']) ? $item['hit_count'] : 1;
                             $val_last  = isset($item['waza_value_last']) ? $item['waza_value_last'] : 0;
+                            if ($hit_count > 1) {
+                                if ($val_last > 0) {
+                                    $loop = $hit_count - 1;
+                                    $eff_val = "（{$eff_val}×{$loop}＋{$val_last}）";
+                                } else {
+                                    $eff_val = "（{$eff_val}×{$hit_count}）";
+                                }
+                            }
                             if ($rate_range_flag) {
                                 $base_phrase = "{$eff_val}～{$val_last}倍の{$omni_text}{$mod_text}{$attr_text}{$atk_noun}";
                             } else {
                                 $base_phrase = "{$saidai_text}{$eff_val}倍の{$omni_text}{$mod_text}{$attr_text}{$atk_noun}";
                             }
 
-                            if ($hit_count > 1) {
-                                if ($val_last > 0) {
-                                    $loop = $hit_count - 1;
-                                    $effect_text = "{$target_name}に{$base_phrase}×{$loop}回＋{$val_last}倍の{$omni_text}{$attr_text}攻撃";
-                                } else {
-                                    $effect_text = "{$target_name}に{$base_phrase}×{$hit_count}回";
-                                }
-                            } else {
-                                $effect_text = "{$target_name}に{$base_phrase}";
-                            }
+                            $effect_text = "{$target_name}に{$base_phrase}";
 
                             if ($needs_link) {
                                 $anchor_id = '';
