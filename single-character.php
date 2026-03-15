@@ -170,11 +170,18 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
 
     // --- 切り替え用リスト作成 ---
     $variations = [];
+    $main_name = get_the_title();
     if ($main_img_url) {
-        $variations[] = ['url' => $main_img_url];
+        $variations[] = [
+            'url'  => $main_img_url,
+            'name' => $main_name
+        ];
     }
     if ($sub_img_url) {
-        $variations[] = ['url' => $sub_img_url];
+        $variations[] = [
+            'url'  => $sub_img_url,
+            'name' => $another_img_name ? $another_img_name : $main_name
+        ];
     }
     ?>
 
@@ -211,7 +218,7 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
         <div class="char-variant-thumbs" style="display:flex; justify-content:center; gap:10px; margin-top:15px;">
             <?php foreach ($variations as $index => $item): ?>
                 <div class="var-thumb <?php if ($index === 0) echo 'active'; ?>"
-                    onclick="switchCharImageOnly(this, '<?php echo esc_url($item['url']); ?>')"
+                    onclick="switchCharImageOnly(this, '<?php echo esc_url($item['url']); ?>', '<?php echo esc_js($item['name']); ?>')"
                     style="width:60px; height:60px; border-radius:10px; overflow:hidden; cursor:pointer; border:2px solid #ddd; transition:0.2s; position:relative;">
 
                     <img src="<?php echo esc_url($item['url']); ?>" style="width:100%; height:100%; object-fit:cover;">
@@ -225,7 +232,7 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
 
         <script>
             // 画像だけを切り替える関数
-            function switchCharImageOnly(el, url) {
+            function switchCharImageOnly(el, url, name) {
                 // 1. 画像切り替え
                 const mainImg = document.getElementById('js-main-char-img');
                 if (mainImg) {
@@ -248,7 +255,13 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
                     }, 100);
                 }
 
-                // 2. サムネイルの枠線切り替え
+                // 2. 名前の切り替え
+                const titleEl = document.querySelector('.character-title-area .entry-title');
+                if (titleEl && name) {
+                    titleEl.innerText = name;
+                }
+
+                // 3. サムネイルの枠線切り替え
                 document.querySelectorAll('.var-thumb').forEach(t => {
                     t.style.borderColor = '#ddd';
                     t.style.opacity = '0.6';
