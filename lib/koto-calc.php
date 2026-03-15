@@ -187,6 +187,10 @@ function get_character_spec_data($post_id)
     ];
     $data['name_ruby'] = get_field('name_ruby', $post_id) ?: '';
     $data['cv'] = get_field('voice_actor', $post_id) ?: '';
+    if (strpos($data['cv'], '%') !== false) {
+        $parts = explode('%', $data['cv']);
+        $data['cv'] = '進化前:'.$parts[0].' / 進化後:'.$parts[1];
+    }
     $data['acquisition'] = get_field('get_place', $post_id) ?: '';
     $data['max_ls_hp'] = (int)(get_field('max_ls_hp', $post_id) ?: 0);
     $data['max_ls_atk'] = (int)(get_field('max_ls_atk', $post_id) ?: 0);
