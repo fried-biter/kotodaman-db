@@ -251,7 +251,7 @@ function get_character_spec_data($post_id)
     if ($sugo_groups && is_array($sugo_groups)) {
         $first_group = $sugo_groups[0];
         $details = $first_group['sugo_detail_loop'] ?? [];
-        $waza_target = $first_action['waza_target'] ?? '';
+        $waza_target = $details['waza_target'] ?? '';
 
         if (!empty($details) && is_array($details)) {
             $first_action = $details[0];
