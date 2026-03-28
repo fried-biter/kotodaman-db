@@ -140,10 +140,12 @@ function koto_get_flat_char_data($post_id)
         'super_both' => 'sboth'
     ];
     $charas = array_map(function ($item) use ($attr_num, $unlock_map) {
+        $unlock_key = isset($item['unlock']) ? trim((string)$item['unlock']) : 'default';
+        $attr_key   = isset($item['attr']) ? trim((string)$item['attr']) : '';
         return [
             'val' => $item['val'] ?? '',
-            'attr' => $attr_num[$item['attr']] ?? 0,
-            'unlock' => $unlock_map[$item['unlock']] ?? 'def',
+            'attr' => $attr_num[$attr_key] ?? 0,
+            'unlock' => $unlock_map[$unlock_key] ?? 'def',
         ];
     }, $spec['chars'] ?? []);
 
