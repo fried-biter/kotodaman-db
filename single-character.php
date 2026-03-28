@@ -347,6 +347,8 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
                         $suffix = '<span style="font-size:0.85em; color:#333; margin-left:2px;">(Sコピー)</span>';
                     } elseif ($place === 'super_change') {
                         $suffix = '<span style="font-size:0.85em; color:#333; margin-left:2px;">(Sチェンジ)</span>';
+                    } elseif ($place === 'super_both') {
+                        $suffix = '<span style="font-size:0.85em; color:#333; margin-left:2px;">(Sコ・Sチ)</span>';
                     }
 
                     $term_link = '#';
