@@ -136,7 +136,8 @@ function koto_get_flat_char_data($post_id)
         'second_trait' => '2',
         'blessing'    => 'bl',
         'super_change' => 'schange',
-        'super_copy' => 'scopy'
+        'super_copy' => 'scopy',
+        'super_both' => 'sboth'
     ];
     $charas = array_map(function ($item) use ($attr_num, $unlock_map) {
         return [
