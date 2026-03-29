@@ -635,7 +635,7 @@ function grant_custom_caps_to_roles()
             // --- 削除権限の制御 ---
             // 管理者は「削除」も絶対に必要
             // 投稿者・寄稿者にも削除させて良いなら、このif文を外して無条件でadd_capしてください
-            if ($role_slug === 'administrator') {
+            if ($role_slug === 'administrator' || $role_slug === 'editor') {
                 $role->add_cap('delete_' . $cap_suffix);
             } else {
                 // 投稿者たちは削除させない（必要ならここを有効化）
@@ -1122,3 +1122,14 @@ add_filter('googlesitekit_analytics-4_tag_blocked', function ($is_blocked) {
     }
     return $is_blocked;
 }, 100); // 100は優先順位。他の設定より後から上書きするために大きくしています。
+
+// キャラクター検索フォームのCSSとJSを読み込む
+function enqueue_character_search_assets()
+{
+    // CSSの読み込み
+    wp_enqueue_style('character-search-style', get_stylesheet_directory_uri() . '/lib/character-search/searchform.css');
+
+    // JSの読み込み
+    wp_enqueue_script('character-search-script', get_stylesheet_directory_uri() . '/lib/character-search/searchform.js', array(), false, true);
+}
+add_action('wp_enqueue_scripts', 'enqueue_character_search_assets');
