@@ -3,74 +3,66 @@
  * Template Name: イベント・キャラ一覧ページ
  */
 
-get_header(); // 必要に応じて
+get_header();
 
-// フィールドの取得
 $events = get_field('event_loop');
 if ($events) {
     echo '<div class="event-history-container">';
 
-    $last_date_text = '';
-    $last_event_name = ''; // ついでにイベント名用も定義しておくと安全です
-    $is_section_open = false;
+    // 完了グループ非表示用ボタン
+    echo '<div class="controls-container">';
+    echo '<button id="toggle-done-groups-btn" class="toggle-done-btn">完了済みのグループを非表示</button>';
+    echo '</div>';
 
-    // セクション開閉管理フラグ
+    $last_date_text = '';
+    $last_event_name = '';
     $is_section_open = false;
 
     foreach ($events as $event) {
-        // 各フィールドの値を取得
-        $main_name     = $event['event_name'];       // 大見出し
-        $detail_name   = $event['event_detail_name']; // 小見出し（ガチャ名など）
-        $date_raw      = $event['event_date'];       // 日付
-        $characters    = $event['character_name_loop']; // キャラ名の繰り返しフィールド
+        $main_name     = $event['event_name'];
+        $detail_name   = $event['event_detail_name'];
+        $date_raw      = $event['event_date'];
+        $characters    = $event['character_name_loop'];
 
-        /* --- 日付の引き継ぎロジック (テキスト版) --- */
-        // 入力があれば更新、空なら直前のテキストを使う
         if (! empty($date_input)) {
             $last_date_text = $date_input;
         } else {
             $date_input = $last_date_text;
         }
 
-        // 表示用: 必要なら / を . に置換するなど整形しても良いですが、
-        // 今回は入力されたテキストをそのまま表示します。
-        $date_display = $date_input;
-
-        // 表示用日付フォーマット作成 (d/m/Y -> Y.m.d)
         $date_display = '';
         if ($date_raw) {
             $date_obj = DateTime::createFromFormat('d/m/Y', $date_raw);
             if ($date_obj) {
                 $date_display = $date_obj->format('Y.m.d');
             } else {
-                // 万が一フォーマットが合わない場合はそのまま表示
                 $date_display = $date_raw;
             }
         }
 
-        /* --- 大見出し（セクション）の切り替わりロジック --- */
-        // 大見出しが入力されている場合、新しいセクションを開始
+        // 大見出し（セクション）の切り替えとアコーディオン用ラッパーの設置
         if (! empty($main_name)) {
-            // 前のセクションが開いていれば閉じる
             if ($is_section_open) {
+                echo '</div>'; // .event-group-content close
                 echo '</div>'; // .event-group close
             }
 
             echo '<div class="event-group">';
-            echo '<h2 class="event-main-title">' . esc_html($main_name) . '</h2>';
+            echo '<h2 class="event-main-title js-accordion-trigger">';
+            echo '<span class="title-text">' . esc_html($main_name) . '</span>';
+            echo '<span class="accordion-icon">▼</span>';
+            echo '</h2>';
+            echo '<div class="event-group-content" style="display: none;">';
 
             $is_section_open = true;
-        }
-        // まだセクションが開いていない（最初の行が空の場合など）の安全策
-        elseif (! $is_section_open) {
+        } elseif (! $is_section_open) {
             echo '<div class="event-group">';
+            echo '<div class="event-group-content">';
             $is_section_open = true;
         }
 
-        /* --- 小見出し・日付・キャラリストの出力 --- */
         echo '<div class="event-row">';
 
-        // ヘッダー部分（小見出し + 日付）
         echo '<div class="event-row-header">';
         echo '<span class="sub-name">' . esc_html($detail_name) . '</span>';
         if ($date_display) {
@@ -78,14 +70,14 @@ if ($events) {
         }
         echo '</div>';
 
-        // キャラクターリスト部分
         if ($characters) {
             echo '<ul class="character-list">';
             foreach ($characters as $char_item) {
                 $char_name = $char_item['character_name'];
+                $done = $char_item['done_tf'] ?? false;
+                $status_class = $done ? 'tag-done' : 'tag-not-done';
                 if ($char_name) {
-                    // 検索リンクにする場合は <a> タグなどをここに入れます
-                    echo '<li class="character-tag">' . esc_html($char_name) . '</li>';
+                    echo '<li class="character-tag ' . esc_attr($status_class) . '">' . esc_html($char_name) . '</li>';
                 }
             }
             echo '</ul>';
@@ -94,19 +86,86 @@ if ($events) {
         echo '</div>'; // .event-row close
     }
 
-    // 最後のセクションを閉じる
     if ($is_section_open) {
-        echo '</div>';
+        echo '</div>'; // .event-group-content close
+        echo '</div>'; // .event-group close
     }
 
     echo '</div>'; // .event-history-container close
 }
-
-get_footer(); // 必要に応じて
 ?>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 全キャラ完了の判定と✅の付与
+        const groups = document.querySelectorAll('.event-group');
+        groups.forEach(group => {
+            const tags = group.querySelectorAll('.character-tag');
+            if (tags.length === 0) return;
+
+            const isAllDone = Array.from(tags).every(tag => tag.classList.contains('tag-done'));
+
+            if (isAllDone) {
+                group.classList.add('is-all-done');
+                const titleText = group.querySelector('.title-text');
+                if (titleText) {
+                    titleText.textContent = '✅ ' + titleText.textContent;
+                }
+            }
+        });
+
+        // 完了グループの表示・非表示切り替え
+        const toggleBtn = document.getElementById('toggle-done-groups-btn');
+        let isHidden = false;
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                isHidden = !isHidden;
+                const doneGroups = document.querySelectorAll('.is-all-done');
+
+                doneGroups.forEach(group => {
+                    group.style.display = isHidden ? 'none' : 'block';
+                });
+
+                toggleBtn.textContent = isHidden ? '完了済みのグループを表示' : '完了済みのグループを非表示';
+            });
+        }
+
+        // アコーディオンの排他開閉制御とスクロール
+        const triggers = document.querySelectorAll('.js-accordion-trigger');
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const currentGroup = this.closest('.event-group');
+                const currentContent = currentGroup.querySelector('.event-group-content');
+                const isOpen = currentContent.classList.contains('is-open');
+
+                document.querySelectorAll('.event-group-content').forEach(content => {
+                    content.classList.remove('is-open');
+                    content.style.display = 'none';
+                });
+
+                document.querySelectorAll('.accordion-icon').forEach(icon => {
+                    icon.textContent = '▼';
+                });
+
+                if (!isOpen) {
+                    currentContent.classList.add('is-open');
+                    currentContent.style.display = 'block';
+                    const icon = this.querySelector('.accordion-icon');
+                    if (icon) icon.textContent = '▲';
+
+                    // 開いたタブの先頭に瞬時にスクロール
+                    currentGroup.scrollIntoView({
+                        behavior: 'instant',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 <style>
-    /* 全体のコンテナ */
     .event-history-container {
         max-width: 800px;
         margin: 30px auto;
@@ -114,7 +173,12 @@ get_footer(); // 必要に応じて
         font-family: "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* --- イベントグループ（大見出し単位） --- */
+    /* 上部のトグルボタン用レイアウト */
+    .controls-container {
+        margin-bottom: 20px;
+        text-align: right;
+    }
+
     .event-group {
         margin-bottom: 40px;
         background: #fff;
@@ -124,7 +188,6 @@ get_footer(); // 必要に応じて
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
 
-    /* 大見出し (event_name) */
     .event-main-title {
         background-color: #333;
         color: #fff;
@@ -133,7 +196,22 @@ get_footer(); // 必要に応じて
         margin: 0;
     }
 
-    /* --- 各行（小見出し＋キャラ） --- */
+    .event-main-title.js-accordion-trigger {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
+    }
+
+    .event-main-title.js-accordion-trigger:hover {
+        background-color: #444;
+    }
+
+    .accordion-icon {
+        font-size: 0.8em;
+    }
+
     .event-row {
         padding: 20px;
         border-bottom: 1px solid #eee;
@@ -143,7 +221,6 @@ get_footer(); // 必要に応じて
         border-bottom: none;
     }
 
-    /* 行のヘッダー（小見出し ＋ 日付） */
     .event-row-header {
         display: flex;
         justify-content: space-between;
@@ -158,7 +235,6 @@ get_footer(); // 必要に応じて
         font-weight: bold;
         color: #444;
         border-left: 4px solid #d32f2f;
-        /* アクセントカラー */
         padding-left: 10px;
     }
 
@@ -170,7 +246,6 @@ get_footer(); // 必要に応じて
         border-radius: 4px;
     }
 
-    /* --- キャラクターリスト --- */
     .character-list {
         list-style: none;
         margin: 0;
@@ -180,15 +255,41 @@ get_footer(); // 必要に応じて
         gap: 8px;
     }
 
-    /* キャラクター名のバッジ */
     .character-tag {
-        background-color: #e3f2fd;
-        /* 薄い青 */
-        color: #1565c0;
-        /* 濃い青文字 */
         font-size: 0.9rem;
         padding: 6px 12px;
         border-radius: 20px;
-        border: 1px solid #bbdefb;
+    }
+
+    .character-tag.tag-done {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+    }
+
+    .character-tag.tag-not-done {
+        background-color: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+    }
+
+    .toggle-done-btn {
+        padding: 8px 16px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: 0.2s;
+    }
+
+    .toggle-done-btn:hover {
+        background-color: #f5f5f5;
     }
 </style>
+
+
+<?php
+get_footer();
