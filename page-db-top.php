@@ -105,10 +105,12 @@ get_header();
             <section class="db-section tax-links rarity">
                 <h2>レアリティで探す</h2>
                 <div class="tax-grid">
-                    <a href="<?php echo home_url('/rarity/grand/'); ?>" class="tax-btn grand">グランド</a>
-                    <a href="<?php echo home_url('/rarity/legend/'); ?>" class="tax-btn legend">レジェンド</a>
-                    <a href="<?php echo home_url('/rarity/dream/'); ?>" class="tax-btn dream">ドリーム</a>
-                    <a href="<?php echo home_url('/rarity/special/'); ?>" class="tax-btn special">スペシャル</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=grand'); ?>" class="tax-btn grand">グランド</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=legend'); ?>" class="tax-btn legend">レジェンド</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=dream'); ?>" class="tax-btn dream">ドリーム</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=miracle'); ?>" class="tax-btn miracle">ミラクル</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=special'); ?>" class="tax-btn special">スペシャル</a>
+                    <a href="<?php echo home_url('/?post_type=character&s=&search_char=&tx_rarity%5B%5D=none'); ?>" class="tax-btn none">なし</a>
                 </div>
             </section>
 
@@ -132,9 +134,9 @@ get_header();
                     ];
 
                     foreach ($gimmicks as $slug => $label) :
-                        $normal_url = home_url('/gimmick/' . $slug . '/');
+                        $normal_url = home_url("/?post_type=character&s=&search_char=&tx_gimmick%5B%5D=" . $slug);
                         // ご提示の規則性に基づき、スーパーのスラッグは "super_" + 通常スラッグ とする
-                        $super_url  = home_url('/gimmick/super_' . $slug . '/');
+                        $super_url  = home_url('/?post_type=character&s=&search_char=&tx_gimmick%5B%5D=super_' . $slug);
                     ?>
                         <div class="split-btn-wrapper">
                             <a href="<?php echo esc_url($normal_url); ?>" class="tax-btn gim-main">
@@ -372,6 +374,10 @@ get_header();
 
     .tax-btn.dream {
         border-bottom: 4px solid rgb(232 225 106);
+    }
+    
+    .tax-btn.miracle {
+        border-bottom: 4px solid rgb(106, 232, 226);
     }
 
     .tax-btn.spe {
