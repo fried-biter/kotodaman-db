@@ -1081,7 +1081,9 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                         case 'atk_debuff':
                         case 'def_buff':
                         case 'def_debuff':
+                        case 'crit_rate_buff':
                             $param = (strpos($eff_type, 'atk') !== false) ? 'ATK' : 'DEF';
+                            $param = (strpos($eff_type, 'crit_rate') !== false) ? 'クリティカル率' : $param;
                             $prefix = (strpos($eff_type, 'debuff') === false) ? 'バフ' : 'デバフ';
                             if (strpos($target_name, '手札') !== false || strpos($target_name, '敵') !== false) {
                                 $effect_text = "{$target_name}に{$turn_text}{$param}{$eff_val}段階{$prefix}を付与";
