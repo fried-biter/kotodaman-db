@@ -288,6 +288,7 @@ function koto_acf_editor_page_html()
         'group_693790ee221c3' => 'とくせい',
         'group_693971a11a6b2' => '祝福',
         'group_693c070768756' => 'EXスキル',
+        'group_69d4b6b256263' => 'ミラクルリーダー',
     ];
     $template_post_ids = [2947 => '', 2023 => '', 2637 => '', 2638 => ''];
 
