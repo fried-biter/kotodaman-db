@@ -706,7 +706,17 @@ if ($charge_name || $charge_loop):
 // =================================================================
 //  リーダーとくせい
 // =================================================================
-$ls_html = function_exists('get_koto_leader_skill_html') ? get_koto_leader_skill_html() : '';
+$ls_back = function_exists('get_koto_leader_skill_html') ? get_koto_leader_skill_html(null, true) : '';
+$ls_html = $ls_back ? $ls_back['content'] : '';
+$ls_count = $ls_back ? $ls_back['count'] : 0;
+$miracle_loop = get_field('miracle_leader_loop') ?? [];
+$miracle_lines = [];
+if ($miracle_loop) {
+    foreach ($miracle_loop as $row) {
+        $text = function_exists('get_koto_trait_text_from_row') ? get_koto_trait_text_from_row($row) : '';
+        if ($text) $miracle_lines[] = $text;
+    }
+}
 
 if ($ls_html): ?>
     <div class="skill-card card-leader">
@@ -715,6 +725,14 @@ if ($ls_html): ?>
             <span class="label-tag tag-effect">効果</span>
             <div class="skill-text-block">
                 <div class="skill-text-area"><?php echo $ls_html; ?></div>
+                <?php if ($miracle_lines): ?>
+                    <?php 
+                    $index = $ls_count;
+                    foreach ($miracle_lines as $line):
+                    ?>
+                    （<?php echo $index++; ?>）<?php echo $line; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </div>
     </div>

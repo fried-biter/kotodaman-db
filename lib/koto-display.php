@@ -1255,7 +1255,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 /**
  * 5. リーダーとくせいHTML生成関数 (新規作成)
  */
-function get_koto_leader_skill_html($post_id = null)
+function get_koto_leader_skill_html($post_id = null,$is_back_count = false)
 {
     if (!$post_id) $post_id = get_the_ID();
     $ls_patterns = get_field('ls_loop', $post_id);
@@ -1474,7 +1474,9 @@ function get_koto_leader_skill_html($post_id = null)
         $ls_text[] = '<span class ="effect-num">（' . $count . '）</span>' . $condition_text . $target_text . $effect_text;
         $count++;
     }
-
+    if ($is_back_count){
+        return ['content'=>koto_replace_icons(implode('<br>', $ls_text)), 'count'=>$count-1];
+    }
     return koto_replace_icons(implode('<br>', $ls_text));
 }
 
