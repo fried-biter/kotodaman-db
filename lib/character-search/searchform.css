@@ -1,0 +1,678 @@
+/* --- メイン画面の検索フォーム枠 --- */
+.search-wrapper {
+    background: #f7ede3;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    width: 100% !important;
+}
+
+.search-row-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.search-row-bottom {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.search-row-top input[type="text"]#s {
+    flex: 1;
+    height: 44px;
+    padding: 0 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+button.submit-btn {
+    flex: 0 0 80px;
+    height: 44px;
+    padding: 0;
+    font-size: 14px;
+    font-weight: bold;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button.submit-btn:hover {
+    background: #135e96;
+}
+
+/* モーダルを開くボタン */
+button.js-toggle-advanced-search.toggle-btn {
+    flex: 1;
+    height: 36px;
+    font-size: 14px;
+    font-weight: bold;
+    background: #fff;
+    border: 2px solid #2271b1;
+    border-radius: 4px;
+    color: #2271b1;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+button.js-toggle-advanced-search.toggle-btn:hover {
+    background: #2271b1;
+    color: #fff;
+}
+
+.reset-btn {
+    flex: 0 0 80px;
+    height: 36px;
+    font-size: 12px;
+    background: #fff;
+    border-radius: 4px;
+    border: 1px solid #d63638;
+    color: #d63638;
+    cursor: pointer;
+    text-align: center;
+}
+
+.reset-btn:hover {
+    background: #fff0f0;
+    border-color: #d63638;
+}
+
+/* =========================================================
+▼▼▼ モーダル（ポップアップ）用のCSS ▼▼▼
+========================================================= */
+.search-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    backdrop-filter: blur(2px);
+}
+
+.search-modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 600px;
+    height: 85%;
+    max-height: 90vh;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.search-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: #f7ede3;
+    border-bottom: 1px solid #ddd;
+}
+
+.search-modal-header .modal-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.modal-header-btns {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* モーダル内のリセットボタンの微調整 */
+.js-modal-reset-search-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid #d63638;
+    color: #d63638;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.js-modal-reset-search-btn:hover {
+    background: #fff0f0;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #666;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+}
+
+.modal-close-btn:hover {
+    color: #d63638;
+}
+
+.search-modal-body {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.search-modal-footer {
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+    background: #fff;
+    text-align: center;
+}
+
+.modal-apply-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background: #2271b1;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-apply-btn:hover {
+    background: #135e96;
+}
+
+/* =========================================================
+▼▼▼ モーダル内の各項目（既存のCSSを引き継ぎ） ▼▼▼
+========================================================= */
+.search-section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+    border-left: 4px solid #2271b1;
+    padding-left: 8px;
+    color: #333;
+}
+
+.section-sub-title {
+    font-weight: bold;
+    font-size: 13px;
+    margin: 10px 0 5px;
+    color: #555;
+}
+
+.icon-only-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.icon-only-label {
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.icon-only-label img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    filter: grayscale(100%) opacity(0.5);
+    transition: all 0.2s;
+    vertical-align: bottom;
+}
+
+.icon-only-label:has(input:checked) img {
+    filter: grayscale(0%) opacity(1);
+    transform: scale(1.1);
+}
+
+.icon-only-label .term-text-hidden {
+    display: none;
+}
+
+.icon-only-label input {
+    display: none;
+}
+
+.custom-term-selector-ui {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.term-tree-search {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.term-tree-list {
+    max-height: 250px;
+    overflow-y: auto;
+    font-size: 13px;
+    border: 1px solid #f0f0f0;
+    padding: 5px;
+}
+
+.term-tree-item {
+    margin: 2px 0;
+}
+
+.term-children-container {
+    margin-left: 18px;
+    border-left: 1px solid #eee;
+    padding-left: 5px;
+}
+
+.tree-accordion {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+.tree-summary {
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    background: #f5f5f5;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tree-summary::-webkit-details-marker {
+    display: none;
+}
+
+.tree-summary::after {
+    content: '▼';
+    font-size: 10px;
+    color: #777;
+    transition: transform 0.2s;
+}
+
+details[open]>.tree-summary::after {
+    transform: rotate(180deg);
+}
+
+.tree-content {
+    padding: 10px;
+}
+
+.scope-selector {
+    background: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.scope-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.tag-accordion-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.tag-details {
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.tag-summary {
+    padding: 8px;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tag-children {
+    padding: 8px 8px 8px 25px;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.simple-tag-row {
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.simple-checkbox {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 13px;
+}
+
+.tab-select-container {
+    position: relative;
+}
+
+.tab-select-area {
+    display: flex;
+    gap: 0px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* リストの・（黒丸）を非表示にする */
+    border-bottom: 2px solid #2271b1;
+    margin-bottom: -5px;
+}
+
+.area-select-button {
+    flex: 1;
+    text-align: center;
+    background: #f7ede3;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    font-size: 14px;
+    padding: 5px 10px;
+    cursor: pointer;
+    position: relative;
+    color: #555;
+    /* アクティブ時に親のボーダーと重ねるための位置調整 */
+    transition: background-color 0.2s;
+}
+
+.area-select-button:hover {
+    background: #c9bcaf;
+}
+
+.area-select-button.is-active {
+    background: #f7ede3;
+    border: 2px solid #2271b1;
+    /* 下線を白にしてコンテンツ領域と一体化させる */
+    color: #2271b1;
+    font-weight: bold;
+    margin-bottom: -2px;
+    z-index: 1;
+    /* 重なり順を上にして、親要素の下線を隠す */
+}
+
+/* タブコンテンツの基本状態 */
+.tab-content {
+    display: none;
+}
+
+/* アクティブなタブコンテンツの状態 */
+.tab-content.is-active {
+    display: block;
+    animation: tabFadeIn 0.2s ease-out;
+}
+
+
+/* タブ切り替え時のアニメーション */
+@keyframes tabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* リーダー条件の各項目枠 */
+.leader-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    background: #fff;
+}
+
+/* leader-cond-selectをコンパクトに */
+.leader-cond-select {
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background: #fff;
+    box-sizing: border-box;
+    height: 36px;
+}
+
+/* 項目追加ボタンを横幅いっぱいに */
+.cond-add-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #2271b1;
+    background: #f0f7ff;
+    border: 2px solid #2271b1;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.cond-add-btn:hover {
+    background: #2271b1;
+    color: #fff;
+}
+
+.cond-add-btn:active {
+    transform: translateY(1px);
+}
+
+.leader-cond-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.leader-cond-container .leader-cond-val{
+    width: 95%; 
+    align-self: flex-end;
+}
+
+
+/* 削除ボタンの調整 */
+.js-remove-cond-btn {
+    /* 親の flex-direction: column に対して右寄せ */
+    align-self: flex-end;
+    /* flex-basisをリセットし、文字幅に合わせる */
+    flex: none;
+    width: auto;
+    min-width: 60px;
+    padding: 4px 12px;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* =========================================================
+▼▼▼ リーダー検索セクション分けスタイル ▼▼▼
+========================================================= */
+
+/* セクション共通スタイル */
+.leader-section {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #fafafa;
+}
+
+.leader-section-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.leader-section-label::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+/* 補正セクション - 青系 */
+.leader-buff-section {
+    border-left: 3px solid #2271b1;
+}
+
+.leader-buff-section .leader-section-label {
+    color: #2271b1;
+}
+
+.leader-buff-section .leader-section-label::before {
+    background: #2271b1;
+}
+
+/* 対象セクション - 緑系 */
+.leader-target-section {
+    border-left: 3px solid #4caf50;
+}
+
+.leader-target-section .leader-section-label {
+    color: #2e7d32;
+}
+
+.leader-target-section .leader-section-label::before {
+    background: #4caf50;
+}
+
+/* 条件セクション - オレンジ系 */
+.leader-condition-section {
+    border-left: 3px solid #ff9800;
+}
+
+.leader-condition-section .leader-section-label {
+    color: #e65100;
+}
+
+.leader-condition-section .leader-section-label::before {
+    background: #ff9800;
+}
+
+/* セクション内の要素間隔 */
+.leader-section > *:not(.leader-section-label) {
+    margin-bottom: 6px;
+}
+
+.leader-section > *:last-child {
+    margin-bottom: 0;
+}
+
+/* 条件セクション内のサブ要素 */
+.leader-cond-sub {
+    margin-left: 12px;
+    padding-left: 8px;
+    border-left: 2px dashed #ddd;
+}
+
+/* チェックボックスコンテナの調整 */
+.leader-section .leader-target-attr,
+.leader-section .leader-target-species,
+.leader-section .leader-cond-attr,
+.leader-section .leader-cond-species {
+    margin-top: 4px;
+}
+
+/* 数値入力欄のスタイル統一 */
+.leader-section input[type="number"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* 条件式チェックボックスコンテナ */
+.leader-cond-type-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+/* 編成条件トグル - 文言とトグルを横並びに */
+.leader-target-aim {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 8px;
+    background: #f5f5f5;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #555;
+}
