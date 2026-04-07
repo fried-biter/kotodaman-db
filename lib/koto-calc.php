@@ -168,6 +168,7 @@ function get_character_spec_data($post_id)
         'trait2'        => [],
         'blessing'      => [],
         'leader'        => null,
+        'miracle_leader' => null,
         'EX_skill'      => [],
         'charge_skill'  => [],
         'corrections'   => [],
@@ -746,6 +747,9 @@ function get_character_spec_data($post_id)
     $ls_loop = get_field('ls_loop', $post_id);
     if ($ls_loop) $data['leader'] = _parse_leader_skill_data($ls_loop);
 
+    $miracle_leader_loop = get_field('miracle_leader_loop', $post_id);
+    if ($miracle_leader_loop) $data['miracle_leader'] = _parse_trait_loop_to_data($miracle_leader_loop);
+
     // 7. EXスキル
     $data['EX_skill'] = _parse_ex_skill($post_id);
     // 8. チャージスキル
@@ -1217,6 +1221,7 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
             'sub_type' => '',
             'rate_type' => '',
             'value' => 0,
+            'mojis' => [],
             'levels' => [],
             'whose' => 'self',
             'super_heal' => 0,
@@ -1238,6 +1243,7 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
             'sub_type' => '',
             'rate_type' => '',
             'value' => 0,
+            'mojis' => [],
             'levels' => [],
             'whose' => 'self',
             'super_heal' => 0,
@@ -1521,6 +1527,12 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
             if (isset($t['limit_break_rate']) && $t['limit_break_rate'] !== '') {
                 $parsed['limit_break'] = (int)$t['limit_break_rate'];
             }
+        }
+
+        //10.文字追加（ミラクル用）
+        elseif ($type === 'add_moji') {
+            $chars = $t['add_moji'] ?? '';
+            $parsed['mojis'] = $chars ? array_map('trim', explode(',', $chars)) : [];
         }
         // --- 共通: per_unit, targets, conditions は既存通り ---
         if (!empty($t['per_unit_tf'])) {

@@ -477,6 +477,17 @@ function get_koto_trait_text_from_row($row)
                 $limit = $row['limit_break_rate'];
                 $effect_text = "重圧のダメージ上限を+{$limit}";
             }
+            elseif ($sub === 'ignore_disad') {
+                $effect_text = "不利属性に対して与えるダメージ、不利属性から受けるダメージが等倍になる";
+            }
+            elseif($sub === 'kokusen'){
+                $effect_text = "黒閃：オーバークリティカル発生時、自身に「ドロー時、２ターンの間自身ATK１段階UP」「ダメージ上限+500000」を自身に付与する";
+            }
+            break;
+
+        case 'add_moji':
+            $add_moji = str_replace(',', '・', $row['add_moji']);
+            $effect_text ="文字変換「" . esc_html($add_moji) . "」";
             break;
     }
 
