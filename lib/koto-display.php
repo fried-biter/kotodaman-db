@@ -476,18 +476,16 @@ function get_koto_trait_text_from_row($row)
             elseif ($sub === 'pressure_break') {
                 $limit = $row['limit_break_rate'];
                 $effect_text = "重圧のダメージ上限を+{$limit}";
-            }
-            elseif ($sub === 'ignore_disad') {
+            } elseif ($sub === 'ignore_disad') {
                 $effect_text = "不利属性に対して与えるダメージ、不利属性から受けるダメージが等倍になる";
-            }
-            elseif($sub === 'kokusen'){
+            } elseif ($sub === 'kokusen') {
                 $effect_text = "黒閃：オーバークリティカル発生時、自身に「ドロー時、２ターンの間自身ATK１段階UP」「ダメージ上限+500000」を自身に付与する";
             }
             break;
 
         case 'add_moji':
             $add_moji = str_replace(',', '・', $row['add_moji']);
-            $effect_text ="文字変換「" . esc_html($add_moji) . "」";
+            $effect_text = "文字変換「" . esc_html($add_moji) . "」";
             break;
     }
 
@@ -609,7 +607,11 @@ function get_koto_trait_text_from_row($row)
 
         // 対象が「自身」以外の場合のみ、特別な書き方に変換
         if ($whose_label && $whose_label !== '自身') {
-            $target_name = $whose_label . 'の味方';
+            if (strpos($whose_label, 'の味方') !== false) {
+                $target_name = $whose_label; // すでに「の味方」が含まれている場合はそのまま
+            } else {
+                $target_name = $whose_label . 'の味方'; // そうでない場合は「の味方」を付ける
+            }
             if (empty($target_name)) $target_name = '全キャラ';
 
             // テキストをラップする
@@ -1255,7 +1257,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 /**
  * 5. リーダーとくせいHTML生成関数 (新規作成)
  */
-function get_koto_leader_skill_html($post_id = null,$is_back_count = false)
+function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
 {
     if (!$post_id) $post_id = get_the_ID();
     $ls_patterns = get_field('ls_loop', $post_id);
@@ -1474,8 +1476,8 @@ function get_koto_leader_skill_html($post_id = null,$is_back_count = false)
         $ls_text[] = '<span class ="effect-num">（' . $count . '）</span>' . $condition_text . $target_text . $effect_text;
         $count++;
     }
-    if ($is_back_count){
-        return ['content'=>koto_replace_icons(implode('<br>', $ls_text)), 'count'=>$count-1];
+    if ($is_back_count) {
+        return ['content' => koto_replace_icons(implode('<br>', $ls_text)), 'count' => $count];
     }
     return koto_replace_icons(implode('<br>', $ls_text));
 }

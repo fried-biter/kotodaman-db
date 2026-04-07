@@ -730,7 +730,7 @@ if ($ls_html): ?>
                     $index = $ls_count;
                     foreach ($miracle_lines as $line):
                     ?>
-                    （<?php echo $index++; ?>）<?php echo $line; ?>
+                    <span class="effect-num">（<?php echo $index++; ?>）</span><?php echo $line; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
