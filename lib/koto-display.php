@@ -767,7 +767,8 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                         'attr' => $c_row['condition_attr'] ?? null,
                         'aff'  => $c_row['condition_affiliation'] ?? null,
                         'species' => $c_row['condition_species'] ?? null,
-                        'hp'   => $c_row['hp_cond_detail'] ?? 'more'
+                        'hp'   => $c_row['hp_cond_detail'] ?? 'more',
+                        'target_cond_detail' => $c_row['target_cond_detail'] ?? null
                     ];
                 }
             }
@@ -814,6 +815,10 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             case 'theme':
                                 $part_text = "「{$cv}」テーマのことばを作った時";
                                 break;
+                            case 'hpcond':
+                                $hp_label = ($p_cond['hp'] === 'less') ? '以下' : '以上';
+                                $part_text = "HP{$cv}%{$hp_label}の時";
+                                break;
                             case 'attr':
                                 $attr_name = $cv;
                                 if (!empty($p_cond['attr'])) {
@@ -821,7 +826,11 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                     $names = is_array($objs) ? wp_list_pluck($objs, 'name') : (is_object($objs) ? [$objs->name] : []);
                                     if (!empty($names)) $attr_name = implode('・', $names);
                                 }
-                                $part_text = "同時に{$attr_name}属性のコトダマンがわざ・すごわざを発動した時";
+                                if ($p_cond['target_cond_detail'] === 'deck') {
+                                    $part_text = "デッキ内に{$attr_name}属性のコトダマンが{$cv}体以上いる時";
+                                } else {
+                                    $part_text = "同時に{$attr_name}属性のコトダマンがわざ・すごわざを発動した時";
+                                }
                                 break;
                             case 'species':
                                 $spe_name = $cv;
@@ -830,11 +839,11 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                     $names = is_array($objs) ? wp_list_pluck($objs, 'name') : (is_object($objs) ? [$objs->name] : []);
                                     if (!empty($names)) $spe_name = implode('・', $names);
                                 }
-                                $part_text = "同時に{$spe_name}種族のコトダマンがわざ・すごわざを発動した時";
-                                break;
-                            case 'hpcond':
-                                $hp_label = ($p_cond['hp'] === 'less') ? '以下' : '以上';
-                                $part_text = "HP{$cv}%{$hp_label}の時";
+                                if ($p_cond['target_cond_detail'] === 'deck') {
+                                    $part_text = "デッキ内に{$spe_name}種族のコトダマンが{$cv}体以上いる時";
+                                } else {
+                                    $part_text = "同時に{$spe_name}種族のコトダマンがわざ・すごわざを発動した時";
+                                }
                                 break;
                             case 'group':
                                 $grp_name = $cv;
@@ -852,7 +861,11 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                     $names = is_array($objs) ? wp_list_pluck($objs, 'name') : (is_object($objs) ? [$objs->name] : []);
                                     if (!empty($names)) $grp_name = implode('・', $names);
                                 }
-                                $part_text = $is_melody ? "同時に「全の戦律」または「斬・砲・突・重・超・打の戦律」のコトダマンがわざ・すごわざを発動した時" : "同時に「{$grp_name}」のコトダマンがわざ・すごわざを発動した時";
+                                if ($p_cond['target_cond_detail'] === 'deck') {
+                                    $part_text = $is_melody ? "デッキ内に「全の戦律」または「斬・砲・突・重・超・打の戦律」のコトダマンが{$cv}体以上いる時" : "デッキ内に「{$grp_name}」のコトダマンが{$cv}体以上いる時";
+                                } else {
+                                    $part_text = $is_melody ? "同時に「全の戦律」または「斬・砲・突・重・超・打の戦律」のコトダマンがわざ・すごわざを発動した時" : "同時に「{$grp_name}」のコトダマンがわざ・すごわざを発動した時";
+                                }
                                 break;
                             case 'attacked':
                                 $part_text = "敵からの攻撃を{$cv}回受けた時";

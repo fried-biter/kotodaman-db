@@ -1583,9 +1583,9 @@ function _parse_trait_condition($cond_data)
     if (empty($cond_data) || !is_array($cond_data)) return [];
     $parsed = [];
     foreach ($cond_data as $c) {
-        // DONEリーダーとくせいは関数化せずリーダーとくせい解析関数に書く
         $type = $c['condition_type'] ?? '';
         $val  = $c['condition_value'] ?? '';
+        $target_cond_detail = $c['target_cond_detail'] ?? '';
         $target_conds = ['type' => '', 'attr' => [], 'species' => [], 'group' => [], 'other' => ''];
         $vals = split_str_comma($val);
         $target_cond = ['attr', 'species', 'group', 'other'];
@@ -1602,6 +1602,7 @@ function _parse_trait_condition($cond_data)
         $parsed[] = [
             'type' => $type,
             'val'  => array_values($vals),
+            'target_cond_detail' => $target_cond_detail,
             'hp_detail' => $c['hp_cond_detail'] ?? '',
             'cond_target' => $target_conds
         ];
