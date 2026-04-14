@@ -1,6 +1,35 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+// =================================================================
+// DBエディタへのリンクをアドミンバーに追加
+// =================================================================
+add_action('admin_bar_menu', 'koto_acf_editor_admin_bar_link', 100);
+function koto_acf_editor_admin_bar_link($wp_admin_bar) {
+    if (!current_user_can('edit_posts')) {
+        return;
+    }
+
+    $post_id = 0;
+    if (is_singular('character')) {
+        $post_id = get_the_ID();
+    } elseif (is_admin() && isset($_GET['post']) && isset($_GET['action']) && $_GET['action'] === 'edit') {
+        $post = get_post($_GET['post']);
+        if ($post && $post->post_type === 'character') {
+            $post_id = $post->ID;
+        }
+    }
+
+    if ($post_id) {
+        $editor_url = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_69204fa4dd82e');
+        $wp_admin_bar->add_node([
+            'id'    => 'koto-acf-editor-link',
+            'title' => 'DBエディタで編集',
+            'href'  => $editor_url,
+        ]);
+    }
+}
+
 add_action('admin_menu', 'koto_acf_editor_menu');
 function koto_acf_editor_menu()
 {
