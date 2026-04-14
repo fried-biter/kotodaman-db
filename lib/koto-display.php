@@ -381,6 +381,8 @@ function get_koto_trait_text_from_row($row)
                 $res = isset($row['resistance']) ? $row['resistance'] : '';
                 $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
                 $effect_text = "{$timing}、手札と盤面の{$target_simple}の{$res_name}状態を回復";
+            } elseif ($sub ==='self_harm'){
+                $effect_text = "{$timing}、最大HPの{$rate}%のダメージを受ける";
             }
             break;
 

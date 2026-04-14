@@ -1282,11 +1282,11 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
             'draw_eff',
             'other_traits',
             'after_attack',
-            'new_traits'
+            'new_traits',
+            'on_play_eff',
         ];
         $rate_type_fixed = [
             'core_gimmick',
-            'on_play_eff',
         ];
         $trait_sub_type_both = [
             'atk',
