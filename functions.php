@@ -1018,7 +1018,7 @@ add_action('admin_footer', function () {
                 }
 
                 if (topRow) {
-                    const inputs = topRow.querySelectorAll('input:not([type="hidden"]), select, textarea');
+                    const inputs = topRow.querySelectorAll('.acf-accordion-title, input:not([type="hidden"]), select, textarea');
                     let targetInput = null;
 
                     for (let i = 0; i < inputs.length; i++) {
@@ -1029,6 +1029,9 @@ add_action('admin_footer', function () {
                     }
 
                     if (targetInput) {
+                        if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(targetInput.tagName) && !targetInput.hasAttribute('tabindex')) {
+                            targetInput.setAttribute('tabindex', '-1');
+                        }
                         targetInput.focus();
                         targetInput.scrollIntoView({
                             behavior: 'smooth',

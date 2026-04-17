@@ -381,7 +381,7 @@ function get_koto_trait_text_from_row($row)
                 $res = isset($row['resistance']) ? $row['resistance'] : '';
                 $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
                 $effect_text = "{$timing}、手札と盤面の{$target_simple}の{$res_name}状態を回復";
-            } elseif ($sub ==='self_harm'){
+            } elseif ($sub === 'self_harm') {
                 $effect_text = "{$timing}、最大HPの{$rate}%のダメージを受ける";
             }
             break;
@@ -1407,7 +1407,6 @@ function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
             $effect_parts[] = "攻撃が10回を超えた次のターン開始時、手札の{$adjusted_target_text}のATKを、2ターンの間{$buff_count}段階バフ";
             $target_text = '';
         } elseif ($ls_type === 'random_crit') {
-            echo 'こんにちは';
             if (!empty($pattern['ls_status_loop'])) {
                 foreach ($pattern['ls_status_loop'] as $status) {
                     $s_type = $status['ls_status'];
@@ -1416,6 +1415,16 @@ function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
             }
             $adjusted_target_text = str_replace('は', '', $target_text);
             $effect_parts[] = "{$adjusted_target_text}の乱打のクリティカル率{$s_rate}%UP";
+            $target_text = '';
+        } elseif ($ls_type === 'damage_cut') {
+            if (!empty($pattern['ls_status_loop'])) {
+                foreach ($pattern['ls_status_loop'] as $status) {
+                    $s_type = $status['ls_status'];
+                    $s_rate = isset($status['rate']) && $status['rate'] !== '' ? $status['rate'] : '（未入力）';
+                }
+            }
+            $adjusted_target_text = str_replace('は', '', $target_text);
+            $effect_parts[] = "{$adjusted_target_text}の受ける{$s_rate}以下のダメージを無効化";
             $target_text = '';
         } elseif ($ls_type === 'per_unit') {
             if (!empty($pattern['per_unit_loop'])) {

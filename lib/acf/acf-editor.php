@@ -5,7 +5,8 @@ if (!defined('ABSPATH')) exit;
 // DBエディタへのリンクをアドミンバーに追加
 // =================================================================
 add_action('admin_bar_menu', 'koto_acf_editor_admin_bar_link', 100);
-function koto_acf_editor_admin_bar_link($wp_admin_bar) {
+function koto_acf_editor_admin_bar_link($wp_admin_bar)
+{
     if (!current_user_can('edit_posts')) {
         return;
     }
@@ -364,6 +365,44 @@ function koto_acf_editor_page_html()
 
     <div class="wrap acf-editor-wrap">
         <h1 class="wp-heading-inline">コトダマンDB エディタ</h1>
+        <div id="koto-sticky-bar" class="acf-sticky-actions" style="position: sticky; top: 32px; z-index: 999; background: #fff; padding: 10px 20px; border-bottom: 2px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display:flex; gap:10px; align-items:center;">
+                <strong style="margin:0;">🌐 サイト確認:</strong>
+                <?php
+                if ($edit_post_id) {
+                    $t_status = get_post_status($edit_post_id);
+                    $t_link = ($t_status === 'publish') ? get_permalink($edit_post_id) : get_preview_post_link($edit_post_id);
+                    echo '<a href="' . esc_url($t_link) . '" target="_blank" class="button">📝 左(編集中)を見る</a>';
+                }
+                if ($source_post_id) {
+                    $s_status = get_post_status($source_post_id);
+                    $s_link = ($s_status === 'publish') ? get_permalink($source_post_id) : get_preview_post_link($source_post_id);
+                    echo '<a href="' . esc_url($s_link) . '" target="_blank" class="button">📦 右(コピー元)を見る</a>';
+                }
+                ?>
+                <a href="https://kotodaman-db.com/magnification-calc/" target="_blank" class="button">倍率計算</a>
+            </div>
+
+            <div class="acf-sticky-group-tabs">
+                <?php foreach ($field_group_keys as $key => $name): ?>
+                    <button type="button" class="button group-switch-btn <?php echo ($edit_group === $key) ? 'button-primary' : ''; ?>" data-group="<?php echo esc_attr($key); ?>">
+                        <?php echo esc_html($name); ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+
+            <script>
+                var kotoCurrentPostStatus = "<?php echo $edit_post_id ? esc_js(get_post_status($edit_post_id)) : ''; ?>";
+            </script>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <?php if ($edit_post_id && $edit_group): ?>
+                    <button type="button" class="button" id="btn_draft_sticky">下書き保存</button>
+                    <button type="button" class="button button-primary button-large" id="btn_publish_sticky">公開 / 更新 </button>
+                <?php else: ?>
+                    <span style="color:#888; font-size:12px;">※左のキャラを指定すると保存できます</span>
+                <?php endif; ?>
+            </div>
+        </div>
         <div class="notice notice-info" style="margin-bottom: 15px;">
             <p style="font-size:14px;"><strong>⌨️ ショートカットキー一覧：</strong>
                 <code style="background:#e6f0fa;">Ctrl + S</code>: 公開/更新&emsp;|&emsp;
@@ -488,44 +527,6 @@ function koto_acf_editor_page_html()
                 </select>
                 <button type="submit" class="button button-secondary" onclick="return confirm('選択した雛型を複製して新しい下書きを作成しますか？');">複製して作成</button>
             </form>
-        </div>
-        <div id="koto-sticky-bar" class="acf-sticky-actions" style="position: sticky; top: 32px; z-index: 999; background: #fff; padding: 10px 20px; border-bottom: 2px solid #ccc; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div style="display:flex; gap:10px; align-items:center;">
-                <strong style="margin:0;">🌐 サイト確認:</strong>
-                <?php
-                if ($edit_post_id) {
-                    $t_status = get_post_status($edit_post_id);
-                    $t_link = ($t_status === 'publish') ? get_permalink($edit_post_id) : get_preview_post_link($edit_post_id);
-                    echo '<a href="' . esc_url($t_link) . '" target="_blank" class="button">📝 左(編集中)を見る</a>';
-                }
-                if ($source_post_id) {
-                    $s_status = get_post_status($source_post_id);
-                    $s_link = ($s_status === 'publish') ? get_permalink($source_post_id) : get_preview_post_link($source_post_id);
-                    echo '<a href="' . esc_url($s_link) . '" target="_blank" class="button">📦 右(コピー元)を見る</a>';
-                }
-                ?>
-                <a href="https://kotodaman-db.com/magnification-calc/" target="_blank" class="button">倍率計算</a>
-            </div>
-
-            <div class="acf-sticky-group-tabs">
-                <?php foreach ($field_group_keys as $key => $name): ?>
-                    <button type="button" class="button group-switch-btn <?php echo ($edit_group === $key) ? 'button-primary' : ''; ?>" data-group="<?php echo esc_attr($key); ?>">
-                        <?php echo esc_html($name); ?>
-                    </button>
-                <?php endforeach; ?>
-            </div>
-
-            <script>
-                var kotoCurrentPostStatus = "<?php echo $edit_post_id ? esc_js(get_post_status($edit_post_id)) : ''; ?>";
-            </script>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <?php if ($edit_post_id && $edit_group): ?>
-                    <button type="button" class="button" id="btn_draft_sticky">下書き保存</button>
-                    <button type="button" class="button button-primary button-large" id="btn_publish_sticky">公開 / 更新 </button>
-                <?php else: ?>
-                    <span style="color:#888; font-size:12px;">※左のキャラを指定すると保存できます</span>
-                <?php endif; ?>
-            </div>
         </div>
 
         <div class="acf-editor-columns">
