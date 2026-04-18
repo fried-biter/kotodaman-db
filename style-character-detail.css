@@ -446,6 +446,7 @@
 .attr-rainbow {
     background: linear-gradient(to right, #ff3333, #ff9800, #ffd427, #32cd32, #1e90ff, #8d23b8);
     -webkit-background-clip: text;
+    -webkit-text-stroke: 0 !important;
     background-clip: text;
     color: transparent;
 }
