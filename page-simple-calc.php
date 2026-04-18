@@ -381,7 +381,7 @@ get_header();
                 </div>
                 <div>
                     <input type="number" id="killer_percent_17" step="1" value="17">
-                    <div class="small-note">満福ロード(相手が英獣霊以外16)</div>
+                    <div class="small-note">満福ロード(相手が妖の時のみ16)</div>
                 </div>
                 <div>
                     <input type="number" id="killer_percent_4" step="1" value="4">
