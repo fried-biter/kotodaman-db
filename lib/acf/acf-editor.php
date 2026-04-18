@@ -115,6 +115,55 @@ add_action('acf/init', function () {
     ]);
 });
 
+// =================================================================
+// ACFリピーター等の行データを、フィールドキーではなくフィールド名をキーにした配列に変換する
+// （異なるフィールドへコピーした際に値が消えるのを防ぐため）
+// =================================================================
+if (!function_exists('koto_acf_convert_to_name_keys')) {
+    function koto_acf_convert_to_name_keys($data, $field) {
+        if (!is_array($data) || empty($field['sub_fields'])) {
+            return $data;
+        }
+        
+        $sub_fields_by_key = [];
+        $sub_fields_by_name = [];
+        foreach ($field['sub_fields'] as $sub) {
+            $sub_fields_by_key[$sub['key']] = $sub;
+            $sub_fields_by_name[$sub['name']] = $sub;
+        }
+        
+        $converted = [];
+        foreach ($data as $k => $v) {
+            $sub_field = null;
+            $new_key = $k;
+
+            if (isset($sub_fields_by_key[$k])) {
+                $sub_field = $sub_fields_by_key[$k];
+                $new_key = $sub_field['name'];
+            } elseif (isset($sub_fields_by_name[$k])) {
+                $sub_field = $sub_fields_by_name[$k];
+            }
+
+            if ($sub_field && is_array($v)) {
+                if ($sub_field['type'] === 'repeater' || $sub_field['type'] === 'flexible_content') {
+                    $converted_list = [];
+                    foreach ($v as $row_index => $row_data) {
+                        $converted_list[$row_index] = koto_acf_convert_to_name_keys($row_data, $sub_field);
+                    }
+                    $converted[$new_key] = $converted_list;
+                } elseif ($sub_field['type'] === 'group') {
+                    $converted[$new_key] = koto_acf_convert_to_name_keys($v, $sub_field);
+                } else {
+                    $converted[$new_key] = $v;
+                }
+            } else {
+                $converted[$new_key] = $v;
+            }
+        }
+        return $converted;
+    }
+}
+
 function koto_acf_editor_handle_actions()
 {
     $current_url = admin_url('admin.php?page=koto-acf-editor');
@@ -163,12 +212,33 @@ function koto_acf_editor_handle_actions()
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acf_action']) && $_POST['acf_action'] === 'import_single_field') {
         $target_post_id = intval($_POST['target_post_id']);
         $source_post_id = intval($_POST['source_post_id']);
-        $field_key      = sanitize_text_field($_POST['field_key']);
-        $field_label    = sanitize_text_field($_POST['field_label']);
+        $source_field_key = sanitize_text_field($_POST['source_field_key'] ?? $_POST['field_key'] ?? '');
+        $target_field_raw = sanitize_text_field($_POST['target_field_key'] ?? $source_field_key);
+        $field_label      = sanitize_text_field($_POST['field_label']);
 
-        if ($target_post_id && $source_post_id && $field_key) {
-            $value = get_field($field_key, $source_post_id, false);
-            update_field($field_key, $value, $target_post_id);
+        $target_field_key = $target_field_raw;
+        if (strpos($target_field_raw, 'field_') !== 0 && function_exists('acf_get_field')) {
+            $f_obj = acf_get_field($target_field_raw);
+            if ($f_obj && isset($f_obj['key'])) {
+                $target_field_key = $f_obj['key'];
+            }
+        }
+
+        if ($target_post_id && $source_post_id && $source_field_key && $target_field_key) {
+            $source_field_obj = function_exists('acf_get_field') ? acf_get_field($source_field_key) : null;
+            $value = get_field($source_field_key, $source_post_id, false);
+
+            if ($source_field_key !== $target_field_key && function_exists('koto_acf_convert_to_name_keys') && is_array($value)) {
+                if ($source_field_obj && $source_field_obj['type'] === 'repeater') {
+                    $converted_value = [];
+                    foreach ($value as $row) {
+                        $converted_value[] = koto_acf_convert_to_name_keys($row, $source_field_obj);
+                    }
+                    $value = $converted_value;
+                }
+            }
+
+            update_field($target_field_key, $value, $target_post_id);
 
             $redirect_url = add_query_arg([
                 'edit_post_id'   => $target_post_id,
@@ -186,24 +256,38 @@ function koto_acf_editor_handle_actions()
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acf_action']) && $_POST['acf_action'] === 'import_single_row') {
         $target_post_id = intval($_POST['target_post_id']);
         $source_post_id = intval($_POST['source_post_id']);
-        $field_key      = sanitize_text_field($_POST['field_key']);
-        $row_index      = intval($_POST['row_index']);
-        $field_label    = sanitize_text_field($_POST['field_label']);
+        $source_field_key = sanitize_text_field($_POST['source_field_key'] ?? $_POST['field_key'] ?? '');
+        $target_field_raw = sanitize_text_field($_POST['target_field_key'] ?? $source_field_key);
+        $row_index        = intval($_POST['row_index']);
+        $field_label      = sanitize_text_field($_POST['field_label']);
 
-        if ($target_post_id && $source_post_id && $field_key) {
+        $target_field_key = $target_field_raw;
+        if (strpos($target_field_raw, 'field_') !== 0 && function_exists('acf_get_field')) {
+            $f_obj = acf_get_field($target_field_raw);
+            if ($f_obj && isset($f_obj['key'])) {
+                $target_field_key = $f_obj['key'];
+            }
+        }
+
+        if ($target_post_id && $source_post_id && $source_field_key && $target_field_key) {
+            $source_field_obj = function_exists('acf_get_field') ? acf_get_field($source_field_key) : null;
             // ソースの特定行を取得
-            $source_data = get_field($field_key, $source_post_id, false);
+            $source_data = get_field($source_field_key, $source_post_id, false);
             $row_data = isset($source_data[$row_index]) ? $source_data[$row_index] : null;
 
             if ($row_data) {
+                if ($source_field_key !== $target_field_key && function_exists('koto_acf_convert_to_name_keys')) {
+                    $row_data = koto_acf_convert_to_name_keys($row_data, $source_field_obj);
+                }
+
                 // ターゲットの既存データを取得（無い場合は空配列にする）
-                $target_data = get_field($field_key, $target_post_id, false);
+                $target_data = get_field($target_field_key, $target_post_id, false);
                 if (!is_array($target_data)) {
                     $target_data = [];
                 }
                 // 末尾に行を追加
                 $target_data[] = $row_data;
-                update_field($field_key, $target_data, $target_post_id);
+                update_field($target_field_key, $target_data, $target_post_id);
             }
 
             $redirect_url = add_query_arg([
@@ -227,19 +311,41 @@ function koto_acf_editor_handle_actions()
         if ($target_post_id && $source_post_id && is_array($copy_items)) {
             $fields_to_update = [];
             foreach ($copy_items as $item) {
-                $fields_to_update[$item['field_key']][] = intval($item['row_index']);
-            }
-            foreach ($fields_to_update as $field_key => $row_indices) {
-                $source_data = get_field($field_key, $source_post_id, false);
-                $target_data = get_field($field_key, $target_post_id, false);
-                if (!is_array($target_data)) $target_data = [];
-
-                foreach ($row_indices as $row_index) {
-                    if (isset($source_data[$row_index])) {
-                        $target_data[] = $source_data[$row_index];
+                $src_key = $item['field_key'];
+                $tgt_key_raw = isset($item['target_field_key']) ? $item['target_field_key'] : $src_key;
+                
+                $tgt_key = $tgt_key_raw;
+                if (strpos($tgt_key_raw, 'field_') !== 0 && function_exists('acf_get_field')) {
+                    $f_obj = acf_get_field($tgt_key_raw);
+                    if ($f_obj && isset($f_obj['key'])) {
+                        $tgt_key = $f_obj['key'];
                     }
                 }
-                update_field($field_key, $target_data, $target_post_id);
+
+                $fields_to_update[$src_key][$tgt_key][] = intval($item['row_index']);
+            }
+            
+            foreach ($fields_to_update as $src_key => $targets) {
+                $source_field_obj = function_exists('acf_get_field') ? acf_get_field($src_key) : null;
+                $source_data = get_field($src_key, $source_post_id, false);
+
+                foreach ($targets as $tgt_key => $row_indices) {
+                    $target_data = get_field($tgt_key, $target_post_id, false);
+                    if (!is_array($target_data)) $target_data = [];
+
+                    foreach ($row_indices as $row_index) {
+                        if (isset($source_data[$row_index])) {
+                            $row_data = $source_data[$row_index];
+
+                            if ($src_key !== $tgt_key && function_exists('koto_acf_convert_to_name_keys')) {
+                                $row_data = koto_acf_convert_to_name_keys($row_data, $source_field_obj);
+                            }
+
+                            $target_data[] = $row_data;
+                        }
+                    }
+                    update_field($tgt_key, $target_data, $target_post_id);
+                }
             }
             $redirect_url = add_query_arg([
                 'edit_post_id' => $target_post_id,
@@ -310,6 +416,25 @@ if (!function_exists('koto_acf_render_preview_html')) {
 
 function koto_acf_editor_page_html()
 {
+    $compatible_fields = [
+        'first_trait_loop' => [
+            ['name' => 'first_trait_loop', 'label' => 'とくせい1'],
+            ['name' => 'second_trait_loop', 'label' => 'とくせい2'],
+        ],
+        'second_trait_loop' => [
+            ['name' => 'first_trait_loop', 'label' => 'とくせい1'],
+            ['name' => 'second_trait_loop', 'label' => 'とくせい2'],
+        ],
+        'waza_group_loop' => [
+            ['name' => 'waza_group_loop', 'label' => 'わざ'],
+            ['name' => 'sugowaza_group_loop', 'label' => 'すごわざ'],
+        ],
+        'sugowaza_group_loop' => [
+            ['name' => 'waza_group_loop', 'label' => 'わざ'],
+            ['name' => 'sugowaza_group_loop', 'label' => 'すごわざ'],
+        ],
+    ];
+
     $field_group_keys = [
         'group_69204fa4dd82e' => '基本データ',
         'group_6937900895bf1' => 'わざ、すごわざ',
@@ -608,12 +733,23 @@ function koto_acf_editor_page_html()
                                         <?php if ($edit_post_id) :
                                             $confirm_msg = "【上書き警告】\n「{$field['label']}」の全体データを上書きコピーします。左側の既存データは消えます。\nよろしいですか？";
                                         ?>
-                                            <form method="POST" action="">
+                                            <form method="POST" action="" style="display:flex; gap:10px; align-items:center;">
                                                 <input type="hidden" name="acf_action" value="import_single_field">
                                                 <input type="hidden" name="target_post_id" value="<?php echo esc_attr($edit_post_id); ?>">
                                                 <input type="hidden" name="source_post_id" value="<?php echo esc_attr($source_post_id); ?>">
-                                                <input type="hidden" name="field_key" value="<?php echo esc_attr($field['key']); ?>">
+                                                <input type="hidden" name="source_field_key" value="<?php echo esc_attr($field['key']); ?>">
                                                 <input type="hidden" name="field_label" value="<?php echo esc_attr($field['label']); ?>">
+                                                
+                                                <?php if (isset($compatible_fields[$field['name']])) : ?>
+                                                    <select name="target_field_key" style="font-size:12px; padding:0 24px 0 8px; min-height:28px;">
+                                                        <?php foreach ($compatible_fields[$field['name']] as $comp) : ?>
+                                                            <option value="<?php echo esc_attr($comp['name']); ?>" <?php selected($field['name'], $comp['name']); ?>>コピー先: <?php echo esc_html($comp['label']); ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                <?php else : ?>
+                                                    <input type="hidden" name="target_field_key" value="<?php echo esc_attr($field['key']); ?>">
+                                                <?php endif; ?>
+
                                                 <button type="submit" class="button my-acf-copy-btn" onclick="return confirm('<?php echo esc_js($confirm_msg); ?>');">
                                                     全体を上書きコピー
                                                 </button>
@@ -667,15 +803,26 @@ function koto_acf_editor_page_html()
                                                         <div class="copy-preview" style="margin-bottom:8px; margin-top:8px;"><?php echo $row_preview; ?></div>
 
                                                         <?php if ($edit_post_id) :
-                                                            $confirm_msg_row = "【追加コピー】\n「{$field['label']}」の行" . ($row_index + 1) . "のデータを、左の投稿の末尾に追加します。\nよろしいですか？";
+                                                            $confirm_msg_row = "【追加コピー】\nこの行のデータを、左の投稿の末尾に追加します。\nよろしいですか？";
                                                         ?>
-                                                            <form method="POST" action="">
+                                                            <form method="POST" action="" style="margin-top: 10px; display:flex; gap:10px; align-items:center;">
                                                                 <input type="hidden" name="acf_action" value="import_single_row">
                                                                 <input type="hidden" name="target_post_id" value="<?php echo esc_attr($edit_post_id); ?>">
                                                                 <input type="hidden" name="source_post_id" value="<?php echo esc_attr($source_post_id); ?>">
-                                                                <input type="hidden" name="field_key" value="<?php echo esc_attr($field['key']); ?>">
+                                                                <input type="hidden" name="source_field_key" value="<?php echo esc_attr($field['key']); ?>">
                                                                 <input type="hidden" name="row_index" value="<?php echo esc_attr($row_index); ?>">
                                                                 <input type="hidden" name="field_label" value="<?php echo esc_attr($field['label']); ?>">
+                                                                
+                                                                <?php if (isset($compatible_fields[$field['name']])) : ?>
+                                                                    <select name="target_field_key" style="font-size:12px; padding:0 24px 0 8px; min-height:26px;">
+                                                                        <?php foreach ($compatible_fields[$field['name']] as $comp) : ?>
+                                                                            <option value="<?php echo esc_attr($comp['name']); ?>" <?php selected($field['name'], $comp['name']); ?>>追加先: <?php echo esc_html($comp['label']); ?></option>
+                                                                        <?php endforeach; ?>
+                                                                    </select>
+                                                                <?php else : ?>
+                                                                    <input type="hidden" name="target_field_key" value="<?php echo esc_attr($field['key']); ?>">
+                                                                <?php endif; ?>
+
                                                                 <button type="submit" class="button button-small" onclick="return confirm('<?php echo esc_js($confirm_msg_row); ?>');">
                                                                     この行を追加
                                                                 </button>
@@ -703,5 +850,36 @@ function koto_acf_editor_page_html()
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('multi-copy-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                var items = [];
+                document.querySelectorAll('.multi-copy-check:checked').forEach(function(chk) {
+                    var fieldKey = chk.getAttribute('data-field-key');
+                    var rowIndex = chk.getAttribute('data-row-index');
+                    
+                    var targetKey = fieldKey;
+                    var container = chk.closest('.acf-single-copy-box');
+                    if (container) {
+                        var select = container.querySelector('select[name="target_field_key"]');
+                        if (select) {
+                            targetKey = select.value;
+                        }
+                    }
+                    
+                    items.push({
+                        field_key: fieldKey,
+                        row_index: rowIndex,
+                        target_field_key: targetKey
+                    });
+                });
+                document.getElementById('copy_items_json').value = JSON.stringify(items);
+            });
+        }
+    });
+    </script>
 <?php
 }
