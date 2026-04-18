@@ -26,10 +26,14 @@ cocoon_template_part('tmp/single-contents'); ?>
 // =================================================================
 //  関連キャラ（モードシフト・変身）のタブ切り替え表示
 // =================================================================
-$related_chars = get_field('same_character');
+$post_id = get_the_ID();
+// ★ここで現在のページの全カスタムフィールドを取得してキャッシュ化・軽量化
+$all_fields = koto_get_post_fields($post_id);
+
+$related_chars = $all_fields['same_character'] ?? null;
 
 if ($related_chars):
-    $current_id = get_the_ID(); // 今見ているページのID
+    $current_id = $post_id; // 今見ているページのID
 ?>
     <div class="character-tab-section">
         <ul class="char-tab-nav">
@@ -57,7 +61,6 @@ if ($related_chars):
 // =================================================================
 //  基本データの呼び出し
 // =================================================================
-$post_id = get_the_ID();
 $raw_data = get_post_meta($post_id, '_spec_json', true);
 $spec_data = null;
 if (is_string($raw_data)) {
@@ -135,13 +138,13 @@ foreach ($group_slugs as $gs) {
 $affiliation_term = function_exists('get_primary_affiliation_obj') ? get_primary_affiliation_obj($group_terms) : ($group_terms[0] ?? null);
 
 // 実装日
-$release_date = $spec_data['release_date'] ?? get_field('実装月（わかれば実装日）');
+$release_date = $spec_data['release_date'] ?? ($all_fields['実装月（わかれば実装日）'] ?? null);
 
 // 進化前名前など (JSONに含まれていないものは get_field)
-$pre_evo_name = $spec_data['pre_evo_name'] ?? get_field('pre_evo_name');
-$another_img_name = $spec_data['another_image_name'] ?? get_field('another_image_name');
-$cv = $spec_data['cv'] ?? get_field('voice_actor');
-$acquisition = $spec_data['acquisition'] ?? get_field('get_place');
+$pre_evo_name = $spec_data['pre_evo_name'] ?? ($all_fields['pre_evo_name'] ?? null);
+$another_img_name = $spec_data['another_image_name'] ?? ($all_fields['another_image_name'] ?? null);
+$cv = $spec_data['cv'] ?? ($all_fields['voice_actor'] ?? null);
+$acquisition = $spec_data['acquisition'] ?? ($all_fields['get_place'] ?? null);
 $max_lv = $spec_data['max_lavel'] ?? 99;
 
 ?>
@@ -153,11 +156,11 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     // =========================================================
 
     // --- 進化前画像 ---
-    $pre_img_id = get_field('pre_evo_image');
+    $pre_img_id = $all_fields['pre_evo_image'] ?? null;
     $pre_img_html = $pre_img_id ? wp_get_attachment_image($pre_img_id, 'medium_large') : '';
 
     // --- 進化後（通常）画像 ---
-    $main_img_id = get_field('character_image');
+    $main_img_id = $all_fields['character_image'] ?? null;
     // URLだけでなく、IDから画像サイズ情報を取得するように変更（CLS対策）
     $main_img_data = $main_img_id ? wp_get_attachment_image_src($main_img_id, 'medium_large') : null;
     $main_img_url = $main_img_data ? $main_img_data[0] : '';
@@ -165,7 +168,7 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     $main_height  = $main_img_data ? $main_img_data[2] : 640;
 
     // --- 進化後（アナザー/モードシフト）画像 ---
-    $sub_img_id = get_field('another_character_image');
+    $sub_img_id = $all_fields['another_character_image'] ?? null;
     $sub_img_url = $sub_img_id ? wp_get_attachment_image_url($sub_img_id, 'medium_large') : '';
 
     // --- 切り替え用リスト作成 ---
@@ -410,9 +413,9 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     </dl>
 
     <?php
-    $get_type = get_field('get_place');
+    $get_type = $all_fields['get_place'] ?? null;
     if ($get_type === 'other'):
-        $is_break = get_field('fuku_break');
+        $is_break = $all_fields['fuku_break'] ?? null;
     ?>
         <dl class="spec-row">
             <dt>言塊突破・福</dt>
@@ -478,17 +481,17 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
 // =================================================================
 //  EXスキル (グランドコトダマン)
 // =================================================================
-$ex_name = get_field('ex_skill_name');
-$ex_label = get_field('ex_skill_label');
-$ex_desc = get_field('ex_skill_discription');
-$search_group = get_field('search_priority');
+$ex_name = $all_fields['ex_skill_name'] ?? null;
+$ex_label = $all_fields['ex_skill_label'] ?? null;
+$ex_desc = $all_fields['ex_skill_discription'] ?? null;
+$search_group = $all_fields['search_priority'] ?? null;
 $priority_text = function_exists('get_koto_target_label') ? get_koto_target_label($search_group) : '';
 
-$add_effect_type = get_field('additional_effect'); // buff, debuff
-$effect_target   = get_field('effect_target');
-$effect_val      = get_field('effect_value');
-$effect_turn = get_field('turn_count');
-$add_trait = get_field('ex_trait_loop') ?? [];
+$add_effect_type = $all_fields['additional_effect'] ?? null; // buff, debuff
+$effect_target   = $all_fields['effect_target'] ?? null;
+$effect_val      = $all_fields['effect_value'] ?? null;
+$effect_turn     = $all_fields['turn_count'] ?? null;
+$add_trait       = $all_fields['ex_trait_loop'] ?? [];
 $add_trait_text = '';
 if (is_array($add_trait)) {
     foreach ($add_trait as $raw) {
@@ -569,9 +572,9 @@ if ($ex_name || $ex_label): // 名前か種類のどちらかがあれば表示
 // =================================================================
 //  チャージスキル (新規実装)
 // =================================================================
-$charge_name = get_field('charge_skill_name');
-$need_charge = get_field('need_charge');
-$charge_loop = get_field('charge_skill_loop');
+$charge_name = $all_fields['charge_skill_name'] ?? null;
+$need_charge = $all_fields['need_charge'] ?? null;
+$charge_loop = $all_fields['charge_skill_loop'] ?? null;
 
 if ($charge_name || $charge_loop):
 ?>
@@ -633,7 +636,7 @@ if ($charge_name || $charge_loop):
                             $type = $item['charge_type'];
                             $val  = $item['charge_skill_value']; // 数値
                             $turn = $item['effect_turn'];        // ターン数
-                            $turn_txt = $turn ? "{$turn}ターンの間、" : "";
+                            $turn_txt = $turn ? "{$turn}ターンの間" : "";
                             $effect_text = "";
 
                             // 状態異常名のマップ
@@ -682,6 +685,12 @@ if ($charge_name || $charge_loop):
                                     // ACF設定上、バリア選択時は「数値」「ターン数」が入力不可のため固定文言
                                     $effect_text = "敵から受けるダメージを1回ダメージを無効化するバリアを展開";
                                     break;
+                                case 'crit_rate_buff':
+                                    $effect_text = "{$tgt_label}に{$turn_txt}クリティカル率{$val}段階バフを付与";
+                                    break;
+                                case 'limit_break':
+                                    $effect_text ="{$tgt_label}のダメージ上限を{$turn_txt}{$val}上昇";
+                                    break;
                             }
 
                             // --- 3. 出力 ---
@@ -706,10 +715,10 @@ if ($charge_name || $charge_loop):
 // =================================================================
 //  リーダーとくせい
 // =================================================================
-$ls_back = function_exists('get_koto_leader_skill_html') ? get_koto_leader_skill_html(null, true) : '';
+$ls_back = function_exists('get_koto_leader_skill_html') ? get_koto_leader_skill_html($post_id, true) : '';
 $ls_html = $ls_back ? $ls_back['content'] : '';
 $ls_count = $ls_back ? $ls_back['count'] : 0;
-$miracle_loop = get_field('miracle_leader_loop') ?? [];
+$miracle_loop = $all_fields['miracle_leader_loop'] ?? [];
 $miracle_lines = [];
 if ($miracle_loop) {
     foreach ($miracle_loop as $row) {
@@ -743,8 +752,8 @@ if ($ls_html): ?>
 //  わざ・すごわざ・コトワザ 表示エリア
 // =================================================================
 ob_start();
-$waza_groups = get_field('waza_group_loop');
-$waza_name = get_field('waza_name');
+$waza_groups = $all_fields['waza_group_loop'] ?? null;
+$waza_name   = $all_fields['waza_name'] ?? null;
 
 if ($waza_groups):
     echo '<div class="skill-card card-waza">';
@@ -759,9 +768,9 @@ endif;
 $waza_html = ob_get_clean();
 
 ob_start();
-$sugo_condition = get_field('sugowaza_condition');
-$sugo_groups    = get_field('sugowaza_group_loop');
-$sugo_name = get_field('sugowaza_name');
+$sugo_condition = $all_fields['sugowaza_condition'] ?? null;
+$sugo_groups    = $all_fields['sugowaza_group_loop'] ?? null;
+$sugo_name      = $all_fields['sugowaza_name'] ?? null;
 
 if ($sugo_condition || $sugo_groups):
     echo '<div class="skill-card card-sugo">';
@@ -782,8 +791,8 @@ if ($has_waza || $has_sugo):
 ?>
     <?php
     // !! をつけることで、どんな値が来ても強制的に true か false に変換します
-    $mgn_est = !!get_field('magnification_estimate_tf');
-    $koto_mgn_est = !!get_field('koto_magnification_estimate_tf');
+    $mgn_est = !!($all_fields['magnification_estimate_tf'] ?? false);
+    $koto_mgn_est = !!($all_fields['koto_magnification_estimate_tf'] ?? false);
 
     // 条件分岐を三項演算子ではなく、if-elseでハッキリ分ける
     if ($mgn_est) {
@@ -821,7 +830,7 @@ if ($has_waza || $has_sugo):
 // =================================================================
 //  コトワザ表示エリア
 // =================================================================
-$koto_outside = get_field('kotowaza_loop_v2');
+$koto_outside = $all_fields['kotowaza_loop_v2'] ?? null;
 
 if ($koto_outside):
     $koto_htmls = [];
@@ -873,7 +882,7 @@ if ($koto_outside):
 
 <?php
 // -----とくせい表示-------
-$trait1_loop = get_field('first_trait_loop');
+$trait1_loop = $all_fields['first_trait_loop'] ?? null;
 $trait1_lines = [];
 $add_moji_1 = function_exists('get_koto_add_moji_html') ? get_koto_add_moji_html('first_trait') : '';
 if ($add_moji_1) $trait1_lines[] = $add_moji_1;
@@ -884,7 +893,7 @@ if ($trait1_loop) {
     }
 }
 
-$trait2_loop = get_field('second_trait_loop');
+$trait2_loop = $all_fields['second_trait_loop'] ?? null;
 $trait2_lines = [];
 $add_moji_2 = function_exists('get_koto_add_moji_html') ? get_koto_add_moji_html('second_trait') : '';
 if ($add_moji_2) $trait2_lines[] = $add_moji_2;
@@ -902,7 +911,7 @@ if ($trait2_loop) {
             <div class="skill-badge-area">
                 <span class="skill-badge badge-trait">とくせい1</span>
                 <?php
-                $t1_name = get_field('first_trait_name');
+                $t1_name = $all_fields['first_trait_name'] ?? null;
                 if ($t1_name) echo '<span class="skill-proper-name">' . esc_html($t1_name) . '</span>';
                 ?>
             </div>
@@ -925,7 +934,7 @@ if ($trait2_loop) {
             <div class="skill-badge-area">
                 <span class="skill-badge badge-trait">とくせい2</span>
                 <?php
-                $t2_name = get_field('second_trait_name');
+                $t2_name = $all_fields['second_trait_name'] ?? null;
                 if ($t2_name) echo '<span class="skill-proper-name">' . esc_html($t2_name) . '</span>';
                 ?>
             </div>
@@ -948,7 +957,7 @@ if ($trait2_loop) {
 // ---------------------
 // ---------祝福--------
 // ---------------------
-$blessing_loop = get_field('blessing_trait_loop');
+$blessing_loop = $all_fields['blessing_trait_loop'] ?? null;
 $has_blessing_data = ($blessing_loop && is_array($blessing_loop));
 
 // 1. 文字追加情報の取得
@@ -1132,7 +1141,7 @@ if ($has_blessing_data || $add_moji_blessing || !empty($add_sugo_blessing_list))
 // ==============================================
 //  5. 倍率詳細表 (ページ最下部エリア)
 // ==============================================
-$waza_table = get_field('waza_maltiplier_table_group');
+$waza_table = $all_fields['waza_maltiplier_table_group'] ?? null;
 $waza_table_html = function_exists('get_koto_multiplier_table_html') ? get_koto_multiplier_table_html($waza_table, null, false) : '';
 if ($waza_table_html): ?>
     <div id="rate-table-waza" class="detail-section-part">
@@ -1142,7 +1151,7 @@ if ($waza_table_html): ?>
 <?php endif; ?>
 
 <?php
-$sugo_table = get_field('sugowaza_maltiplier_table_group');
+$sugo_table = $all_fields['sugowaza_maltiplier_table_group'] ?? null;
 $sugo_table_html = function_exists('get_koto_multiplier_table_html') ? get_koto_multiplier_table_html($sugo_table, null, false) : '';
 if ($sugo_table_html): ?>
     <div id="rate-table-sugo" class="detail-section-part">
@@ -1152,7 +1161,7 @@ if ($sugo_table_html): ?>
 <?php endif; ?>
 
 <?php
-$koto_table = get_field('kotowaza_maltiplier_table_group');
+$koto_table = $all_fields['kotowaza_maltiplier_table_group'] ?? null;
 if ($koto_table && !empty($koto_table['use_maltiplier_table'])):
     $koto_levels = [0, 1, 2, 3, 4];
     $has_any_data = false;

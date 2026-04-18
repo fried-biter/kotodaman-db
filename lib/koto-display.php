@@ -4,6 +4,28 @@
 // =================================================================
 
 /**
+ * カスタムフィールド一括取得のキャッシュ関数
+ * （get_field の個別呼び出しを減らして軽量化するため）
+ */
+function koto_get_post_fields($post_id = null) {
+    if (!$post_id) {
+        $post_id = get_the_ID();
+    }
+    if (!$post_id) return [];
+
+    static $fields_cache = [];
+    if (!isset($fields_cache[$post_id])) {
+        $fields_cache[$post_id] = get_fields($post_id) ?: [];
+    }
+    return $fields_cache[$post_id];
+}
+
+function koto_get_field_cached($field_key, $post_id = null) {
+    $fields = koto_get_post_fields($post_id);
+    return isset($fields[$field_key]) ? $fields[$field_key] : null;
+}
+
+/**
  * 1. 倍率詳細表のHTML生成
  */
 function get_koto_multiplier_table_html($table_group, $target_break_lv = null, $show_break_col = false)
@@ -95,7 +117,7 @@ function get_koto_multiplier_table_html($table_group, $target_break_lv = null, $
 function get_koto_add_moji_html($trait_slug)
 {
     // 投稿IDを取得できるよう、関数内で呼び出すか引数で渡すのが一般的ですが、get_fieldは現在の投稿を参照します
-    $moji_loop = get_field('available_moji_loop');
+    $moji_loop = koto_get_field_cached('available_moji_loop');
     $html_parts = [];
 
     if ($moji_loop) {
@@ -462,7 +484,7 @@ function get_koto_trait_text_from_row($row)
             $joined_names = implode('・', $names);
             if ($rel === 'mode_shift') $effect_text = "モードシフト先：{$joined_names}";
             elseif ($rel === 'another_image') {
-                $joined_names = get_field('another_image_name');
+                $joined_names = koto_get_field_cached('another_image_name');
                 $effect_text = "モードシフト先：{$joined_names}";
             } elseif ($rel === 'before_transform') $effect_text = "変身先：{$joined_names}";
             else $effect_text = "変身前：{$joined_names}";
@@ -499,7 +521,7 @@ function get_koto_trait_text_from_row($row)
     // ★追加：追加文字の取得処理 (番号指定 ＆ 自動判定 両対応)
     // =========================================================
     $found_chars_html = [];
-    $all_moji_data = get_field('available_moji_loop'); // 基本データの文字リストを取得
+    $all_moji_data = koto_get_field_cached('available_moji_loop'); // 基本データの文字リストを取得
 
     if ($all_moji_data) {
         // -------------------------------------------------
@@ -701,7 +723,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
     // B. 効果リスト (赤タグ) - ロジック部
     // =========================================================
     $target_field = ($skill_type === 'kotowaza') ? 'koto_shift_type' : 'sugo_shift_type';
-    $shift_type = get_field($target_field);
+    $shift_type = koto_get_field_cached($target_field);
     $is_shift_mode = (!empty($shift_type) && $shift_type !== 'none');
 
     $tab_data = [];
@@ -1277,7 +1299,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
 {
     if (!$post_id) $post_id = get_the_ID();
-    $ls_patterns = get_field('ls_loop', $post_id);
+    $ls_patterns = koto_get_field_cached('ls_loop', $post_id);
 
     if (empty($ls_patterns)) return '';
 
@@ -1514,7 +1536,7 @@ function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
 function get_koto_blessing_sugo_list($post_id = null)
 {
     if (!$post_id) $post_id = get_the_ID();
-    $cond_rows = get_field('sugowaza_condition', $post_id);
+    $cond_rows = koto_get_field_cached('sugowaza_condition', $post_id);
     $results = [];
 
     if ($cond_rows) {
