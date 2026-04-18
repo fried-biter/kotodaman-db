@@ -100,6 +100,7 @@ function koto_get_flat_char_data($post_id)
     $spec = $json_str ? json_decode($json_str, true) : [];
     $attr_num = koto_get_attr_num();
     $species_num = koto_get_species_num();
+    $japanese_tags = '';
 
     if (!is_array($spec) || empty($spec)) {
         return null;
@@ -130,6 +131,10 @@ function koto_get_flat_char_data($post_id)
     $groups = array_map(function ($item) {
         return $item['slug'] ?? '';
     }, $spec['groups'] ?? []);
+    $group_names = array_map(function ($item) {
+        return $item['name'] ?? '';
+    }, $spec['groups'] ?? []);
+    $japanese_tags = implode(' ', array_merge($group_names, $gimmicks));
     $unlock_map = [
         'default' => 'def',
         'first_trait' => '1',
@@ -219,6 +224,7 @@ function koto_get_flat_char_data($post_id)
         't1_t'         => $t1_tags,
         't2_t'         => $t2_tags,
         'bles_t'       => $blessing_tags,
+        'jp_t'         => $japanese_tags,
     ];
 }
 
