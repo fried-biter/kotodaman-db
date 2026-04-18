@@ -1085,7 +1085,7 @@ add_action('wp_footer', function () {
 require_once get_stylesheet_directory() . '/lib/acf/acf-editor.php';
 require_once get_stylesheet_directory() . '/lib/character-search/koto-json-reformer.php';
 
-$current_domain = $_SERVER['HTTP_HOST'];
+$current_domain = $_SERVER['HTTP_HOST'] ?? '';
 if (str_ends_with($current_domain, 'kotodaman-db.com')) {
     // 保存先の指定
     add_filter('acf/settings/save_json', function ($path) {
