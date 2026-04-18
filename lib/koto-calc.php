@@ -115,6 +115,7 @@ function get_character_spec_data($post_id)
         'legend' => 0.05,
         'grand' => 0.05,
         'dream' => 0.05,
+        'miracle'=> 0.05,
     ];
 
     if (get_field('talent_status_auto_tf', $post_id)) {
@@ -776,25 +777,9 @@ function on_save_character_specs($post_id)
     $spec_data = get_character_spec_data($post_id);
     // ★追加: 属性・種族のカスタムソート用インデックス保存
     // 指定の順番定義
-    $order_attr = [
-        'fire'   => 1, // 火
-        'water'  => 2, // 水
-        'wood'   => 3, // 木
-        'light'  => 4, // 光
-        'dark'   => 5, // 闇
-        'void'   => 6, // 冥
-        'heaven' => 7, // 天
-    ];
-    $order_species = [
-        'god'      => 1, // 神
-        'demon'    => 2, // 魔
-        'hero'     => 3, // 英
-        'dragon'   => 4, // 龍
-        'beast'    => 5, // 獣
-        'spirit'   => 6, // 霊
-        'artifact' => 7, // 物
-        'yokai'    => 8, // 妖
-    ];
+    $order_attr = koto_get_attr_num();
+    $order_species = koto_get_species_num();
+
     // 1. 火力指数を計算
     $firepower_index = 0;
     // $firepower_index = _calculate_firepower_index($spec_data);

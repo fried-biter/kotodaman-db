@@ -12,6 +12,7 @@ function koto_get_attr_num()
         'dark'   => 5,
         'void'   => 6,
         'heaven' => 7,
+        'rainbow' => 8,
     ];
 }
 
@@ -38,6 +39,7 @@ function koto_get_attr_map()
         '闇' => 'dark',
         '冥' => 'void',
         '天' => 'heaven',
+        '虹' => 'rainbow',
     ];
 }
 
