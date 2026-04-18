@@ -3,7 +3,7 @@
 
     <div class="search-wrapper">
         <div class="search-row-top">
-            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名..." />
+            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名・状態異常耐性..." />
             <button type="submit" class="submit-btn">検索</button>
         </div>
 
@@ -41,6 +41,12 @@
                         <input type="text" name="search_char" class="term-tree-search"
                             value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
                             placeholder="例：あい（「あ」または「い」を持つキャラ）" />
+                        <div class="simple-tag-row">
+                            <label>
+                                <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
+                                <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
+                            </label>
+                        </div>
                         <p class="section-title">文字の軸
                             <?php
                             render_simple_relation_toggle('tx_axis');

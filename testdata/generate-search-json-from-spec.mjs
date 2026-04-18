@@ -65,6 +65,20 @@ const GIMMICK_LABELS = {
   super_attack_core: 'スーパーアタックコア',
 };
 
+const STATUS_LABELS = {
+  poison: '毒',
+  sleep: '睡眠',
+  curse: '呪い',
+  confusion: '混乱',
+  pollution: '汚染',
+  burn: '炎上',
+  remodel: '改造',
+  weakness: '衰弱',
+  mutation: '変異',
+  erasure: '消去',
+  all: '全て',
+};
+
 function uniqueBilingualPairs(pairs) {
   const seen = new Set();
   const en = [];
@@ -98,6 +112,15 @@ function gimmickSlugToLabel(slug) {
   }
 
   return slug;
+}
+
+function collectStatusResistancePairs(statusSlugs) {
+  return uniqueBilingualPairs(
+    statusSlugs.map((slug) => ({
+      en: String(slug || '').trim(),
+      jp: STATUS_LABELS[String(slug || '').trim()] || '',
+    })),
+  );
 }
 
 function collectAxisTags(chars) {
@@ -205,6 +228,20 @@ function buildCharacter(spec) {
   }
 
   const gimmicks = uniqueBilingualPairs(gimmickPairs);
+  const traitStatusResistances = collectStatusResistancePairs(
+    traitContents
+      .filter((trait) => (trait?.type || '') === 'status_up' && (trait?.sub_type || '') === 'resistance')
+      .map((trait) => trait?.resist_status || ''),
+  );
+  const leaderStatusResistances = collectStatusResistancePairs(
+    (spec.leader || []).flatMap((leader) =>
+      (leader?.main_eff || []).flatMap((effect) =>
+        (effect?.value_raws || [])
+          .filter((valueRaw) => (valueRaw?.status || '') === 'resistance')
+          .map((valueRaw) => valueRaw?.resist || ''),
+      ),
+    ),
+  );
   const rarity = spec.rarity || 0;
   const rarityDetail = spec.rarity_detail || 'none';
   const rarityTags = [];
@@ -243,6 +280,10 @@ function buildCharacter(spec) {
     debuf: spec.debuff_counts || [0, 0, 0, 0, 0, 0],
     gimmick_en: gimmicks.en,
     gimmick_jp: gimmicks.jp,
+    trait_status_resistance_en: traitStatusResistances.en,
+    trait_status_resistance_jp: traitStatusResistances.jp,
+    leader_status_resistance_en: leaderStatusResistances.en,
+    leader_status_resistance_jp: leaderStatusResistances.jp,
     leader: (spec.leader || []).map(flattenLeader),
     ls_hp: spec.max_ls_hp || 0,
     ls_atk: spec.max_ls_atk || 0,
