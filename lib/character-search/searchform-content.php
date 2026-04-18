@@ -3,7 +3,7 @@
 
     <div class="search-wrapper">
         <div class="search-row-top">
-            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・キーワード..." />
+            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名..." />
             <button type="submit" class="submit-btn">検索</button>
         </div>
 

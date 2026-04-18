@@ -90,6 +90,36 @@ function flatten_leader($item)
     ];
 }
 
+function koto_unique_bilingual_pairs($pairs)
+{
+    $seen = [];
+    $en_values = [];
+    $jp_values = [];
+
+    foreach ($pairs as $pair) {
+        $en = trim((string) ($pair['en'] ?? ''));
+        $jp = trim((string) ($pair['jp'] ?? ''));
+
+        if ($en === '' || $jp === '') {
+            continue;
+        }
+
+        $pair_key = $en . "\t" . $jp;
+        if (isset($seen[$pair_key])) {
+            continue;
+        }
+
+        $seen[$pair_key] = true;
+        $en_values[] = $en;
+        $jp_values[] = $jp;
+    }
+
+    return [
+        'en' => $en_values,
+        'jp' => $jp_values,
+    ];
+}
+
 
 // =========================================================
 // 1. 1キャラ分のデータを抽出する共通関数（★キー名の短縮などはここを編集）
@@ -109,8 +139,7 @@ function koto_get_flat_char_data($post_id)
     $thumb_url = get_the_post_thumbnail_url($post_id, 'thumbnail') ?? '';
 
     // ギミック名の抽出
-    $gimmicks = [];
-    $gimmick_slugs = [];
+    $gimmick_pairs = [];
     $contents_trait1   = $spec['trait1']['contents'] ?? [];
     $contents_trait2   = $spec['trait2']['contents'] ?? [];
     $contents_blessing = $spec['blessing']['contents'] ?? [];
@@ -118,23 +147,28 @@ function koto_get_flat_char_data($post_id)
     $traits = array_merge($contents_trait1, $contents_trait2, $contents_blessing);
     if (!empty($traits)) {
         foreach ($traits as $t) {
-            if ($t['type'] === 'gimmick' && !empty($t['sub_type'])) {
+            if (($t['type'] ?? '') === 'gimmick' && !empty($t['sub_type'])) {
                 $term = get_term_by('slug', $t['sub_type'], 'gimmick');
-                if ($term) $gimmicks[] = $term->name;
-                if ($term) $gimmick_slugs[] = $term->slug;
+                if ($term) {
+                    $gimmick_pairs[] = [
+                        'en' => $term->slug,
+                        'jp' => $term->name,
+                    ];
+                }
             }
         }
     }
+    $gimmicks = koto_unique_bilingual_pairs($gimmick_pairs);
     $sub_attributes = array_map(function ($item) use ($attr_num) {
         return $attr_num[$item] ?? 0;
-    }, $spec['sub_attributes']);
-    $groups = array_map(function ($item) {
-        return $item['slug'] ?? '';
+    }, $spec['sub_attributes'] ?? []);
+    $group_pairs = array_map(function ($item) {
+        return [
+            'en' => $item['slug'] ?? '',
+            'jp' => $item['name'] ?? '',
+        ];
     }, $spec['groups'] ?? []);
-    $group_names = array_map(function ($item) {
-        return $item['name'] ?? '';
-    }, $spec['groups'] ?? []);
-    $japanese_tags = implode(' ', array_merge($group_names, $gimmicks));
+    $groups = koto_unique_bilingual_pairs($group_pairs);
     $unlock_map = [
         'default' => 'def',
         'first_trait' => '1',
@@ -193,7 +227,8 @@ function koto_get_flat_char_data($post_id)
         'attr'        => $attr_num[$spec['attribute']],
         'sub_attrs'     => $sub_attributes,
         'spe'          => $species_num[$spec['species']],
-        'grp'          => $groups,
+        'group_en'     => $groups['en'],
+        'group_jp'     => $groups['jp'],
         'events'       => is_array($events) ? $events : [],
         'rar'          => $spec['rarity'], //検索では不使用
         'rar_d'        => $spec['rarity_detail'], //検索では不使用
@@ -211,8 +246,8 @@ function koto_get_flat_char_data($post_id)
         'hnd_buff'     => $spec['buff_counts_hand'],
         'bd_buff'     => $spec['buff_counts_board'],
         'debuf'           => $spec['debuff_counts'],
-        'gimmicks'     => array_values(array_unique($gimmicks)),
-        'gim_t'        => array_values(array_unique($gimmick_slugs)),
+        'gimmick_en'   => $gimmicks['en'],
+        'gimmick_jp'   => $gimmicks['jp'],
         'leader'       => $learder_flat,
         'ls_hp'        => ($spec['max_ls_hp'] ?? 0),
         'ls_atk'       => ($spec['max_ls_atk'] ?? 0),

@@ -14,15 +14,15 @@ get_header();
     <section class="db-section main-links">
         <h2>データベース・ツール</h2>
         <div class="link-grid">
-            <a href="https://www.kotodaman-db.com/character/" class="grid-item">
+            <a href="<?php echo esc_url(home_url('/character/')); ?>" class="grid-item">
                 <span class="icon">📊</span>
                 <span class="text">全キャラ一覧<br></span>
             </a>
-            <a href="https://www.kotodaman-db.com/magnification-calc/" class="grid-item">
+            <a href="<?php echo esc_url(home_url('/magnification-calc/')); ?>" class="grid-item">
                 <span class="icon">⚔️</span>
                 <span class="text">簡易ダメージ、倍率計算機</span>
             </a>
-            <a href="https://www.kotodaman-db.com/mgn-blank-charas" class="grid-item">
+            <a href="<?php echo esc_url(home_url('/mgn-blank-charas/')); ?>" class="grid-item">
                 <span class="icon">📋</span>
                 <span class="text">未入力リスト<br><small>情報提供のご協力お願いします！</small></span>
             </a>

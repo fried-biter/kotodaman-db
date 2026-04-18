@@ -112,6 +112,7 @@ $event_map = koto_get_event_map();
 
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/lib/character-search/search-engine.js?v=<?php echo $version; ?>"></script>
 <script>
+    const KOTO_SEARCH_JSON_URL = <?php echo json_encode(get_stylesheet_directory_uri() . '/lib/character-search/all_characters_search.json'); ?>;
     const KOTO_GROUP_MAP = <?php echo json_encode($grp_map) ?>;
     const KOTO_EVENT_MAP = <?php echo json_encode($event_map) ?>;
 </script>
