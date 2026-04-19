@@ -120,6 +120,25 @@ function koto_unique_bilingual_pairs($pairs)
     ];
 }
 
+function koto_collect_status_resistance_pairs($status_slugs, $status_map)
+{
+    $pairs = [];
+
+    foreach ($status_slugs as $status_slug) {
+        $status_slug = trim((string) $status_slug);
+        if ($status_slug === '' || empty($status_map[$status_slug])) {
+            continue;
+        }
+
+        $pairs[] = [
+            'en' => $status_slug,
+            'jp' => $status_map[$status_slug],
+        ];
+    }
+
+    return koto_unique_bilingual_pairs($pairs);
+}
+
 
 // =========================================================
 // 1. 1キャラ分のデータを抽出する共通関数（★キー名の短縮などはここを編集）
@@ -130,6 +149,7 @@ function koto_get_flat_char_data($post_id)
     $spec = $json_str ? json_decode($json_str, true) : [];
     $attr_num = koto_get_attr_num();
     $species_num = koto_get_species_num();
+    $status_map = function_exists('koto_get_status_map') ? koto_get_status_map() : [];
     $japanese_tags = '';
 
     if (!is_array($spec) || empty($spec)) {
@@ -159,6 +179,18 @@ function koto_get_flat_char_data($post_id)
         }
     }
     $gimmicks = koto_unique_bilingual_pairs($gimmick_pairs);
+    $trait_status_resistance_slugs = [];
+    foreach ($traits as $trait) {
+        if (($trait['type'] ?? '') !== 'status_up' || ($trait['sub_type'] ?? '') !== 'resistance') {
+            continue;
+        }
+
+        $trait_status_slug = $trait['resist_status'] ?? '';
+        if ($trait_status_slug !== '') {
+            $trait_status_resistance_slugs[] = $trait_status_slug;
+        }
+    }
+    $trait_status_resistances = koto_collect_status_resistance_pairs($trait_status_resistance_slugs, $status_map);
     $sub_attributes = array_map(function ($item) use ($attr_num) {
         return $attr_num[$item] ?? 0;
     }, $spec['sub_attributes'] ?? []);
@@ -215,6 +247,22 @@ function koto_get_flat_char_data($post_id)
     $leader_raws = $spec['leader'] ?? [];
     $learder_flat = [];
     $learder_flat = array_map('flatten_leader', $leader_raws);
+    $leader_status_resistance_slugs = [];
+    foreach ($leader_raws as $leader_raw) {
+        foreach ($leader_raw['main_eff'] ?? [] as $main_effect) {
+            foreach ($main_effect['value_raws'] ?? [] as $value_raw) {
+                if (($value_raw['status'] ?? '') !== 'resistance') {
+                    continue;
+                }
+
+                $leader_status_slug = $value_raw['resist'] ?? '';
+                if ($leader_status_slug !== '') {
+                    $leader_status_resistance_slugs[] = $leader_status_slug;
+                }
+            }
+        }
+    }
+    $leader_status_resistances = koto_collect_status_resistance_pairs($leader_status_resistance_slugs, $status_map);
 
     return [
         'id'           => $post_id,
@@ -248,6 +296,10 @@ function koto_get_flat_char_data($post_id)
         'debuf'           => $spec['debuff_counts'],
         'gimmick_en'   => $gimmicks['en'],
         'gimmick_jp'   => $gimmicks['jp'],
+        'trait_status_resistance_en' => $trait_status_resistances['en'],
+        'trait_status_resistance_jp' => $trait_status_resistances['jp'],
+        'leader_status_resistance_en' => $leader_status_resistances['en'],
+        'leader_status_resistance_jp' => $leader_status_resistances['jp'],
         'leader'       => $learder_flat,
         'ls_hp'        => ($spec['max_ls_hp'] ?? 0),
         'ls_atk'       => ($spec['max_ls_atk'] ?? 0),
