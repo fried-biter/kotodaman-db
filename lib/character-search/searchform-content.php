@@ -37,16 +37,16 @@
             <div class="search-modal-body" id="advanced-search-panel">
                 <div class="tab-content is-active" data-content="tab-basic">
                     <div class="search-section">
-                        <div class="section-title">使用可能文字 (OR検索)</div>
+                        <div class="section-title">
+                            使用可能文字 
+                            <?php
+                            render_simple_relation_toggle('search_char');
+                            ?>
+                        </div>
                         <input type="text" name="search_char" class="term-tree-search"
                             value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
                             placeholder="例：あい（「あ」または「い」を持つキャラ）" />
-                        <div class="simple-tag-row">
-                            <label>
-                                <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
-                                <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
-                            </label>
-                        </div>
+                        <!-- TODO入力した文字のうち〇文字以上を含むというような検索をしたい -->
                         <p class="section-title">文字の軸
                             <?php
                             render_simple_relation_toggle('tx_axis');
@@ -60,7 +60,12 @@
                             <label><input type="checkbox" name="tx_axis[]" value="char_small_yuyo"> <span>小さいゆよ</span></label>
                         </div>
                     </div>
-
+                    <div class="simple-tag-row">
+                        <label>
+                            <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
+                            <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
+                        </label>
+                    </div>
                     <div class="search-section">
                         <div class="section-title">属性
                             <?php
