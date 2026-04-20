@@ -148,9 +148,9 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
     return ob_get_clean();
 }
 // シンプルなチェックボックスでrender_ios_toggleを利用するための関数
-function render_simple_relation_toggle($name)
+function render_simple_relation_toggle($name,$initial = 'OR')
 {
-    $relation = isset($_GET["{$name}_relation"]) ? $_GET["{$name}_relation"] : 'OR';
+    $relation = isset($_GET["{$name}_relation"]) ? $_GET["{$name}_relation"] : $initial;
     if (function_exists('render_ios_toggle')) {
         echo render_ios_toggle("{$name}_relation", $relation);
     }

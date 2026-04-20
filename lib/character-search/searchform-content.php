@@ -9,7 +9,7 @@
         <div class="section-title">
             使用可能文字
             <?php
-            render_simple_relation_toggle('search_char');
+            render_simple_relation_toggle('search_char', 'AND');
             ?>
             <span style="margin-left: 10px;">
                 <label>
