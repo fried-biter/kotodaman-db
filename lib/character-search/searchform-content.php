@@ -6,7 +6,21 @@
             <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名・状態異常耐性..." />
             <button type="submit" class="submit-btn">検索</button>
         </div>
-
+        <div class="section-title">
+            使用可能文字
+            <?php
+            render_simple_relation_toggle('search_char');
+            ?>
+            <span style="margin-left: 10px;">
+                <label>
+                    <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
+                    <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
+                </label>
+            </span>
+        </div>
+        <input type="text" name="search_char" class="term-tree-search"
+            value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
+            placeholder="例：あい（「あ」または「い」を持つキャラ）" />
         <div class="search-row-bottom">
             <button type="button" class="toggle-btn js-toggle-advanced-search" aria-label="詳細検索を開く">
                 <span class="filter-icon">🔍</span> 詳細フィルターを開く
@@ -37,16 +51,6 @@
             <div class="search-modal-body" id="advanced-search-panel">
                 <div class="tab-content is-active" data-content="tab-basic">
                     <div class="search-section">
-                        <div class="section-title">
-                            使用可能文字 
-                            <?php
-                            render_simple_relation_toggle('search_char');
-                            ?>
-                        </div>
-                        <input type="text" name="search_char" class="term-tree-search"
-                            value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
-                            placeholder="例：あい（「あ」または「い」を持つキャラ）" />
-                        <!-- TODO入力した文字のうち〇文字以上を含むというような検索をしたい -->
                         <p class="section-title">文字の軸
                             <?php
                             render_simple_relation_toggle('tx_axis');
@@ -60,12 +64,7 @@
                             <label><input type="checkbox" name="tx_axis[]" value="char_small_yuyo"> <span>小さいゆよ</span></label>
                         </div>
                     </div>
-                    <div class="simple-tag-row">
-                        <label>
-                            <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
-                            <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
-                        </label>
-                    </div>
+
                     <div class="search-section">
                         <div class="section-title">属性
                             <?php
