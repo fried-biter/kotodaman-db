@@ -115,7 +115,7 @@ function get_character_spec_data($post_id)
         'legend' => 0.05,
         'grand' => 0.05,
         'dream' => 0.05,
-        'miracle'=> 0.05,
+        'miracle' => 0.05,
     ];
 
     if (get_field('talent_status_auto_tf', $post_id)) {
@@ -253,7 +253,7 @@ function get_character_spec_data($post_id)
     if ($sugo_groups && is_array($sugo_groups)) {
         $first_group = $sugo_groups[0];
         $details = $first_group['sugo_detail_loop'] ?? [];
-        
+
         if (!empty($details) && is_array($details)) {
             $first_action = $details[0];
             $waza_target = $first_action['waza_target'] ?? '';
@@ -1758,7 +1758,11 @@ function _parse_skill_groups_to_data($groups, $shift_type = 'none')
                 }
 
                 // --- ターゲットメイン / サブ ---
-                $waza_target_main = $d['waza_target'] ?? '';
+                if ($type === 'command') {
+                    $waza_target_main = 'single_oppo';
+                } else {
+                    $waza_target_main = $d['waza_target'] ?? '';
+                }
                 $waza_target_type = $d['waza_target_detail'] ?? 'none';
 
                 $parsed_target = parse_target_group([]);

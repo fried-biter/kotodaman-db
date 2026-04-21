@@ -816,6 +816,9 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 
             $current_group_effects = [];
             $effect_counter = 1;
+            
+            // ★ グループ(タブ)ごとの火力計算配列
+            $current_group_at_rate_array = [];
 
             foreach ($items as $item) {
                 // 条件テキスト生成
@@ -1042,11 +1045,11 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                 if ($val_last > 0) {
                                     $loop = $hit_count - 1;
                                     $eff_val = "（{$eff_val}×{$loop}＋{$val_last}）";
-                                    $at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => $loop];
-                                    $at_rate_array[] = ['rate' => (float)$val_last, 'hit_count' => 1];
+                                    $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => $loop];
+                                    $current_group_at_rate_array[] = ['rate' => (float)$val_last, 'hit_count' => 1];
                                 } else {
                                     $eff_val = "（{$eff_val}×{$hit_count}）";
-                                    $at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => $hit_count];
+                                    $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => $hit_count];
                                 }
                             }
                             if ($rate_range_flag) {
@@ -1054,8 +1057,9 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             } else {
                                 $base_phrase = "{$saidai_text}{$eff_val}倍の{$omni_text}{$mod_text}{$attr_text}{$atk_noun}";
                             }
-                            $at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
-
+                            if($hit_count <= 1){
+                            $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
+                            }
                             $effect_text = "{$target_name}に{$base_phrase}";
 
                             if ($needs_link) {
@@ -1081,7 +1085,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             }
                             $order_text = implode('・', $order_names);
                             $effect_text = "{$target_name}に{$eff_val}倍の{$order_text}属性の各一回攻撃";
-                            $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => count($order_names)];
+                            $current_group_at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => count($order_names)];
                             break;
                         case 'coop_attack':
                             $coop_grp = isset($item['coop_target']) ? $item['coop_target'] : null;
@@ -1097,10 +1101,10 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             $is_omni = !empty($item['omni_advantage']);
                             $omni_text = $is_omni ? "全属性に有利な" : "";
                             $effect_text = "わざ・すごわざを発動した{$grp_name}と同じ属性で、{$target_name}に{$eff_val}倍の{$omni_text}攻撃";
-                            $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
+                            $current_group_at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'command':
-                            $effect_text = "わざ・すごわざを発動した味方が{$target_name}に{$eff_val}倍の{$attack_attr}属性攻撃";
+                            $effect_text = "わざ・すごわざを発動した味方が敵単体に{$eff_val}倍の{$attack_attr}属性攻撃";
                             $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'waza_command':
@@ -1216,13 +1220,34 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                 }
             }
 
+            // ★ グループごとの火力計算
+            $group_at_rate_html = '';
+            $group_at_sum = 0;
+            if ($current_group_at_rate_array) {
+                $at_rate_parts = [];
+                foreach ($current_group_at_rate_array as $item) {
+                    $firepower = floor($item['rate'] * $attack);
+                    if ($item['hit_count'] > 1) {
+                        $at_rate_parts[] = number_format($firepower) . "<span class='simple-firerate-times'>×</span>" . $item['hit_count'];
+                    } else {
+                        $at_rate_parts[] = number_format($firepower);
+                    }
+                    $group_at_sum += $firepower * $item['hit_count'];
+                }
+                $group_at_rate_html = implode('<span class="simple-firerate-plus">＋</span>', $at_rate_parts);
+            }
+
             // グループの処理が完了したら、タブのデータ配列に追加
             if ($is_shift_mode && !empty($current_group_effects)) {
                 $tab_data[] = [
                     'id'      => $unique_prefix . '-panel-' . $group_idx,
                     'label'   => koto_replace_icons(esc_html($group_info['text'])),
-                    'effects' => $current_group_effects
+                    'effects' => $current_group_effects,
+                    'at_rate_html' => $group_at_rate_html,
+                    'at_sum' => $group_at_sum
                 ];
+            } else {
+                $at_rate_array = array_merge($at_rate_array, $current_group_at_rate_array);
             }
             $group_idx++;
         }
@@ -1290,6 +1315,15 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                             <?php echo $eff['cond'] . $eff['effect']; ?>
                                         </div>
                                     <?php endforeach; ?>
+                                    
+                                    <?php if (!empty($tab['at_rate_html'])): ?>
+                                        <div class="simple-firerate-container">
+                                            <div class="simple-firerate-title">単純火力指数</div>
+                                            <div class="simple-firerate-formula"><?php echo $tab['at_rate_html']; ?></div>
+                                            <div class="simple-firerate-total"><span class="simple-firerate-equal">＝</span><?php echo number_format($tab['at_sum']); ?></div>
+                                            <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -1313,14 +1347,14 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             <?php $counter++; ?>
                         <?php endforeach; ?>
                     <?php endif; ?>
-                <?php endif; ?>
-                <?php if ($at_rate_html): ?>
-                    <div class="simple-firerate-container">
-                        <div class="simple-firerate-title">単純火力指数</div>
-                        <div class="simple-firerate-formula"><?php echo $at_rate_html; ?></div>
-                        <div class="simple-firerate-total"><span class="simple-firerate-equal">＝</span><?php echo number_format($at_sum__rate_html); ?></div>
-                        <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
-                    </div>
+                    <?php if ($at_rate_html): ?>
+                        <div class="simple-firerate-container">
+                            <div class="simple-firerate-title">単純火力指数</div>
+                            <div class="simple-firerate-formula"><?php echo $at_rate_html; ?></div>
+                            <div class="simple-firerate-total"><span class="simple-firerate-equal">＝</span><?php echo number_format($at_sum__rate_html); ?></div>
+                            <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>

@@ -842,7 +842,7 @@ if ($koto_outside):
 
         $html_body = '';
         if (function_exists('get_koto_sugowaza_html')) {
-            $html_body = get_koto_sugowaza_html($cond_check, $loop_check, 'kotowaza');
+            $html_body = get_koto_sugowaza_html($cond_check, $loop_check, 'kotowaza', $calc_atk);
         }
 
         if ($html_body) {
