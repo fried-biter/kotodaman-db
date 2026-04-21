@@ -460,7 +460,7 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     </tbody>
 </table>
 </dd>
-
+<?php if(false):?>
 <div class="firepower-container">
     <div class="firepower-header">
         <span class="fp-label">火力指数</span>
@@ -476,7 +476,7 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     </div>
     <div class="firepower-note">※LV120・才能開花なし<br>計算が正確でない場合があります</div>
 </div>
-
+<?php endif; ?>
 <?php
 // =================================================================
 //  EXスキル (グランドコトダマン)
@@ -754,6 +754,7 @@ if ($ls_html): ?>
 ob_start();
 $waza_groups = $all_fields['waza_group_loop'] ?? null;
 $waza_name   = $all_fields['waza_name'] ?? null;
+$calc_atk=$disp_atk_120 ?? ($disp_atk_99 ?? 0);
 
 if ($waza_groups):
     echo '<div class="skill-card card-waza">';
@@ -762,7 +763,7 @@ if ($waza_groups):
     if ($waza_name) echo '<span class="skill-proper-name">' . esc_html($waza_name) . '</span>';
     echo '</div>';
     echo '<div class="skill-text-area">';
-    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html(null, $waza_groups, 'waza');
+    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html(null, $waza_groups, 'waza', $calc_atk);
     echo '</div></div>';
 endif;
 $waza_html = ob_get_clean();
@@ -779,7 +780,7 @@ if ($sugo_condition || $sugo_groups):
     if ($sugo_name) echo '<span class="skill-proper-name">' . esc_html($sugo_name) . '</span>';
     echo '</div>';
     echo '<div class="skill-text-area">';
-    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html($sugo_condition, $sugo_groups, 'sugo');
+    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html($sugo_condition, $sugo_groups, 'sugo', $calc_atk);
     echo '</div></div>';
 endif;
 $sugo_html = ob_get_clean();

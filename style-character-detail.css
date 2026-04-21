@@ -1350,6 +1350,54 @@ body.admin-bar .character-tab-section {
     margin-top: 5px;
 }
 
+/* --- 単純火力指数 (わざ・すごわざ内) --- */
+.simple-firerate-container {
+    margin-top: 15px;
+    padding: 10px;
+    background: #fffaf5;
+    border: 1px solid #ffe0b2;
+    border-radius: 6px;
+    text-align: center;
+}
+.simple-firerate-title {
+    font-weight: bold;
+    color: #e65100;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+.simple-firerate-formula {
+    font-size: 1.1em;
+    color: #555;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    margin-bottom: 3px;
+}
+.simple-firerate-total {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #d32f2f;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+.simple-firerate-equal {
+    font-size: 0.8em;
+    color: #999;
+    margin-right: 5px;
+    font-weight: normal;
+}
+.simple-firerate-note {
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 5px;
+}
+.simple-firerate-times {
+    font-size: 0.8em;
+    margin: 0 2px;
+    color: #666;
+}
+.simple-firerate-plus {
+    margin: 0 5px;
+    color: #aaa;
+}
+
 /* ========================================= */
 /* すごわざシフト切り替えタブ (新規追加) */
 /* ========================================= */
