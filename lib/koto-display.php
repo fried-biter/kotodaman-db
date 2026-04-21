@@ -1102,7 +1102,8 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'command':
-                            $effect_text = "わざ・すごわざを発動した味方が{$target_name}に{$eff_val}倍の{$attack_attr}属性攻撃";
+                            $target_phrase = $target_name ? "{$target_name}に" : '';
+                            $effect_text = "わざ・すごわざを発動した味方が{$target_phrase}{$eff_val}倍の{$attack_attr}属性攻撃";
                             $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'waza_command':
