@@ -18,13 +18,12 @@
                 </label>
             </span>
         </div>
-        <input type="text" name="search_char" class="term-tree-search"
+        <input type="text" name="search_char" class="term-tree-search js-search-char-input"
             value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
             placeholder="ほしい文字を入力" />
         <div class="search-row-bottom">
             <button type="button" class="toggle-btn js-toggle-advanced-search" aria-label="詳細検索を開く">
                 <span class="filter-icon">🔍</span> 詳細フィルターを開く
-                <!-- TODO詳細フィルターを閉じたら検索画面へ推移（検索画面じゃないなら）キーイベントを送信 -->
             </button>
             <button type="button" class="reset-btn js-reset-search-btn">条件クリア</button>
         </div>
