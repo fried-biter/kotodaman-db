@@ -94,16 +94,27 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // トグルスイッチの状態に合わせてラベルとHidden要素を更新する共通関数
+                const updateLabels = function(checkbox) {
+                    const container = checkbox.closest('.ios-toggle-container-minimal');
+                    if (container) {
+                        const labels = container.querySelectorAll('.ios-toggle-label-text');
+                        const isChecked = checkbox.checked;
+                        labels[0].classList.toggle('active', !isChecked);
+                        labels[1].classList.toggle('active', isChecked);
+                        
+                        // チェックされている時は hidden(OR) を無効化してURLパラメータのダブりを防ぐ
+                        const hiddenInput = container.querySelector('input[type="hidden"]');
+                        if (hiddenInput) {
+                            hiddenInput.disabled = isChecked;
+                        }
+                    }
+                };
+
                 // 文字クリックとスイッチを連動させる共通処理
                 document.body.addEventListener('change', function(e) {
                     if (e.target.classList.contains('ios-toggle-checkbox')) {
-                        const container = e.target.closest('.ios-toggle-container-minimal');
-                        if (container) {
-                            const labels = container.querySelectorAll('.ios-toggle-label-text');
-                            const isChecked = e.target.checked;
-                            labels[0].classList.toggle('active', !isChecked);
-                            labels[1].classList.toggle('active', isChecked);
-                        }
+                        updateLabels(e.target);
                     }
                 });
 
@@ -122,6 +133,21 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
                             bubbles: true
                         }));
                     }
+                });
+
+                // フォームリセット時（条件クリア時）にラベルのスタイルを追従させる
+                document.body.addEventListener('reset', function(e) {
+                    setTimeout(() => {
+                        const toggles = e.target.querySelectorAll('.ios-toggle-checkbox');
+                        toggles.forEach(checkbox => updateLabels(checkbox));
+                    }, 0); // DOMの状態がリセットされた直後に実行
+                });
+
+                // 初期表示時にも hidden の disabled 状態をセットする
+                const initialToggles = document.querySelectorAll('.ios-toggle-checkbox');
+                initialToggles.forEach(checkbox => {
+                    const hiddenInput = checkbox.closest('.ios-toggle-container-minimal').querySelector('input[type="hidden"]');
+                    if (hiddenInput) hiddenInput.disabled = checkbox.checked;
                 });
             });
         </script>

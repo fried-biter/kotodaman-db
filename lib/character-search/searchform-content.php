@@ -20,7 +20,7 @@
         </div>
         <input type="text" name="search_char" class="term-tree-search"
             value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
-            placeholder="例：あい（「あ」または「い」を持つキャラ）" />
+            placeholder="ほしい文字を入力" />
         <div class="search-row-bottom">
             <button type="button" class="toggle-btn js-toggle-advanced-search" aria-label="詳細検索を開く">
                 <span class="filter-icon">🔍</span> 詳細フィルターを開く
