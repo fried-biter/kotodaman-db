@@ -1054,7 +1054,9 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             } else {
                                 $base_phrase = "{$saidai_text}{$eff_val}倍の{$omni_text}{$mod_text}{$attr_text}{$atk_noun}";
                             }
-                            $at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
+                            if ($hit_count <= 1) {
+                                $at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
+                            }
 
                             $effect_text = "{$target_name}に{$base_phrase}";
 
@@ -1100,7 +1102,8 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'command':
-                            $effect_text = "わざ・すごわざを発動した味方が{$target_name}に{$eff_val}倍の{$attack_attr}属性攻撃";
+                            $target_phrase = $target_name ? "{$target_name}に" : '';
+                            $effect_text = "わざ・すごわざを発動した味方が{$target_phrase}{$eff_val}倍の{$attack_attr}属性攻撃";
                             $at_rate_array[] = ['rate' => (float)$eff_val, 'hit_count' => 3];
                             break;
                         case 'waza_command':
