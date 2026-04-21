@@ -753,7 +753,11 @@ if ($ls_html): ?>
 // =================================================================
 ob_start();
 $waza_groups = $all_fields['waza_group_loop'] ?? null;
-$waza_name   = $all_fields['waza_name'] ?? null;
+$waza_name   = $all_fields['waza_name'] ?? ($spec_data['waza']['name'] ?? null);
+$waza_shift_type = $spec_data['waza']['shift_type'] ?? 'none';
+if (empty($waza_groups) && function_exists('kotodaman_local_build_skill_groups_from_spec')) {
+    $waza_groups = kotodaman_local_build_skill_groups_from_spec($spec_data['waza']['variations'] ?? [], 'waza', $waza_shift_type);
+}
 $calc_atk=$disp_atk_120 ?? ($disp_atk_99 ?? 0);
 
 if ($waza_groups):
@@ -771,7 +775,14 @@ $waza_html = ob_get_clean();
 ob_start();
 $sugo_condition = $all_fields['sugowaza_condition'] ?? null;
 $sugo_groups    = $all_fields['sugowaza_group_loop'] ?? null;
-$sugo_name      = $all_fields['sugowaza_name'] ?? null;
+$sugo_name      = $all_fields['sugowaza_name'] ?? ($spec_data['sugowaza']['name'] ?? null);
+$sugo_shift_type = $spec_data['sugowaza']['shift_type'] ?? 'none';
+if (empty($sugo_condition) && function_exists('kotodaman_local_build_sugowaza_conditions_from_spec')) {
+    $sugo_condition = kotodaman_local_build_sugowaza_conditions_from_spec($spec_data['sugowaza']['condition'] ?? []);
+}
+if (empty($sugo_groups) && function_exists('kotodaman_local_build_skill_groups_from_spec')) {
+    $sugo_groups = kotodaman_local_build_skill_groups_from_spec($spec_data['sugowaza']['variations'] ?? [], 'sugo', $sugo_shift_type);
+}
 
 if ($sugo_condition || $sugo_groups):
     echo '<div class="skill-card card-sugo">';

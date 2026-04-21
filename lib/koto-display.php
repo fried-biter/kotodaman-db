@@ -1057,9 +1057,10 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             } else {
                                 $base_phrase = "{$saidai_text}{$eff_val}倍の{$omni_text}{$mod_text}{$attr_text}{$atk_noun}";
                             }
-                            if($hit_count <= 1){
-                            $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
-                            }
+                            if ($hit_count <= 1) {
+                                $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
+                            }                            
+
                             $effect_text = "{$target_name}に{$base_phrase}";
 
                             if ($needs_link) {
