@@ -121,7 +121,7 @@ function get_koto_add_moji_html($trait_slug)
     // 投稿IDを取得できるよう、関数内で呼び出すか引数で渡すのが一般的ですが、get_fieldは現在の投稿を参照します
     $moji_loop = koto_get_field_cached('available_moji_loop');
     $html_parts = [];
-
+    $grp_html = '';
     if ($moji_loop) {
         foreach ($moji_loop as $m) {
             if (isset($m['unlock_place']) && $m['unlock_place'] === $trait_slug) {
@@ -144,7 +144,11 @@ function get_koto_add_moji_html($trait_slug)
                         $current_row_chars[] = '<span class="char-font attr-' . esc_attr($slug) . '">' . esc_html($c_obj->name) . '</span>';
                     }
                 }
-
+                if ($m['moji_group_cond'] ?? false) {
+                    $affiliation_obj = koto_get_field_cached('affiliation');
+                    $affiliation_name = is_object($affiliation_obj) ? ($affiliation_obj->name ?? 'グループ条件') : 'グループ条件';
+                    $grp_html .= 'デッキ内に「' . esc_html($affiliation_name) . '」の味方がいるとき';
+                }
                 if (!empty($current_row_chars)) {
                     $html_parts[] = implode('・', $current_row_chars) . $pt_html;
                 }
@@ -152,7 +156,7 @@ function get_koto_add_moji_html($trait_slug)
         }
     }
     if (!empty($html_parts)) {
-        return '追加文字：' . implode('・', $html_parts);
+        return $grp_html . '追加文字：' . implode('・', $html_parts);
     }
     return '';
 }

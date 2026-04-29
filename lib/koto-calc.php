@@ -275,6 +275,8 @@ function get_character_spec_data($post_id)
         foreach ($moji_rows as $row) {
             $unlock_place = $row['unlock_place'] ?? 'normal';
             if (empty($unlock_place)) $unlock_place = 'normal';
+            $grp_cond = $row['moji_group_cond'] ?? false;
+            $unlock_place = $grp_cond ? 'group_cond_' . $unlock_place : $unlock_place;
 
             // ★修正: 属性の取得ロジックを強化 (ID, オブジェクト, 配列に対応)
             $attr_slug = '';
