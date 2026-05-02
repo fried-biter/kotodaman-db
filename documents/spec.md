@@ -130,7 +130,7 @@
 |target|対象により変化|
 |hp_up|hpが多いほど威力の上がる攻撃|
 |hp_down|hpが少ないほど威力の上がる攻撃|
-## **攻撃ゲーム内prefix**
+## 攻撃ゲーム内prefix
 |value|label|
 |---|---|
 |strong|強力|
