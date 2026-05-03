@@ -397,6 +397,7 @@ function koto_get_flat_char_data($post_id)
         'hnd_buff'     => $spec['buff_counts_hand'],
         'bd_buff'     => $spec['buff_counts_board'],
         'debuf'           => $spec['debuff_counts'],
+        'firepower_index' => max($spec['firepower_index'] ?? 0),
         'gimmick_en'   => $gimmicks['en'],
         'gimmick_jp'   => $gimmicks['jp'],
         'trait_status_resistance_en' => $trait_status_resistances['en'],

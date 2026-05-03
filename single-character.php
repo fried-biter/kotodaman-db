@@ -762,7 +762,7 @@ $waza_shift_type = $spec_data['waza']['shift_type'] ?? 'none';
 if (empty($waza_groups) && function_exists('kotodaman_local_build_skill_groups_from_spec')) {
     $waza_groups = kotodaman_local_build_skill_groups_from_spec($spec_data['waza']['variations'] ?? [], 'waza', $waza_shift_type);
 }
-$calc_atk=$disp_atk_120 ?? ($disp_atk_99 ?? 0);
+$calc_atk=(int)($disp_atk_120 ?? ($disp_atk_99 ?? 0));
 
 if ($waza_groups):
     echo '<div class="skill-card card-waza">';

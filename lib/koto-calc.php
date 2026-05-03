@@ -772,7 +772,7 @@ function on_save_character_specs($post_id)
 
     // 1. 火力指数を計算
     $firepower_index = 0;
-    // $firepower_index = _calculate_firepower_index($spec_data);
+    $firepower_index = simple_firepower_calc($spec_data['sugowaza']['variations'] ?? [], $spec_data['_val_120_atk'] ?? 0);
     // 2. 計算結果を配列（$spec_data）に反映させる！
     $spec_data['firepower_index'] = $firepower_index;
     // ▼▼ソート用に外に出す
@@ -1135,6 +1135,46 @@ function _calculate_correction_values($data)
     return $result;
 }
 */
+// 簡易火力指数計算
+function simple_firepower_calc($variations, $attack)
+{
+    if (empty($variations)) {
+        return [0];
+    }
+    $result = [];
+    foreach ($variations as $var) {
+        $timelines = $var['timelines'] ?? [];
+        $shift_val = $var['shift_value'] ?? ['none'];
+        $timeline_firepower = 0;
+        foreach ($timelines as $action) {
+            $action_type = $action['type'];
+            if (strpos($action_type, 'attack') !== false || $action_type === 'command') {
+                $val = (float)($action['value'] ?? 0);
+                $hits = (int)($action['hit_count'] ?? 1);
+                if ($action_type === 'command' || $action_type === 'coop_attack') {
+                    $hits = 3;
+                }
+                $last = (float)($action['value_last'] ?? 0);
+                $mag = 0;
+                if ($last > 0 && $hits > 1) {
+                    $mag = ($val * ($hits - 1)) + $last;
+                } else {
+                    $mag = $val * $hits;
+                }
+                $timeline_firepower += (float)$mag * (float)$attack;
+            }
+        }
+        // キーを文字列として生成
+        $key = implode(',', $shift_val);
+        // その場でresultに加算する（重複加算を防ぐ）
+        if (!isset($result[$key])) {
+            $result[$key] = 0;
+        }
+        $result[$key] += $timeline_firepower;
+    }
+
+    return array_map('floor', $result);
+}
 // 対象選択フィールドグループをspec_json用に崩す関数
 function parse_target_group($grp)
 {
@@ -1775,9 +1815,12 @@ function _parse_skill_groups_to_data($groups, $shift_type = 'none')
 
                 // --- その他のパラメータ ---
                 $color_order = [];
-                if (!empty($d['colorfull_attack_attr'])) {
-                    foreach ($d['colorfull_attack_attr'] as $c) {
-                        if (is_object($c)) $color_order[] = $c->slug;
+                if ($type === 'colorfull_attack') {
+                    if (!empty($d['colorfull_attack_attr'])) {
+                        foreach ($d['colorfull_attack_attr'] as $c) {
+                            if (is_object($c)) $color_order[] = $c->slug;
+                        }
+                        $d['hit_count'] = count($color_order); // 色順の数をヒット数に反映
                     }
                 }
 

@@ -209,7 +209,7 @@ function koto_get_column_config()
         'power' => [
             'label' => '火力指数',
             'class' => 'col-power',
-            'sort'  => 'power',
+            'sort'  => 'firepower_index',
             'meta'  => 'firepower_index',
             'type'  => 'NUMERIC',
             'show'  => false,

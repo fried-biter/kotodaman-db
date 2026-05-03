@@ -530,8 +530,10 @@ function get_koto_trait_text_from_row($row)
             if ($sub === 'combo_plus') $effect_text = "コンボ＋{$rate}";
             elseif ($sub === 'other') $effect_text = $row['other_text'];
             elseif ($sub === 'penetration') $effect_text = "バリア貫通{$rate}{$unit}";
-            elseif ($sub === 'over_healing') $effect_text = "{$target_prefix}オーバーヒールを得る";
-            elseif ($sub === 'exp_up') $effect_text = "獲得経験値{$rate}{$unit}UP";
+            elseif ($sub === 'over_healing') {
+                $target_prefix = str_replace('の', 'に', $target_prefix);
+                $effect_text = "{$target_prefix}オーバーヒールを付与";
+            } elseif ($sub === 'exp_up') $effect_text = "獲得経験値{$rate}{$unit}UP";
             elseif ($sub === 'pressure_break') {
                 $limit = $row['limit_break_rate'];
                 $effect_text = "重圧のダメージ上限を+{$limit}";
@@ -849,7 +851,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 
             $current_group_effects = [];
             $effect_counter = 1;
-            
+
             // ★ グループ(タブ)ごとの火力計算配列
             $current_group_at_rate_array = [];
 
@@ -1092,7 +1094,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             }
                             if ($hit_count <= 1) {
                                 $current_group_at_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
-                            }                            
+                            }
 
                             $effect_text = "{$target_name}に{$base_phrase}";
 
@@ -1349,7 +1351,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                             <?php echo $eff['cond'] . $eff['effect']; ?>
                                         </div>
                                     <?php endforeach; ?>
-                                    
+
                                     <?php if (!empty($tab['at_rate_html'])): ?>
                                         <div class="simple-firerate-container">
                                             <div class="simple-firerate-title">単純火力指数</div>
@@ -1713,10 +1715,11 @@ function koto_replace_icons($buffer)
         $ignore_patterns[] = '/' . implode('|', $ignore_regex_parts) . '/u';
     }
 
+    /** @var array<string, string> $saved_masks */
     $saved_masks = [];
     foreach ($ignore_patterns as $pattern) {
-        $buffer = preg_replace_callback($pattern, function ($matches) use (&$saved_masks) {
-            $placeholder = '##MASK_' . count($saved_masks) . '##';
+        $buffer = preg_replace_callback($pattern, function (array $matches) use (&$saved_masks) {
+            $placeholder = '##MASK_' . (string) count($saved_masks) . '##';
             $saved_masks[$placeholder] = $matches[0];
             return $placeholder;
         }, $buffer);
@@ -1725,7 +1728,7 @@ function koto_replace_icons($buffer)
     // ==========================================
     // 1. 属性の置換処理
     // ==========================================
-    $slug_map = koto_get_attr_map();
+    $slug_map = koto_get_attr_map() ?? [];
     $keys_regex = implode('|', array_keys($slug_map));
     $pattern_attr = '/(' . $keys_regex . ')(属性|・)/u';
 
