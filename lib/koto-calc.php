@@ -1151,6 +1151,7 @@ function simple_firepower_calc($variations, $attack)
             if (strpos($action_type, 'attack') !== false || $action_type === 'command') {
                 $val = (float)($action['value'] ?? 0);
                 $hits = (int)($action['hit_count'] ?? 1);
+                if ($hits < 1) $hits = 1; // hit_countが0やマイナスの場合は1に補正
                 if ($action_type === 'command' || $action_type === 'coop_attack') {
                     $hits = 3;
                 }
