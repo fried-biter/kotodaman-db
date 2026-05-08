@@ -1197,6 +1197,18 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                 foreach ($item['battle_field_loop'] as $field_item) {
                                     $category = $field_item['battle_field_target'];
                                     $value = $field_item['battle_field_value'];
+                                    $raw_val_type = $field_item['battle_field_value_type'];
+                                    switch ($raw_val_type) {
+                                        case 'crit_damage':
+                                            $val_type = "クリティカルダメージ";
+                                            break;
+                                        case 'crit_rate':
+                                            $val_type = "クリティカル率";
+                                            break;
+                                        default:
+                                            $val_type = "火力";
+                                            break;
+                                    }
                                     $suffix = '';
                                     $raw_targets = null;
                                     switch ($category) {
@@ -1224,7 +1236,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                         $disp = ($category === 'group' || $category === 'moji') ? implode('', array_map(function ($n) {
                                             return "「{$n}」";
                                         }, $names)) : implode('・', $names) . $suffix;
-                                        $field_text[] = "{$disp}の火力{$value}%UP";
+                                        $field_text[] = "{$disp}の{$val_type}{$value}%UP";
                                     }
                                 }
                             }
