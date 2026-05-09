@@ -635,6 +635,7 @@ if ($charge_name || $charge_loop):
                                     $tgt_label = "手札の{$tgt_label}";
                                 }
                             }
+                            $tgt_label = koto_replace_icons(esc_html($tgt_label)); // アイコン置換
 
                             // --- 2. 効果テキストの生成 ---
                             $type = $item['charge_type'];
@@ -694,6 +695,10 @@ if ($charge_name || $charge_loop):
                                     break;
                                 case 'limit_break':
                                     $effect_text ="{$tgt_label}のダメージ上限を{$turn_txt}{$val}上昇";
+                                    break;
+                                case 'other':
+                                    $other_text = esc_html($val);
+                                    $effect_text = $other_text ? "{$tgt_label}に{$other_text}" : '';
                                     break;
                             }
 
