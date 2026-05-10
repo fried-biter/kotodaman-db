@@ -399,7 +399,11 @@ function get_koto_trait_text_from_row($row)
             }
             if ($sub === 'resistance') {
                 $res = $row['resistance'];
-                $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
+                if ($res === 'all') {
+                    $res_name = '全ての状態異常';
+                } else {
+                    $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
+                }
                 $effect_text = "{$target_prefix}{$prefix}{$res_name}耐性{$rate}{$unit}";
             } elseif ($sub === 'dodge') {
                 $effect_text = "{$target_prefix}心眼回避{$rate}{$unit}";
