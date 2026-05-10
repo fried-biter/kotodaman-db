@@ -1037,7 +1037,7 @@ function _calculate_correction_values($data)
                 if ($val) $parts[] = "文字:{$val}";
             } elseif ($type === 'theme') {
                 if ($val) $parts[] = "テーマ:{$val}";
-            } elseif ($type === 'field') $parts[] = "フィールド中"; //TODOフィールドか単体単発か上限解放の火力指数計算がおかしい
+            } elseif ($type === 'field') $parts[] = "フィールド中"; 
             elseif ($type === 'deck_attr' || $type === 'attr') $parts[] = "デッキ条件";
             elseif ($type === 'deck_species' || $type === 'species') $parts[] = "デッキ条件";
             elseif ($type === 'attacked') $parts[] = "被ダメージ";

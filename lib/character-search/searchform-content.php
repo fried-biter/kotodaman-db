@@ -1,3 +1,4 @@
+<!-- TODO小さくたためるようにする -->
 <form role="search" method="get" id="searchform" class="searchform js-search-form" action="<?php echo home_url('/'); ?>">
     <input type="hidden" name="post_type" value="character" />
 
