@@ -283,6 +283,7 @@ get_header();
 
     .history-actions {
         text-align: right;
+        margin-bottom: 10px;
     }
 
     .btn-clear-history {
@@ -311,11 +312,6 @@ get_header();
         ③ <strong>キラーについて:</strong> とくせい、おまもり、コトワリなどの各種キラー、ダメージ倍率をすべて加算して記入してください。
     </div>
     <form id="dmgForm">
-        <div class="calc-group">
-            <label>画面のダメージ値 <span style="font-weight:normal; font-size:12px;">(※逆算時のみ必須)</span></label>
-            <input type="number" id="actual_damage" placeholder="例: 154308">
-        </div>
-
         <div class="calc-group">
             <label>基礎パラメータ</label>
             <div class="input-row">
@@ -422,15 +418,19 @@ get_header();
                 </div>
             </div>
         </div>
+        <div class="calc-group">
+            <label>画面のダメージ値 <span style="font-weight:normal; font-size:12px;">(※逆算時のみ必須)</span></label>
+            <input type="number" id="actual_damage" placeholder="例: 154308">
+        </div>
         <?php echo render_ios_toggle('healing_toggle', '攻撃', '攻撃', '回復'); ?>
         <button type="button" class="btn-calc" onclick="calcReverse()">① 倍率を計算する</button>
 
         <div id="historyContainer" class="history-box" style="display:none;">
             <h3 class="history-title">倍率計算履歴</h3>
-            <ul id="historyList" class="history-list"></ul>
             <div class="history-actions">
                 <button type="button" class="btn-clear-history" onclick="clearHistory()">履歴をすべてクリア</button>
             </div>
+            <ul id="historyList" class="history-list"></ul>
         </div>
 
         <div class="verify-area">
@@ -541,9 +541,9 @@ get_header();
             if (p.criticalTf === 'true') {
                 p.extraMult += p.criticalUpPercent;
             } else if (p.criticalTf === 'hatsuratsu') {
-                p.extraMult = (p.extraMult/1.5 + p.criticalUpPercent)*1.5;
+                p.extraMult = (p.extraMult / 1.5 + p.criticalUpPercent) * 1.5;
             } else if (p.criticalTf === 'kaishin') {
-                p.extraMult = (p.extraMult/3.0 + p.criticalUpPercent)*3.0;
+                p.extraMult = (p.extraMult / 3.0 + p.criticalUpPercent) * 3.0;
             }
         }
         let totalOtherMult = p.elemMult * p.correctionMult * p.extraMult * buffMult * debuffMult;
