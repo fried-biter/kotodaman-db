@@ -2,6 +2,12 @@
 /*
 Template Name: 汎用ターム一覧ページ（階層対応）
 */
+
+// Author(投稿者)以上の権限チェック
+if (!current_user_can('publish_posts')) {
+    wp_die('このページにアクセスする権限がありません。');
+}
+
 get_header();
 
 // 1. ACFの設定を取得
