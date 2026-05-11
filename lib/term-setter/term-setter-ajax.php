@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) exit;
 add_action('wp_ajax_term_setter_create_term', 'term_setter_handle_create_term');
 function term_setter_handle_create_term() {
     // 権限チェック
-    if (!current_user_can('manage_categories')) {
+    if (!current_user_can('publish_posts')) {
         wp_send_json_error(['message' => '権限がありません。']);
     }
 
@@ -68,7 +68,7 @@ function term_setter_handle_create_term() {
 add_action('wp_ajax_term_setter_apply_terms', 'term_setter_handle_apply_terms');
 function term_setter_handle_apply_terms() {
     // 権限チェック
-    if (!current_user_can('manage_categories')) {
+    if (!current_user_can('publish_posts')) {
         wp_send_json_error(['message' => '権限がありません。']);
     }
 
@@ -149,7 +149,7 @@ function term_setter_handle_apply_terms() {
 add_action('wp_ajax_term_setter_get_term_hierarchy', 'term_setter_handle_get_term_hierarchy');
 function term_setter_handle_get_term_hierarchy() {
     // 権限チェック
-    if (!current_user_can('manage_categories')) {
+    if (!current_user_can('publish_posts')) {
         wp_send_json_error(['message' => '権限がありません。']);
     }
 
