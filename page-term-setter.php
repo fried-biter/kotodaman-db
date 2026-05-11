@@ -4,8 +4,9 @@ Template Name: ターム一括付与
 */
 
 // 管理者権限チェック
-if (!current_user_can('manage_categories')) {
-    wp_die('このページにアクセスする権限がありません。');
+// Author(投稿者)以上の権限チェック
+if (!current_user_can('publish_posts')) {
+    wp_die('このページにアクセスする権限がありません。from page-term-list.php');
 }
 
 // ACFフィールドから対象タクソノミーを取得
