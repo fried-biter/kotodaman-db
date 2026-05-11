@@ -1084,3 +1084,6 @@ function enqueue_character_search_assets()
     wp_enqueue_script('character-search-script', get_stylesheet_directory_uri() . '/lib/character-search/searchform.js', array(), false, true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_character_search_assets');
+
+// ターム一括付与Ajax処理
+require_once get_stylesheet_directory() . '/lib/term-setter/term-setter-ajax.php';
