@@ -693,6 +693,14 @@ function get_koto_trait_text_from_row($row)
 function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type = '', $attack = 0)
 {
     ob_start();
+    $post_id = get_the_ID();
+    $raw_data = get_post_meta($post_id, '_spec_json', true);
+    $spec_data = null;
+    if (is_string($raw_data)) {
+        $spec_data = json_decode($raw_data, true);
+    } elseif (is_array($raw_data)) {
+        $spec_data = $raw_data;
+    }
 
     // =========================================================
     // A. 発動条件 (青タグ) - ロジック部
@@ -1320,6 +1328,11 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
         }
         $at_rate_html = implode('<span class="simple-firerate-plus">＋</span>', $at_rate_parts);
     }
+    $healing_rate_html = $spec_data['healingpower_index'] ?? 0;
+    if (is_array($healing_rate_html)) {
+        $healing_rate_html = !empty($healing_rate_html) ? max($healing_rate_html) : 0;
+    }
+
     // =========================================================
     // C. 実際のHTML出力部 (ビュー)
     // =========================================================
@@ -1405,6 +1418,13 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             <div class="simple-firerate-formula"><?php echo $at_rate_html; ?></div>
                             <div class="simple-firerate-total"><span class="simple-firerate-equal">＝</span><?php echo number_format($at_sum__rate_html); ?></div>
                             <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($healing_rate_html > 0): ?>
+                        <div class="simple-healingrate-container">
+                            <div class="simple-healingrate-title">単純回復指数</div>
+                            <div class="simple-healingrate-total"><?php echo number_format($healing_rate_html); ?></div>
+                            <div class="simple-healingrate-note">※バフ・威力補正等は考慮していません</div>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>

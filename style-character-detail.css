@@ -443,6 +443,7 @@
 .attr-underworld {
     color: #460046;
 }
+
 .attr-rainbow {
     background: linear-gradient(to right, #ff3333, #ff9800, #ffd427, #32cd32, #1e90ff, #8d23b8);
     -webkit-background-clip: text;
@@ -1359,43 +1360,84 @@ body.admin-bar .character-tab-section {
     border-radius: 6px;
     text-align: center;
 }
+
 .simple-firerate-title {
     font-weight: bold;
     color: #e65100;
     font-size: 0.9em;
     margin-bottom: 5px;
 }
+
 .simple-firerate-formula {
     font-size: 1.1em;
     color: #555;
     font-family: "Helvetica Neue", Arial, sans-serif;
     margin-bottom: 3px;
 }
+
 .simple-firerate-total {
     font-size: 1.5em;
     font-weight: bold;
     color: #d32f2f;
     font-family: "Helvetica Neue", Arial, sans-serif;
 }
+
 .simple-firerate-equal {
     font-size: 0.8em;
     color: #999;
     margin-right: 5px;
     font-weight: normal;
 }
+
 .simple-firerate-note {
     font-size: 0.75em;
     color: #888;
     margin-top: 5px;
 }
+
 .simple-firerate-times {
     font-size: 0.8em;
     margin: 0 2px;
     color: #666;
 }
+
 .simple-firerate-plus {
     margin: 0 5px;
     color: #aaa;
+}
+
+/* 単純回復指数のスタイル (緑基調) */
+/* コンテナ全体：薄いミント系の背景と淡い緑の枠線 */
+.simple-healingrate-container {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f1f8e9;
+    border: 1px solid #c5e1a5;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* タイトル：濃いめのオリーブ・グリーン */
+.simple-healingrate-title {
+    font-weight: bold;
+    color: #33691e;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+/* 合計値：鮮やかで視認性の高いエメラルド・グリーン */
+.simple-healingrate-total {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #2e7d32;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 注釈：控えめなグレー（既存踏襲） */
+.simple-healingrate-note {
+    font-size: 0.75em;
+    color: #888;
+    margin-top: 5px;
 }
 
 /* ========================================= */

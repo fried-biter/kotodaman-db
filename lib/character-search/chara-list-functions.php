@@ -216,6 +216,16 @@ function koto_get_column_config()
             'header_class' => 'th-power',
             'related_filters' => []
         ],
+        'heal' => [
+            'label' => '回復指数',
+            'class' => 'col-heal',
+            'sort'  => 'healingpower_index',
+            'meta'  => 'healingpower_index',
+            'type'  => 'NUMERIC',
+            'show'  => false,
+            'header_class' => 'th-heal',
+            'related_filters' => []
+        ],
     ];
 }
 
