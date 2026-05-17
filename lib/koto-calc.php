@@ -24,7 +24,16 @@ function get_character_spec_data($post_id)
 
     // ▼▼▼ 2. ACFフィールド値の取得 ▼▼▼
     $rarity_term = get_field('rarity', $post_id);
-    $rarity = $rarity_term ? $rarity_term->slug : 'none';
+    if (is_object($rarity_term) && isset($rarity_term->slug)) {
+        $rarity = $rarity_term->slug;
+    } elseif (is_numeric($rarity_term)) {
+        $rarity_obj = get_term((int)$rarity_term, 'rarity');
+        $rarity = ($rarity_obj && !is_wp_error($rarity_obj)) ? $rarity_obj->slug : (string)$rarity_term;
+    } elseif (is_string($rarity_term) && $rarity_term !== '') {
+        $rarity = $rarity_term;
+    } else {
+        $rarity = 'none';
+    }
     $taxonomy = 'rarity';
     if (!is_numeric($rarity)) {
         $rarity_detail = $rarity;

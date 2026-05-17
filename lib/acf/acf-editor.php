@@ -1,6 +1,8 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
+require_once __DIR__ . '/spec-json-importer.php';
+
 // =================================================================
 // DBエディタへのリンクをアドミンバーに追加
 // =================================================================
@@ -168,6 +170,71 @@ if (!function_exists('koto_acf_convert_to_name_keys')) {
 function koto_acf_editor_handle_actions()
 {
     $current_url = admin_url('admin.php?page=koto-acf-editor');
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acf_action']) && $_POST['acf_action'] === 'import_spec_json') {
+        if (!current_user_can('edit_posts')) {
+            wp_die('この操作を行う権限がありません。');
+        }
+
+        check_admin_referer('koto_import_spec_json', 'koto_import_spec_json_nonce');
+
+        $raw_json = '';
+        if (!empty($_FILES['spec_json_file']) && is_array($_FILES['spec_json_file']) && ($_FILES['spec_json_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
+            $file = $_FILES['spec_json_file'];
+
+            if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+                koto_acf_editor_set_import_notice('error', 'JSONファイルのアップロードに失敗しました。');
+                wp_safe_redirect(add_query_arg(['spec_import_notice' => 1], $current_url));
+                exit;
+            }
+
+            if (($file['size'] ?? 0) > 1024 * 1024) {
+                koto_acf_editor_set_import_notice('error', 'JSONファイルは1MB以下にしてください。');
+                wp_safe_redirect(add_query_arg(['spec_import_notice' => 1], $current_url));
+                exit;
+            }
+
+            $raw_json = file_get_contents($file['tmp_name']);
+        }
+
+        $pasted_json = trim((string)wp_unslash($_POST['spec_json_text'] ?? ''));
+        if ($pasted_json !== '') {
+            $raw_json = $pasted_json;
+        }
+
+        if (trim((string)$raw_json) === '') {
+            koto_acf_editor_set_import_notice('error', 'JSONファイルを選択するか、spec_json を貼り付けてください。');
+            wp_safe_redirect(add_query_arg(['spec_import_notice' => 1], $current_url));
+            exit;
+        }
+
+        $spec = json_decode($raw_json, true);
+        if (!is_array($spec)) {
+            koto_acf_editor_set_import_notice('error', 'JSONの構文を確認してください: ' . json_last_error_msg());
+            wp_safe_redirect(add_query_arg(['spec_import_notice' => 1], $current_url));
+            exit;
+        }
+
+        $result = koto_import_spec_json_to_draft($spec);
+        if (is_wp_error($result)) {
+            koto_acf_editor_set_import_notice('error', $result->get_error_message());
+            wp_safe_redirect(add_query_arg(['spec_import_notice' => 1], $current_url));
+            exit;
+        }
+
+        $post_id = (int)$result['post_id'];
+        set_transient('koto_spec_import_result_' . $post_id, [
+            'warnings' => $result['warnings'] ?? [],
+        ], 5 * MINUTE_IN_SECONDS);
+
+        wp_safe_redirect(add_query_arg([
+            'edit_post_id' => $post_id,
+            'acf_group' => 'group_69204fa4dd82e',
+            'spec_imported' => $post_id,
+        ], $current_url));
+        exit;
+    }
+
     // A. 雛型・既存キャラの複製
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acf_action']) && $_POST['acf_action'] === 'copy_template') {
         $search_temp_id = 0;
@@ -374,6 +441,14 @@ function koto_acf_editor_handle_actions()
     if (function_exists('acf_form_head')) acf_form_head();
 }
 
+function koto_acf_editor_set_import_notice($type, $message)
+{
+    set_transient('koto_spec_import_notice_' . get_current_user_id(), [
+        'type' => $type,
+        'message' => $message,
+    ], MINUTE_IN_SECONDS);
+}
+
 // プレビュー表示用ヘルパー
 if (!function_exists('koto_acf_render_preview_html')) {
     function koto_acf_render_preview_html($value, $depth = 0)
@@ -487,6 +562,20 @@ function koto_acf_editor_page_html()
 
     $target_title = $edit_post_id ? get_the_title($edit_post_id) : '【未選択】';
     $source_title = $source_post_id ? get_the_title($source_post_id) : '【未選択】';
+
+    $spec_import_notice = null;
+    if (isset($_GET['spec_import_notice'])) {
+        $notice_key = 'koto_spec_import_notice_' . get_current_user_id();
+        $spec_import_notice = get_transient($notice_key);
+        delete_transient($notice_key);
+    }
+
+    $spec_import_result = null;
+    if (!empty($_GET['spec_imported'])) {
+        $result_key = 'koto_spec_import_result_' . intval($_GET['spec_imported']);
+        $spec_import_result = get_transient($result_key);
+        delete_transient($result_key);
+    }
 ?>
 
     <div class="wrap acf-editor-wrap">
@@ -586,6 +675,26 @@ function koto_acf_editor_page_html()
         <?php if (isset($_GET['imported_multiple'])) : ?>
             <div class="notice notice-success is-dismissible">
                 <p><strong><?php echo intval($_GET['imported_multiple']); ?> 件</strong> の行データを一括で左へ追加コピーしました。</p>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($spec_import_notice) : ?>
+            <div class="notice notice-<?php echo esc_attr($spec_import_notice['type'] === 'error' ? 'error' : 'info'); ?> is-dismissible">
+                <p><?php echo esc_html($spec_import_notice['message'] ?? ''); ?></p>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($_GET['spec_imported'])) : ?>
+            <div class="notice notice-success is-dismissible">
+                <p><strong>spec_json から新規下書きを作成しました。</strong> ID: <?php echo intval($_GET['spec_imported']); ?></p>
+                <?php if (!empty($spec_import_result['warnings'])) : ?>
+                    <p>確認事項:</p>
+                    <ul style="list-style: disc; margin-left: 20px;">
+                        <?php foreach ($spec_import_result['warnings'] as $warning) : ?>
+                            <li><?php echo esc_html($warning); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 
@@ -697,6 +806,23 @@ function koto_acf_editor_page_html()
                     <?php foreach ($field_group_keys as $key => $name) echo '<option value="' . esc_attr($key) . '">' . esc_html($name) . '</option>'; ?>
                 </select>
                 <button type="submit" class="button button-secondary" onclick="return confirm('選択した雛型を複製して新しい下書きを作成しますか？');">複製して作成</button>
+            </form>
+        </div>
+
+        <div class="acf-editor-top-panel" style="background:#fff7e6; border-left:4px solid #dba617; padding:15px; margin-top:15px;">
+            <form method="POST" action="" enctype="multipart/form-data" style="display:grid; gap:10px;">
+                <input type="hidden" name="acf_action" value="import_spec_json">
+                <?php wp_nonce_field('koto_import_spec_json', 'koto_import_spec_json_nonce'); ?>
+                <strong>spec_jsonから新規下書き作成:</strong>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <input type="file" name="spec_json_file" accept="application/json,.json">
+                    <span style="color:#666; font-size:12px;">または下のテキスト欄に直接貼り付け</span>
+                </div>
+                <textarea id="koto-spec-json-text" name="spec_json_text" rows="6" style="width:100%; font-family:monospace;" placeholder="{ &quot;name&quot;: &quot;...&quot;, ... }"></textarea>
+                <div>
+                    <button type="submit" class="button button-secondary" onclick="return confirm('spec_json から新しい下書きを作成します。既存キャラは上書きしません。よろしいですか？');">spec_jsonから下書き作成</button>
+                    <span style="font-size:12px; color:#666; margin-left:8px;">基本情報・文字・わざ・すごわざを初期値として保存します。</span>
+                </div>
             </form>
         </div>
 
