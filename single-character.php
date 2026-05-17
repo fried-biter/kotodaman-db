@@ -15,9 +15,6 @@ if (!is_amp()) {
 }
 ?>
 
-<?php //投稿ページ内容
-cocoon_template_part('tmp/single-contents'); ?>
-
 <div class="character-search-box">
     <?php get_search_form(); ?>
 </div>
