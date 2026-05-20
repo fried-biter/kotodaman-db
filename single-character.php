@@ -461,22 +461,22 @@ $max_lv = $spec_data['max_lavel'] ?? 99;
     </tbody>
 </table>
 </dd>
-<?php if(false):?>
-<div class="firepower-container">
-    <div class="firepower-header">
-        <span class="fp-label">火力指数</span>
-        <?php if (!empty($spec_data['is_estimate'])): ?>
-            <span class="fp-est-badge">予想倍率による計算</span>
-        <?php endif; ?>
+<?php if (false): ?>
+    <div class="firepower-container">
+        <div class="firepower-header">
+            <span class="fp-label">火力指数</span>
+            <?php if (!empty($spec_data['is_estimate'])): ?>
+                <span class="fp-est-badge">予想倍率による計算</span>
+            <?php endif; ?>
+        </div>
+        <div class="firepower-value-area">
+            <?php
+            $fp_index = $spec_data['firepower_index'] ?? 0;
+            echo ($fp_index > 0) ? '<span class="fp-val">' . number_format($fp_index) . '</span>' : '<span class="fp-val-none">-</span>';
+            ?>
+        </div>
+        <div class="firepower-note">※LV120・才能開花なし<br>計算が正確でない場合があります</div>
     </div>
-    <div class="firepower-value-area">
-        <?php
-        $fp_index = $spec_data['firepower_index'] ?? 0;
-        echo ($fp_index > 0) ? '<span class="fp-val">' . number_format($fp_index) . '</span>' : '<span class="fp-val-none">-</span>';
-        ?>
-    </div>
-    <div class="firepower-note">※LV120・才能開花なし<br>計算が正確でない場合があります</div>
-</div>
 <?php endif; ?>
 <?php
 // =================================================================
@@ -632,6 +632,7 @@ if ($charge_name || $charge_loop):
                                     $tgt_label = "手札の{$tgt_label}";
                                 }
                             }
+                            $tgt_label = koto_replace_icons(esc_html($tgt_label)); // アイコン置換
 
                             // --- 2. 効果テキストの生成 ---
                             $type = $item['charge_type'];
@@ -690,7 +691,11 @@ if ($charge_name || $charge_loop):
                                     $effect_text = "{$tgt_label}に{$turn_txt}クリティカル率{$val}段階バフを付与";
                                     break;
                                 case 'limit_break':
-                                    $effect_text ="{$tgt_label}のダメージ上限を{$turn_txt}{$val}上昇";
+                                    $effect_text = "{$tgt_label}のダメージ上限を{$turn_txt}{$val}上昇";
+                                    break;
+                                case 'other':
+                                    $other_text = esc_html($val);
+                                    $effect_text = $other_text ? "{$tgt_label}に{$other_text}" : '';
                                     break;
                             }
 
@@ -736,11 +741,11 @@ if ($ls_html): ?>
             <div class="skill-text-block">
                 <div class="skill-text-area"><?php echo $ls_html; ?></div>
                 <?php if ($miracle_lines): ?>
-                    <?php 
+                    <?php
                     $index = $ls_count;
                     foreach ($miracle_lines as $line):
                     ?>
-                    <span class="effect-num">（<?php echo $index++; ?>）</span><?php echo $line; ?>
+                        <span class="effect-num"><br>（<?php echo $index++; ?>）</span><?php echo $line; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
@@ -759,7 +764,7 @@ $waza_shift_type = $spec_data['waza']['shift_type'] ?? 'none';
 if (empty($waza_groups) && function_exists('kotodaman_local_build_skill_groups_from_spec')) {
     $waza_groups = kotodaman_local_build_skill_groups_from_spec($spec_data['waza']['variations'] ?? [], 'waza', $waza_shift_type);
 }
-$calc_atk=(int)($disp_atk_120 ?? ($disp_atk_99 ?? 0));
+$calc_atk = (int)($disp_atk_120 ?? ($disp_atk_99 ?? 0));
 
 if ($waza_groups):
     echo '<div class="skill-card card-waza">';
@@ -899,7 +904,7 @@ $trait1_loop = $all_fields['first_trait_loop'] ?? null;
 $trait1_lines = [];
 $add_moji_1 = function_exists('get_koto_add_moji_html') ? get_koto_add_moji_html('first_trait') : '';
 if (!empty($add_moji_1[0])) $trait1_lines[] = $add_moji_1[0];
-if(!empty($add_moji_1[1])) $trait1_lines[] = $add_moji_1[1];
+if (!empty($add_moji_1[1])) $trait1_lines[] = $add_moji_1[1];
 if ($trait1_loop) {
     foreach ($trait1_loop as $row) {
         $text = function_exists('get_koto_trait_text_from_row') ? get_koto_trait_text_from_row($row) : '';
@@ -911,7 +916,7 @@ $trait2_loop = $all_fields['second_trait_loop'] ?? null;
 $trait2_lines = [];
 $add_moji_2 = function_exists('get_koto_add_moji_html') ? get_koto_add_moji_html('second_trait') : '';
 if (!empty($add_moji_2[0])) $trait2_lines[] = $add_moji_2[0];
-if(!empty($add_moji_2[1])) $trait2_lines[] = $add_moji_2[1];
+if (!empty($add_moji_2[1])) $trait2_lines[] = $add_moji_2[1];
 if ($trait2_loop) {
     foreach ($trait2_loop as $row) {
         $text = function_exists('get_koto_trait_text_from_row') ? get_koto_trait_text_from_row($row) : '';

@@ -399,7 +399,11 @@ function get_koto_trait_text_from_row($row)
             }
             if ($sub === 'resistance') {
                 $res = $row['resistance'];
-                $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
+                if ($res === 'all') {
+                    $res_name = '全ての状態異常';
+                } else {
+                    $res_name = isset($status_map[$res]) ? $status_map[$res] : $res;
+                }
                 $effect_text = "{$target_prefix}{$prefix}{$res_name}耐性{$rate}{$unit}";
             } elseif ($sub === 'dodge') {
                 $effect_text = "{$target_prefix}心眼回避{$rate}{$unit}";
@@ -689,6 +693,14 @@ function get_koto_trait_text_from_row($row)
 function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type = '', $attack = 0)
 {
     ob_start();
+    $post_id = get_the_ID();
+    $raw_data = get_post_meta($post_id, '_spec_json', true);
+    $spec_data = null;
+    if (is_string($raw_data)) {
+        $spec_data = json_decode($raw_data, true);
+    } elseif (is_array($raw_data)) {
+        $spec_data = $raw_data;
+    }
 
     // =========================================================
     // A. 発動条件 (青タグ) - ロジック部
@@ -845,6 +857,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
         }
 
         $group_idx = 0;
+        $heal_rate_array = [];
         foreach ($grouped_data as $group_info) {
             $items = $group_info['items'];
             if (empty($items)) continue;
@@ -854,6 +867,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 
             // ★ グループ(タブ)ごとの火力計算配列
             $current_group_at_rate_array = [];
+            $current_group_heal_rate_array = [];
 
             foreach ($items as $item) {
                 // 条件テキスト生成
@@ -1167,6 +1181,8 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             $is_moji_healing = $item['is_moji_healing'] ?? false;
                             $max_prefix = $is_moji_healing ? '文字数に応じて、最大' : '';
                             $effect_text = "HPを{$max_prefix}ATK×{$eff_val}回復";
+                            $raw_eff_val = isset($item['waza_value']) ? (float)$item['waza_value'] : 0;
+                            $current_group_heal_rate_array[] = ['rate' => $raw_eff_val, 'hit_count' => 1];
                             break;
                         case 'atk_buff':
                         case 'atk_debuff':
@@ -1285,6 +1301,15 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                 $group_at_rate_html = implode('<span class="simple-firerate-plus">＋</span>', $at_rate_parts);
             }
 
+            // ★ グループごとの回復計算
+            $group_heal_sum = 0;
+            if ($current_group_heal_rate_array) {
+                foreach ($current_group_heal_rate_array as $item) {
+                    $healingpower = floor($item['rate'] * $attack);
+                    $group_heal_sum += $healingpower * $item['hit_count'];
+                }
+            }
+
             // グループの処理が完了したら、タブのデータ配列に追加
             if ($is_shift_mode && !empty($current_group_effects)) {
                 $tab_data[] = [
@@ -1292,10 +1317,12 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                     'label'   => koto_replace_icons(esc_html($group_info['text'])),
                     'effects' => $current_group_effects,
                     'at_rate_html' => $group_at_rate_html,
-                    'at_sum' => $group_at_sum
+                    'at_sum' => $group_at_sum,
+                    'heal_sum' => $group_heal_sum
                 ];
             } else {
                 $at_rate_array = array_merge($at_rate_array, $current_group_at_rate_array);
+                $heal_rate_array = array_merge($heal_rate_array, $current_group_heal_rate_array);
             }
             $group_idx++;
         }
@@ -1316,6 +1343,15 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
         }
         $at_rate_html = implode('<span class="simple-firerate-plus">＋</span>', $at_rate_parts);
     }
+
+    $healing_rate_html = 0;
+    if (!empty($heal_rate_array)) {
+        foreach ($heal_rate_array as $item) {
+            $healingpower = floor($item['rate'] * $attack);
+            $healing_rate_html += $healingpower * $item['hit_count'];
+        }
+    }
+
     // =========================================================
     // C. 実際のHTML出力部 (ビュー)
     // =========================================================
@@ -1372,6 +1408,13 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                                             <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
                                         </div>
                                     <?php endif; ?>
+                                    <?php if (!empty($tab['heal_sum']) && $tab['heal_sum'] > 0): ?>
+                                        <div class="simple-healingrate-container">
+                                            <div class="simple-healingrate-title">単純回復指数</div>
+                                            <div class="simple-healingrate-total"><?php echo number_format($tab['heal_sum']); ?></div>
+                                            <div class="simple-healingrate-note">※バフ・威力補正等は考慮していません</div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -1401,6 +1444,13 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                             <div class="simple-firerate-formula"><?php echo $at_rate_html; ?></div>
                             <div class="simple-firerate-total"><span class="simple-firerate-equal">＝</span><?php echo number_format($at_sum__rate_html); ?></div>
                             <div class="simple-firerate-note">※バフ・デバフ・キラー等は考慮していません</div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($healing_rate_html > 0): ?>
+                        <div class="simple-healingrate-container">
+                            <div class="simple-healingrate-title">単純回復指数</div>
+                            <div class="simple-healingrate-total"><?php echo number_format($healing_rate_html); ?></div>
+                            <div class="simple-healingrate-note">※バフ・威力補正等は考慮していません</div>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>

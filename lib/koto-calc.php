@@ -781,9 +781,13 @@ function on_save_character_specs($post_id)
 
     // 1. 火力指数を計算
     $firepower_index = 0;
+    $healingpower_index = 0;
     $firepower_index = simple_firepower_calc($spec_data['sugowaza']['variations'] ?? [], $spec_data['_val_120_atk'] ?? 0);
+    $healingpower_index = simple_healingpower_calc($spec_data['sugowaza']['variations'] ?? [], $spec_data['_val_120_atk'] ?? 0);
+
     // 2. 計算結果を配列（$spec_data）に反映させる！
     $spec_data['firepower_index'] = $firepower_index;
+    $spec_data['healingpower_index'] = $healingpower_index;
     // ▼▼ソート用に外に出す
     // 1. 火力指数
     update_post_meta($post_id, 'firepower_index', $firepower_index);
@@ -1046,7 +1050,7 @@ function _calculate_correction_values($data)
                 if ($val) $parts[] = "文字:{$val}";
             } elseif ($type === 'theme') {
                 if ($val) $parts[] = "テーマ:{$val}";
-            } elseif ($type === 'field') $parts[] = "フィールド中"; //TODOフィールドか単体単発か上限解放の火力指数計算がおかしい
+            } elseif ($type === 'field') $parts[] = "フィールド中"; 
             elseif ($type === 'deck_attr' || $type === 'attr') $parts[] = "デッキ条件";
             elseif ($type === 'deck_species' || $type === 'species') $parts[] = "デッキ条件";
             elseif ($type === 'attacked') $parts[] = "被ダメージ";
@@ -1185,6 +1189,34 @@ function simple_firepower_calc($variations, $attack)
 
     return array_map('floor', $result);
 }
+function simple_healingpower_calc($variations, $attack)
+{
+    if (empty($variations)) {
+        return [0];
+    }
+    $result = [];
+    foreach ($variations as $var) {
+        $timelines = $var['timelines'] ?? [];
+        $shift_val = $var['shift_value'] ?? ['none'];
+        $timeline_healing = 0;
+        foreach ($timelines as $action) {
+            $action_type = $action['type'];
+            if (strpos($action_type, 'heal') !== false) {
+                $val = (float)($action['value'] ?? 0);
+                $timeline_healing += (float)$val * (float)$attack;
+            }
+        }
+        // キーを文字列として生成
+        $key = implode(',', $shift_val);
+        // その場でresultに加算する（重複加算を防ぐ）
+        if (!isset($result[$key])) {
+            $result[$key] = 0;
+        }
+        $result[$key] += $timeline_healing;
+    }
+    return array_map('floor', $result);
+}
+
 // 対象選択フィールドグループをspec_json用に崩す関数
 function parse_target_group($grp)
 {

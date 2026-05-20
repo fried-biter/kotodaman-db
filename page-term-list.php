@@ -2,6 +2,8 @@
 /*
 Template Name: 汎用ターム一覧ページ（階層対応）
 */
+
+
 get_header();
 
 // 1. ACFの設定を取得

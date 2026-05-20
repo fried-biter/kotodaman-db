@@ -542,7 +542,7 @@ require_once get_stylesheet_directory() . '/lib/character-search/chara-list-func
  */
 function override_event_affiliation_caps($args, $taxonomy)
 {
-    $target_taxonomies = ['event', 'affiliation'];
+    $target_taxonomies = ['event', 'affiliation', 'suitable_quest'];
 
     if (in_array($taxonomy, $target_taxonomies, true)) {
         // 合鍵の名前
@@ -566,7 +566,7 @@ add_filter('register_taxonomy_args', 'override_event_affiliation_caps', 20, 2);
 function grant_custom_caps_to_roles()
 {
     // 権限を与えるロール一覧
-    $roles_to_modify = ['administrator', 'editor', 'author', 'contributor'];
+    $roles_to_modify = ['administrator', 'editor', 'author'];
 
     // 合鍵の名前
     $cap_suffix = 'custom_event_aff_terms';
@@ -1084,3 +1084,6 @@ function enqueue_character_search_assets()
     wp_enqueue_script('character-search-script', get_stylesheet_directory_uri() . '/lib/character-search/searchform.js', array(), false, true);
 }
 add_action('wp_enqueue_scripts', 'enqueue_character_search_assets');
+
+// ターム一括付与Ajax処理
+require_once get_stylesheet_directory() . '/lib/term-setter/term-setter-ajax.php';

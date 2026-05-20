@@ -29,6 +29,7 @@ function koto_acf_editor_admin_bar_link($wp_admin_bar)
             'id'    => 'koto-acf-editor-link',
             'title' => 'DBエディタで編集',
             'href'  => $editor_url,
+            'meta' => ['target' => '_blank'],
         ]);
     }
 }
