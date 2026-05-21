@@ -382,8 +382,10 @@ function get_koto_trait_text_from_row($row)
                 $limit = $row['limit_break_rate'];
                 $effect_text = "{$prefix}自身のダメージ上限を+{$limit}";
             } elseif ($sub === 'single_shot') {
-                $limit_txt = $row['limit_break_rate'] ? "、ダメージ上限を+{$row['limit_break_rate']}" : '';
-                $effect_text = "{$target_prefix}単体単発攻撃のダメージ{$rate}%UP{$limit_txt}";
+                $limit_txt = $row['limit_break_rate'] ? "ダメージ上限を+{$row['limit_break_rate']}" : '';
+                $rate_txt = $rate > 0 ? "ダメージ{$rate}%UP" : '';
+                $panctuation = ($rate_txt && $limit_txt) ? '、' : '';
+                $effect_text = "{$target_prefix}単体単発攻撃の{$rate_txt}{$panctuation}{$limit_txt}";
             } elseif ($sub === 'week_killer') {
                 $effect_text = "{$prefix}自身が弱点を突いた時のダメージ{$rate}%UP";
             }
