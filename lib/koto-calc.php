@@ -1335,6 +1335,7 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
         ];
         $rate_type_fixed = [
             'core_gimmick',
+            'unique_buff'
         ];
         $trait_sub_type_both = [
             'atk',
@@ -1895,7 +1896,7 @@ function _parse_skill_groups_to_data($groups, $shift_type = 'none')
                 if (empty($parsed_bt_field_eff)) {
                     $parsed_bt_field_eff = $bt_field_eff; // デフォルト構造を維持
                 }
-                if ($d['hit_count']<1) $d['hit_count'] = 1; // ヒット数が0以下の場合は1に補正
+                if ($d['hit_count'] < 1) $d['hit_count'] = 1; // ヒット数が0以下の場合は1に補正
                 // タイムライン追加
                 $variant['timelines'][] = [
                     'type'            => $type,

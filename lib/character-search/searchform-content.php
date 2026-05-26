@@ -308,6 +308,18 @@
                             <details class="tag-details">
                                 <summary class="tag-summary">
                                     <label class="parent-label" onclick="event.stopPropagation();">
+                                        <input type="checkbox" name="tx_trait_tags[]" value="trait_unique_buff"> 特殊な攻撃バフ
+                                    </label>
+                                </summary>
+                                <div class="tag-children">
+                                    <label><input type="checkbox" name="tx_trait_tags[]" value="trait_unique_buff_gimmick_count"> ギミックカウントATKバフ</label>
+                                    <label><input type="checkbox" name="tx_trait_tags[]" value="trait_unique_buff_block_break"> ブロック破壊時ATKバフ</label>
+                                    <label><input type="checkbox" name="tx_trait_tags[]" value="trait_unique_buff_passed_turn"> ターン経過ATKバフ</label>
+                                </div>
+                            </details>
+                            <details class="tag-details">
+                                <summary class="tag-summary">
+                                    <label class="parent-label" onclick="event.stopPropagation();">
                                         <input type="checkbox" name="tx_trait_tags[]" value="trait_after_attack"> 反撃・腐敗など
                                     </label>
                                 </summary>

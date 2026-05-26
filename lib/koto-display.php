@@ -486,6 +486,23 @@ function get_koto_trait_text_from_row($row)
             }
             break;
 
+        case 'unique_buff':
+            $sub = $row['unique_buff'];
+            switch ($sub) {
+                case 'gimmick_count':
+                    $effect_text = "実体化時に盤面に存在するギミックの数×{$rate}段階自身のATKを強化";
+                    break;
+                case 'block_break':
+                    $effect_text = "実体化している間に、ブロックギミックが破壊された数×{$rate}段階自身のATKを強化";
+                    break;
+                case 'passed_turn':
+                    $max_buff = $rate * 4;
+                    $effect_text = "ドロー時、または自身が手札にいる場合はターン開始時に経過ターン数×{$rate}段階自身のATKを1ターンの間強化(最大{$max_buff}段階)。（例：０→１→２→３→４→３→２→１→０→……）";
+                    break;
+            }
+            break;
+
+
         case 'new_traits':
             $sub = $row['new_traits'];
             $new_map = ['support' => '応援', 'see_through' => '看破', 'assistance' => '援護', 'resonance' => '共鳴', 'poke' => '牽制'];
