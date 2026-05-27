@@ -25,10 +25,25 @@ function koto_acf_editor_admin_bar_link($wp_admin_bar)
         $editor_url = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_69204fa4dd82e');
         $wp_admin_bar->add_node([
             'id'    => 'koto-acf-editor-link',
-            'title' => 'DBエディタで編集',
+            'title' => '<span class="ab-icon dashicons dashicons-edit-page" style="top: 2px; position: relative;"></span><span class="ab-label">DBエディタ</span>',
             'href'  => $editor_url,
             'meta' => ['target' => '_blank'],
         ]);
+    }
+}
+
+// スマホでもDBエディタリンクをアドミンバーに表示させるためのCSS
+add_action('wp_print_styles', 'koto_acf_editor_admin_bar_style');
+add_action('admin_print_styles', 'koto_acf_editor_admin_bar_style');
+function koto_acf_editor_admin_bar_style() {
+    if (is_admin_bar_showing()) {
+        echo '<style>
+            @media screen and (max-width: 782px) {
+                #wpadminbar #wp-admin-bar-koto-acf-editor-link {
+                    display: block !important;
+                }
+            }
+        </style>';
     }
 }
 
