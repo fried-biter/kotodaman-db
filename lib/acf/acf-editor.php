@@ -1,6 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit;
-
+require_once __DIR__ . '/acf-auto-input.php';
 // =================================================================
 // DBエディタへのリンクをアドミンバーに追加
 // =================================================================
@@ -35,7 +35,8 @@ function koto_acf_editor_admin_bar_link($wp_admin_bar)
 // スマホでもDBエディタリンクをアドミンバーに表示させるためのCSS
 add_action('wp_print_styles', 'koto_acf_editor_admin_bar_style');
 add_action('admin_print_styles', 'koto_acf_editor_admin_bar_style');
-function koto_acf_editor_admin_bar_style() {
+function koto_acf_editor_admin_bar_style()
+{
     if (is_admin_bar_showing()) {
         echo '<style>
             @media screen and (max-width: 782px) {
@@ -130,6 +131,40 @@ add_action('acf/init', function () {
         'return_format' => 'id',
     ]);
 });
+
+// =================================================================
+// DBに誤って保存されたWP_TermやWP_PostオブジェクトをIDに変換してエラーを防ぐ
+// =================================================================
+add_filter('acf/load_value/type=taxonomy', 'koto_sanitize_acf_object_value', 5, 3);
+add_filter('acf/update_value/type=taxonomy', 'koto_sanitize_acf_object_value', 5, 3);
+add_filter('acf/load_value/type=relationship', 'koto_sanitize_acf_object_value', 5, 3);
+add_filter('acf/update_value/type=relationship', 'koto_sanitize_acf_object_value', 5, 3);
+add_filter('acf/load_value/type=post_object', 'koto_sanitize_acf_object_value', 5, 3);
+add_filter('acf/update_value/type=post_object', 'koto_sanitize_acf_object_value', 5, 3);
+
+function koto_sanitize_acf_object_value($value, $post_id, $field) {
+    if (empty($value)) return $value;
+
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            if (is_object($v)) {
+                if (isset($v->term_id)) {
+                    $value[$k] = (int) $v->term_id;
+                } elseif (isset($v->ID)) {
+                    $value[$k] = (int) $v->ID;
+                }
+            }
+        }
+    } elseif (is_object($value)) {
+        if (isset($value->term_id)) {
+            $value = (int) $value->term_id;
+        } elseif (isset($value->ID)) {
+            $value = (int) $value->ID;
+        }
+    }
+
+    return $value;
+}
 
 // =================================================================
 // ACFリピーター等の行データを、フィールドキーではなくフィールド名をキーにした配列に変換する
@@ -715,6 +750,20 @@ function koto_acf_editor_page_html()
                 <button type="submit" class="button button-secondary" onclick="return confirm('選択した雛型を複製して新しい下書きを作成しますか？');">複製して作成</button>
             </form>
         </div>
+        <div class="acf-auto-input-container">
+            <div class="acf-auto-input-header">自動入力を使用する</div>
+            <div class="acf-auto-input-content">
+                <div class="acf-auto-input-row"><label for="auto_input_character_name" class="acf-auto-input-label">キャラ名：</label><input type="text" class="acf-auto-input-text" id="auto_input_character_name" placeholder="例: コトダマン"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_waza" class="acf-auto-input-label">わざ内容：</label><input type="text" class="acf-auto-input-text" id="auto_input_waza"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_sugowaza" class="acf-auto-input-label">すごわざ内容：</label><input type="text" class="acf-auto-input-text" id="auto_input_sugowaza"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_sugowaza_condition" class="acf-auto-input-label">すごわざ条件：</label><input type="text" class="acf-auto-input-text" id="auto_input_sugowaza_condition"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_trait1" class="acf-auto-input-label">とくせい１内容：</label><input type="text" class="acf-auto-input-text" id="auto_input_trait1" placeholder="とくせい1の内容"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_trait2" class="acf-auto-input-label">とくせい２内容：</label><input type="text" class="acf-auto-input-text" id="auto_input_trait2" placeholder="とくせい2の内容"></div>
+                <div class="acf-auto-input-row"><label for="auto_input_blessing" class="acf-auto-input-label">祝福内容：</label><input type="text" class="acf-auto-input-text" id="auto_input_blessing" placeholder="祝福の内容"></div>
+                <button type="button" class="button button-secondary" id="btn_auto_input_fill">これらの内容を自動入力</button>
+                <button type="button" class="button button-secondary" id="btn_auto_input_make">これらの内容を自動入力して記事を作成</button>
+            </div>
+        </div>
 
         <div class="acf-editor-columns">
             <div class="acf-editor-col-left">
@@ -953,6 +1002,106 @@ function koto_acf_editor_page_html()
                         });
                     });
                     document.getElementById('copy_items_json').value = JSON.stringify(items);
+                });
+            }
+
+            // 自動入力用スクリプト
+            const btnAutoInputFill = document.getElementById('btn_auto_input_fill');
+            const btnAutoInputMake = document.getElementById('btn_auto_input_make');
+
+            function getAutoInputData() {
+                return {
+                    character_name: document.getElementById('auto_input_character_name')?.value || '',
+                    texts: {
+                        auto_input_waza: document.getElementById('auto_input_waza')?.value || '',
+                        auto_input_sugowaza: document.getElementById('auto_input_sugowaza')?.value || '',
+                        auto_input_sugowaza_condition: document.getElementById('auto_input_sugowaza_condition')?.value || '',
+                        auto_input_trait1: document.getElementById('auto_input_trait1')?.value || '',
+                        auto_input_trait2: document.getElementById('auto_input_trait2')?.value || '',
+                        auto_input_blessing: document.getElementById('auto_input_blessing')?.value || ''
+                    }
+                };
+            }
+
+            if (btnAutoInputFill) {
+                btnAutoInputFill.addEventListener('click', function() {
+                    const data = getAutoInputData();
+                    const editPostId = document.getElementById('real_edit_post_id')?.value;
+
+                    if (!editPostId) {
+                        alert('反映先の記事（左側）が選択されていません。');
+                        return;
+                    }
+
+                    if (!confirm('現在の記事（左側）に自動入力の内容を反映してよろしいですか？\n※保存済みのデータに追記されます。画面がリロードされます。')) {
+                        return;
+                    }
+
+                    btnAutoInputFill.disabled = true;
+                    btnAutoInputFill.textContent = '反映中...';
+
+                    jQuery.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'koto_update_post_from_auto_input',
+                            post_id: editPostId,
+                            texts: data.texts
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.data.message);
+                                location.reload();
+                            } else {
+                                alert('エラー: ' + (response.data?.message || '通信に失敗しました'));
+                                btnAutoInputFill.disabled = false;
+                                btnAutoInputFill.textContent = 'これらの内容を自動入力';
+                            }
+                        },
+                        error: function() {
+                            alert('サーバーエラーが発生しました。');
+                            btnAutoInputFill.disabled = false;
+                            btnAutoInputFill.textContent = 'これらの内容を自動入力';
+                        }
+                    });
+                });
+            }
+
+            if (btnAutoInputMake) {
+                btnAutoInputMake.addEventListener('click', function() {
+                    const data = getAutoInputData();
+
+                    if (!confirm('入力された内容で新しい記事を作成してよろしいですか？')) {
+                        return;
+                    }
+
+                    btnAutoInputMake.disabled = true;
+                    btnAutoInputMake.textContent = '作成中...';
+
+                    jQuery.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'koto_create_post_from_auto_input',
+                            character_name: data.character_name,
+                            texts: data.texts
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert(response.data.message);
+                                window.location.href = response.data.edit_url;
+                            } else {
+                                alert('エラー: ' + (response.data?.message || '通信に失敗しました'));
+                                btnAutoInputMake.disabled = false;
+                                btnAutoInputMake.textContent = 'これらの内容を自動入力して記事を作成';
+                            }
+                        },
+                        error: function() {
+                            alert('サーバーエラーが発生しました。');
+                            btnAutoInputMake.disabled = false;
+                            btnAutoInputMake.textContent = 'これらの内容を自動入力して記事を作成';
+                        }
+                    });
                 });
             }
         });
