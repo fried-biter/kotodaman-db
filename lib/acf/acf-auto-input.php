@@ -391,7 +391,8 @@ function koto_preprocess_text($text)
         'このコトダマンを含むことばで指定コンボ達成した場合、達成段階に応じて効果が変化する。',
         '※同じとくせいを持ったコトダマンが複数いる場合、1ターンに2体まで発動する',
         'また、クエスト終了まで変身状態は維持される。',
-        '※この効果は重複しません。'
+        '※この効果は重複しません。',
+        ' ',
     ];
     $text = trim(str_replace($ignore_texts, '', $text));
 
@@ -402,7 +403,7 @@ function koto_preprocess_text($text)
 
 function koto_split_by_circled_numbers($text)
 {
-    $parts = preg_split('/[①②③④⑤⑥⑦⑧⑨⑩]/u', $text, -1, PREG_SPLIT_NO_EMPTY);
+    $parts = preg_split('/[①②③④⑤⑥⑦⑧⑨⑩\n\/／●■★]/u', $text, -1, PREG_SPLIT_NO_EMPTY);
     $result = [];
     foreach ($parts as $part) {
         $trimmed = trim($part);
