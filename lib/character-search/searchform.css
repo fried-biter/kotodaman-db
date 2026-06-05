@@ -1,11 +1,55 @@
 /* --- メイン画面の検索フォーム枠 --- */
 .search-wrapper {
     background: #f7ede3;
+    position: relative; /* Needed for absolute positioning of the minimize button */
     padding: 15px;
     border-radius: 8px;
     border: 1px solid #ddd;
     margin-bottom: 20px;
     width: 100% !important;
+}
+
+/* Minimize button */
+.js-minimize-search-btn {
+    background: #fff;
+    color: #555;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    padding: 0;
+}
+
+.js-minimize-search-btn:hover {
+    background: #f0f0f0;
+}
+
+/* 最小化時に非表示にする要素 */
+.search-wrapper.is-minimized .search-row-top,
+.search-wrapper.is-minimized .search-configs .config-item:not(:first-child) {
+    display: none;
+}
+
+/* 最小化時のラッパー自体のスタイル調整 */
+.search-wrapper.is-minimized {
+    background: transparent;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0;
+    box-shadow: none !important;
+    margin-bottom: 0;
+}
+
+/* 最小化時に設定項目コンテナの余白をなくす */
+.search-wrapper.is-minimized .search-configs {
+    margin-top: 0;
 }
 
 .search-row-top {
@@ -734,6 +778,7 @@ details[open]>.tree-summary::after {
 .config-item {
     display: flex;
     align-items: center;
+    height: 36px !important;
 }
 
 /* トグルスイッチがある左側のアイテム */

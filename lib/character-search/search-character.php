@@ -14,8 +14,16 @@ if (!is_search() && !isset($_GET['tx_attr'])) {
     // 必要であればここで初期化
 }
 // ▲▲▲ 追加・修正ポイント終わり ▲▲▲
-
-get_header(); ?>
+?>
+<?php
+// Add 'is-search-page' class to body if it's a character search result page
+if (is_search() && get_query_var('post_type') === 'character') {
+    add_filter('body_class', function($classes) {
+        return array_merge($classes, ['is-search-page']);
+    });
+}
+get_header();
+?>
 <div class="koto-archive-container">
 
     <header class="archive-header">

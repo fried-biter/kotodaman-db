@@ -2,13 +2,14 @@
 // =========================================================
 // iPhone風トグルスイッチを出力する共通関数（CSS＆JS内包版）
 // =========================================================
-function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label_on = 'AND', $width = 40)
+function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label_on = 'AND', $width = 40, $has_frame = true)
 {
     static $assets_outputted = false;
 
     $is_on = ($current_val === 'AND');
     $active_off = !$is_on ? 'active' : '';
     $active_on = $is_on ? 'active' : '';
+    $capsule_class = $has_frame ? ' ios-toggle-capsule' : '';
 
     // スイッチの比率計算
     $height = round($width * 0.56); // 高さを横幅の約56%に
@@ -16,18 +17,35 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
     $knob_size = $height - ($padding * 2); // ノブの直径
     $translate_x = $width - $knob_size - ($padding * 2); // 移動距離
 
+    // JavaScriptで使うセレクタのクラス名
+    // `ios-toggle-container-minimal` は `ios-toggle-wrapper` に変更
+    // `ios-toggle-wrapper` は常に存在し、`ios-toggle-capsule` が外枠のスタイルを定義する
+    $wrapper_class = 'ios-toggle-wrapper';
+    $js_selector_class = '.' . $wrapper_class;
+
+    // CSS変数名も変更
+    $css_var_prefix = '--sw-';
+
     ob_start();
 
     if (!$assets_outputted) {
 ?>
         <style>
-            .ios-toggle-container-minimal {
+            .ios-toggle-wrapper {
                 display: inline-flex;
                 align-items: center;
                 gap: 8px;
                 font-size: 14px;
                 vertical-align: middle;
-                color: #666;
+                box-sizing: border-box;
+            }
+
+            /* 外枠（カプセル型）のスタイル */
+            .ios-toggle-wrapper.ios-toggle-capsule {
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 4px 8px;
             }
 
             .ios-toggle-label-text {
@@ -37,19 +55,19 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
             }
 
             .ios-toggle-label-text.active {
-                color: #000;
+                color: #2271b1;
                 font-weight: bold;
             }
 
             .ios-toggle-label-text:not(.active) {
-                color: #ccc;
+                color: #777;
             }
 
             .ios-toggle-switch-dynamic {
                 position: relative;
                 display: inline-block;
-                width: var(--sw-width);
-                height: var(--sw-height);
+                width: var(<?php echo $css_var_prefix; ?>width);
+                height: var(<?php echo $css_var_prefix; ?>height);
             }
 
             .ios-toggle-switch-dynamic input {
@@ -68,16 +86,16 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
                 bottom: 0;
                 background-color: #e5e5ea;
                 transition: .3s;
-                border-radius: var(--sw-height);
+                border-radius: var(<?php echo $css_var_prefix; ?>height);
             }
 
             .ios-toggle-slider-dynamic:before {
                 position: absolute;
                 content: "";
-                height: var(--sw-knob);
-                width: var(--sw-knob);
-                left: var(--sw-pad);
-                bottom: var(--sw-pad);
+                height: var(<?php echo $css_var_prefix; ?>knob);
+                width: var(<?php echo $css_var_prefix; ?>knob);
+                left: var(<?php echo $css_var_prefix; ?>pad);
+                bottom: var(<?php echo $css_var_prefix; ?>pad);
                 background-color: white;
                 transition: .3s;
                 border-radius: 50%;
@@ -89,20 +107,20 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
             }
 
             .ios-toggle-checkbox:checked+.ios-toggle-slider-dynamic:before {
-                transform: translateX(var(--sw-translate));
+                transform: translateX(var(<?php echo $css_var_prefix; ?>translate));
             }
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // トグルスイッチの状態に合わせてラベルとHidden要素を更新する共通関数
                 const updateLabels = function(checkbox) {
-                    const container = checkbox.closest('.ios-toggle-container-minimal');
+                    const container = checkbox.closest('<?php echo $js_selector_class; ?>');
                     if (container) {
                         const labels = container.querySelectorAll('.ios-toggle-label-text');
                         const isChecked = checkbox.checked;
                         labels[0].classList.toggle('active', !isChecked);
                         labels[1].classList.toggle('active', isChecked);
-                        
+
                         // チェックされている時は hidden(OR) を無効化してURLパラメータのダブりを防ぐ
                         const hiddenInput = container.querySelector('input[type="hidden"]');
                         if (hiddenInput) {
@@ -122,7 +140,7 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
                     const label = e.target.closest('.ios-toggle-label-text');
                     if (!label) return;
 
-                    const container = label.closest('.ios-toggle-container-minimal');
+                    const container = label.closest('<?php echo $js_selector_class; ?>');
                     const checkbox = container.querySelector('.ios-toggle-checkbox');
                     const labels = container.querySelectorAll('.ios-toggle-label-text');
                     const isFirstLabel = (label === labels[0]);
@@ -145,8 +163,8 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
 
                 // 初期表示時にも hidden の disabled 状態をセットする
                 const initialToggles = document.querySelectorAll('.ios-toggle-checkbox');
-                initialToggles.forEach(checkbox => {
-                    const hiddenInput = checkbox.closest('.ios-toggle-container-minimal').querySelector('input[type="hidden"]');
+                initialToggles.forEach(checkbox => { // `closest` は `ios-toggle-wrapper` を探すように変更
+                    const hiddenInput = checkbox.closest('<?php echo $js_selector_class; ?>').querySelector('input[type="hidden"]');
                     if (hiddenInput) hiddenInput.disabled = checkbox.checked;
                 });
             });
@@ -154,14 +172,14 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
     <?php
         $assets_outputted = true;
     }
+    // `ios-toggle-container-minimal` を `ios-toggle-wrapper` に変更し、`ios-toggle-capsule` を条件付きで追加
     ?>
-    <span class="ios-toggle-container-minimal" style="
-        --sw-width: <?php echo $width; ?>px;
-        --sw-height: <?php echo $height; ?>px;
-        --sw-knob: <?php echo $knob_size; ?>px;
-        --sw-pad: <?php echo $padding; ?>px;
-        --sw-translate: <?php echo $translate_x; ?>px;
-    ">
+    <span class="<?php echo $wrapper_class . $capsule_class; ?>" style="
+        <?php echo $css_var_prefix; ?>width: <?php echo $width; ?>px;
+        <?php echo $css_var_prefix; ?>height: <?php echo $height; ?>px;
+        <?php echo $css_var_prefix; ?>knob: <?php echo $knob_size; ?>px;
+        <?php echo $css_var_prefix; ?>pad: <?php echo $padding; ?>px;
+        <?php echo $css_var_prefix; ?>translate: <?php echo $translate_x; ?>px;">
         <span class="ios-toggle-label-text <?php echo $active_off; ?>"><?php echo esc_html($label_off); ?></span>
         <label class="ios-toggle-switch-dynamic">
             <input type="hidden" name="<?php echo esc_attr($name); ?>" value="OR">
@@ -174,11 +192,11 @@ function render_ios_toggle($name, $current_val = 'OR', $label_off = 'OR', $label
     return ob_get_clean();
 }
 // シンプルなチェックボックスでrender_ios_toggleを利用するための関数
-function render_simple_relation_toggle($name,$initial = 'OR')
+function render_simple_relation_toggle($name, $initial = 'OR')
 {
     $relation = isset($_GET["{$name}_relation"]) ? $_GET["{$name}_relation"] : $initial;
     if (function_exists('render_ios_toggle')) {
-        echo render_ios_toggle("{$name}_relation", $relation);
+        echo render_ios_toggle("{$name}_relation", $relation, 'OR', 'AND', 40, false); // 外枠なしで呼び出す
     }
 }
 // =================================================================

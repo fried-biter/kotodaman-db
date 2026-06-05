@@ -5,7 +5,6 @@
     $current_target = isset($_GET['string_match_target']) ? $_GET['string_match_target'] : 'OR';
     $is_moji = ($current_target === 'AND');
     ?>
-
     <div class="search-wrapper">
         <div class="search-row-top">
             <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名・状態異常耐性..." class="js-freeword-search" <?php if ($is_moji) echo 'style="display:none;"'; ?> />
@@ -20,6 +19,9 @@
             ?>
         </div>
         <div class="search-configs">
+            <div class="config-item">
+                <button type="button" class="js-minimize-search-btn" aria-label="検索バーを最小化/最大化"><span>−</span></button>
+            </div>
             <div class="config-item">
                 <?php echo render_ios_toggle('string_match_target', $current_target, 'フリーワード', '文字'); ?>
             </div>
@@ -79,7 +81,7 @@
                         </div>
                         <p class="section-sub-title">副属性</p>
                         <?php
-                        echo render_ios_toggle('tx_attr_sub', isset($_GET['tx_attr_sub']) ? $_GET['tx_attr_sub'] : 'OR', '含む', '含まない');
+                        echo render_ios_toggle('tx_attr_sub', isset($_GET['tx_attr_sub']) ? $_GET['tx_attr_sub'] : 'OR', '含む', '含まない', 40, false);
                         ?>
                         <?php if (function_exists('render_simple_checkbox_list')) render_simple_checkbox_list('attribute', 'tx_attr', true); ?>
                     </div>
