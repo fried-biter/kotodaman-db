@@ -4,6 +4,7 @@
     <?php
     $current_target = isset($_GET['string_match_target']) ? $_GET['string_match_target'] : 'OR';
     $is_moji = ($current_target === 'AND');
+    $is_search_page = is_search() && get_query_var('post_type') === 'character';
     ?>
     <div class="search-wrapper">
         <div class="search-row-top">
@@ -19,9 +20,11 @@
             ?>
         </div>
         <div class="search-configs">
-            <div class="config-item">
-                <button type="button" class="js-minimize-search-btn" aria-label="検索バーを最小化/最大化"><span>−</span></button>
-            </div>
+            <?php if ($is_search_page): ?>
+                <div class="config-item">
+                    <button type="button" class="js-minimize-search-btn" aria-label="検索バーを最小化/最大化"><span>−</span></button>
+                </div>
+            <?php endif; ?>
             <div class="config-item">
                 <?php echo render_ios_toggle('string_match_target', $current_target, 'フリーワード', '文字'); ?>
             </div>
