@@ -1,32 +1,36 @@
 <!-- TODO小さくたためるようにする -->
 <form role="search" method="get" id="searchform" class="searchform js-search-form" action="<?php echo home_url('/'); ?>">
     <input type="hidden" name="post_type" value="character" />
+    <?php
+    $current_target = isset($_GET['string_match_target']) ? $_GET['string_match_target'] : 'OR';
+    $is_moji = ($current_target === 'AND');
+    ?>
 
     <div class="search-wrapper">
         <div class="search-row-top">
-            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名・状態異常耐性..." />
+            <input type="text" value="<?php echo get_search_query(); ?>" name="s" id="s" placeholder="キャラ名・グループ名・ギミック名・状態異常耐性..." class="js-freeword-search" <?php if ($is_moji) echo 'style="display:none;"'; ?> />
+            <input type="text" name="search_char" class="js-search-char-input"
+                value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
+                placeholder="ほしい文字を入力" <?php if (!$is_moji) echo 'style="display:none;"'; ?> />
             <button type="submit" class="submit-btn">検索</button>
         </div>
-        <div class="section-title">
-            使用可能文字
+        <div style="display:none;">
             <?php
             render_simple_relation_toggle('search_char', 'AND');
             ?>
-            <span style="margin-left: 10px;">
-                <label>
-                    <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
-                    <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
-                </label>
-            </span>
         </div>
-        <input type="text" name="search_char" class="term-tree-search js-search-char-input"
-            value="<?php echo isset($_GET['search_char']) ? esc_attr($_GET['search_char']) : ''; ?>"
-            placeholder="ほしい文字を入力" />
-        <div class="search-row-bottom">
-            <button type="button" class="toggle-btn js-toggle-advanced-search" aria-label="詳細検索を開く">
-                <span class="filter-icon">🔍</span> 詳細フィルターを開く
-            </button>
-            <button type="button" class="reset-btn js-reset-search-btn">条件クリア</button>
+        <div class="search-configs">
+            <div class="config-item">
+                <?php echo render_ios_toggle('string_match_target', $current_target, 'フリーワード', '文字'); ?>
+            </div>
+            <div class="config-item">
+                <div class="search-row-bottom">
+                    <button type="button" class="toggle-btn js-toggle-advanced-search" aria-label="詳細検索を開く" style="width:100%;">
+                        <span class="filter-icon">🔍</span> 詳細フィルターを開く
+                    </button>
+                    <button type="button" class="reset-btn js-reset-search-btn">条件クリア</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -51,6 +55,8 @@
             <div class="search-modal-body" id="advanced-search-panel">
                 <div class="tab-content is-active" data-content="tab-basic">
                     <div class="search-section">
+                        <input type="checkbox" name="include_trait_status_resistance" value="1" <?php checked(isset($_GET['include_trait_status_resistance']) && $_GET['include_trait_status_resistance'] === '1'); ?>>
+                        <span>自由入力で個別とくせい由来の状態異常耐性も含める</span>
                         <p class="section-title">文字の軸
                             <?php
                             render_simple_relation_toggle('tx_axis');

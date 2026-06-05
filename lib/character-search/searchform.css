@@ -22,7 +22,7 @@
     width: 100%;
 }
 
-.search-row-top input[type="text"]#s {
+.search-row-top input[type="text"] {
     flex: 1;
     height: 44px;
     padding: 0 12px;
@@ -63,6 +63,7 @@ button.js-toggle-advanced-search.toggle-btn {
     cursor: pointer;
     text-align: center;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 button.js-toggle-advanced-search.toggle-btn:hover {
@@ -528,8 +529,9 @@ details[open]>.tree-summary::after {
     flex-direction: column;
     gap: 8px;
 }
-.leader-cond-container .leader-cond-val{
-    width: 95%; 
+
+.leader-cond-container .leader-cond-val {
+    width: 95%;
     align-self: flex-end;
 }
 
@@ -620,11 +622,11 @@ details[open]>.tree-summary::after {
 }
 
 /* セクション内の要素間隔 */
-.leader-section > *:not(.leader-section-label) {
+.leader-section>*:not(.leader-section-label) {
     margin-bottom: 6px;
 }
 
-.leader-section > *:last-child {
+.leader-section>*:last-child {
     margin-bottom: 0;
 }
 
@@ -714,4 +716,34 @@ details[open]>.tree-summary::after {
 
 .match-section.active {
     display: table-row-group;
+}
+
+.search-configs {
+    display: flex;
+    flex-wrap: wrap;
+    /* 画面幅が狭いときや要素が溢れたときに折り返せるように */
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    /* 上段との間隔を適切に確保 */
+    width: 100%;
+}
+
+/* 各設定アイテムのベース */
+.config-item {
+    display: flex;
+    align-items: center;
+}
+
+/* トグルスイッチがある左側のアイテム */
+.config-item:first-child {
+    flex: 0 0 auto;
+    /* トグルは必要な幅だけ確保 */
+}
+
+/* ボタン群がある右側のアイテム */
+.config-item:last-child {
+    flex: 1;
+    /* 残りの余白をすべて埋める */
 }
