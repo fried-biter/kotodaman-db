@@ -6,6 +6,9 @@
 /**
  * キャラクターのスペック情報（計算用・JSON用）をすべて取得する関数
  * ロジックをここに集約します。
+ *
+ * @param int $post_id 投稿ID
+ * @return array キャラクターのスペックデータ
  */
 function get_character_spec_data($post_id)
 {
@@ -759,6 +762,13 @@ function get_character_spec_data($post_id)
 // =================================================================
 add_action('acf/save_post', 'on_save_character_specs', 20);
 
+/**
+ * 保存処理: JSON保存・火力指数の計算と保存のみ行う
+ * ACFの保存フック(acf/save_post)で実行される。
+ *
+ * @param int|string $post_id 投稿ID
+ * @return void
+ */
 function on_save_character_specs($post_id)
 {
     if (get_post_type($post_id) !== 'character') return;
@@ -1139,7 +1149,14 @@ function _calculate_correction_values($data)
     return $result;
 }
 */
-// 簡易火力指数計算
+
+/**
+ * 簡易火力指数計算
+ *
+ * @param array $variations スキルのバリエーションデータ
+ * @param int|float $attack ATK値
+ * @return array 各シフト状態の簡易火力指数（切り捨て）
+ */
 function simple_firepower_calc($variations, $attack)
 {
     if (empty($variations)) {
@@ -1180,6 +1197,14 @@ function simple_firepower_calc($variations, $attack)
 
     return array_map('floor', $result);
 }
+
+/**
+ * 簡易回復指数計算
+ *
+ * @param array $variations スキルのバリエーションデータ
+ * @param int|float $attack ATK値
+ * @return array 各シフト状態の簡易回復指数（切り捨て）
+ */
 function simple_healingpower_calc($variations, $attack)
 {
     if (empty($variations)) {
@@ -1208,7 +1233,12 @@ function simple_healingpower_calc($variations, $attack)
     return array_map('floor', $result);
 }
 
-// 対象選択フィールドグループをspec_json用に崩す関数
+/**
+ * 対象選択フィールドグループをspec_json用に崩す関数
+ *
+ * @param array|null $grp ターゲットグループのACFデータ
+ * @return array 解析されたターゲットデータ ['type' => ..., 'obj' => [...]]
+ */
 function parse_target_group($grp)
 {
     $result = ['type' => '', 'obj' => []];
@@ -1261,6 +1291,11 @@ function parse_target_group($grp)
 // =================================================================
 //  【内部ヘルパー】とくせい解析 (決定版：通常とくせいはLvなし)
 // =================================================================
+/**
+ * @param array|null $trait_loop とくせいループのACFデータ
+ * @param bool $is_blessing 祝福とくせいかどうかのフラグ
+ * @return array 解析されたとくせいデータの配列
+ */
 function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
 {
     if (empty($trait_loop) || !is_array($trait_loop)) return [
@@ -1611,6 +1646,13 @@ function _parse_trait_loop_to_data($trait_loop, $is_blessing = false)
     }
     return $data;
 }
+
+/**
+ * 文字列をカンマで分割し、整形する関数
+ *
+ * @param string|int|float $val 分割対象の値
+ * @return array 空白除去・数値化された要素の配列
+ */
 function split_str_comma($val)
 {
     // 1. 全角を半角に統一
@@ -1627,6 +1669,10 @@ function split_str_comma($val)
 // =================================================================
 //  【内部ヘルパー】とくせい条件/わざ追加条件解析
 // =================================================================
+/**
+ * @param array|null $cond_data 条件のACFデータ
+ * @return array 解析された条件データの配列
+ */
 function _parse_trait_condition($cond_data)
 {
     if (empty($cond_data) || !is_array($cond_data)) return [];
@@ -1660,7 +1706,12 @@ function _parse_trait_condition($cond_data)
     return $parsed;
 }
 
-// すごわざ条件解析
+/**
+ * すごわざ条件解析
+ *
+ * @param array|null $cond_data すごわざ発動条件のACFデータ
+ * @return array 解析されたすごわざ条件の配列
+ */
 function _parse_sugo_condition($cond_data)
 {
     $parsed = [];
@@ -1703,6 +1754,11 @@ function _parse_sugo_condition($cond_data)
 // =================================================================
 //  【内部ヘルパー】わざ解析 (全タイプ対応・完全版)
 // =================================================================
+/**
+ * @param array|null $groups わざ/すごわざ/コトワザのループデータ
+ * @param string $shift_type シフト条件のタイプ
+ * @return array 解析されたスキルデータのバリエーション配列
+ */
 function _parse_skill_groups_to_data($groups, $shift_type = 'none')
 {
     // ▼ 初期化処理
@@ -1933,7 +1989,12 @@ function _parse_skill_groups_to_data($groups, $shift_type = 'none')
     return $result;
 }
 
-// lsの効果成形関数
+/**
+ * リーダーとくせいの効果成形関数
+ *
+ * @param array $loop リーダーとくせい効果のループデータ
+ * @return array 解析された効果データ
+ */
 function parse_ls_eff($loop)
 {
     $data = [];
@@ -1948,6 +2009,12 @@ function parse_ls_eff($loop)
     return $data;
 }
 
+/**
+ * リーダーとくせいデータ解析
+ *
+ * @param array|null $loop リーダーとくせいのループデータ
+ * @return array 解析されたリーダーとくせいデータ
+ */
 function _parse_leader_skill_data($loop)
 {
     $data = [];
@@ -2087,6 +2154,10 @@ function _parse_leader_skill_data($loop)
 // =================================================================
 //  【内部ヘルパー】EXスキル解析
 // =================================================================
+/**
+ * @param int $post_id 投稿ID
+ * @return array 解析されたEXスキルデータ
+ */
 function _parse_ex_skill($post_id)
 {
     // ▼ 初期化処理
@@ -2137,6 +2208,10 @@ function _parse_ex_skill($post_id)
 // =================================================================
 //  【内部ヘルパー】チャージスキル解析
 // =================================================================
+/**
+ * @param int $post_id 投稿ID
+ * @return array 解析されたチャージスキルデータ
+ */
 function _parse_charge_skill($post_id)
 {
     // ▼ 初期化処理

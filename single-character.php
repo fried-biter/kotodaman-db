@@ -776,7 +776,7 @@ if ($waza_groups):
     if ($waza_name) echo '<span class="skill-proper-name">' . esc_html($waza_name) . '</span>';
     echo '</div>';
     echo '<div class="skill-text-area">';
-    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html(null, $waza_groups, 'waza', $calc_atk);
+    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html($waza_groups, null, 'waza', $calc_atk);
     echo '</div></div>';
 endif;
 $waza_html = ob_get_clean();
@@ -800,7 +800,7 @@ if ($sugo_condition || $sugo_groups):
     if ($sugo_name) echo '<span class="skill-proper-name">' . esc_html($sugo_name) . '</span>';
     echo '</div>';
     echo '<div class="skill-text-area">';
-    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html($sugo_condition, $sugo_groups, 'sugo', $calc_atk);
+    if (function_exists('get_koto_sugowaza_html')) echo get_koto_sugowaza_html($sugo_groups, $sugo_condition, 'sugo', $calc_atk);
     echo '</div></div>';
 endif;
 $sugo_html = ob_get_clean();
@@ -862,7 +862,7 @@ if ($koto_outside):
 
         $html_body = '';
         if (function_exists('get_koto_sugowaza_html')) {
-            $html_body = get_koto_sugowaza_html($cond_check, $loop_check, 'kotowaza', $calc_atk);
+            $html_body = get_koto_sugowaza_html($loop_check, $cond_check, 'kotowaza', $calc_atk);
         }
 
         if ($html_body) {

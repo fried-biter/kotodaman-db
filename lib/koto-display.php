@@ -6,6 +6,9 @@
 /**
  * カスタムフィールド一括取得のキャッシュ関数
  * （get_field の個別呼び出しを減らして軽量化するため）
+ *
+ * @param int|null $post_id 投稿ID
+ * @return array 取得したカスタムフィールドの配列
  */
 function koto_get_post_fields($post_id = null)
 {
@@ -21,6 +24,13 @@ function koto_get_post_fields($post_id = null)
     return $fields_cache[$post_id];
 }
 
+/**
+ * キャッシュされたカスタムフィールドから指定キーの値を取得する
+ *
+ * @param string $field_key フィールドのキー名
+ * @param int|null $post_id 投稿ID
+ * @return mixed フィールドの値、存在しない場合はnull
+ */
 function koto_get_field_cached($field_key, $post_id = null)
 {
     $fields = koto_get_post_fields($post_id);
@@ -29,6 +39,11 @@ function koto_get_field_cached($field_key, $post_id = null)
 
 /**
  * 1. 倍率詳細表のHTML生成
+ *
+ * @param array|null $table_group 倍率表のグループデータ
+ * @param int|string|null $target_break_lv 対象の突破レベル
+ * @param bool $show_break_col 突破数の列を表示するかどうか
+ * @return string 生成されたHTML
  */
 function get_koto_multiplier_table_html($table_group, $target_break_lv = null, $show_break_col = false)
 {
@@ -115,6 +130,9 @@ function get_koto_multiplier_table_html($table_group, $target_break_lv = null, $
 
 /**
  * 2. 文字追加情報の取得関数
+ *
+ * @param string $trait_slug とくせいのスラッグ（unlock_place と照合）
+ * @return array [追加文字テキスト, グループ条件テキスト] の配列
  */
 function get_koto_add_moji_html($trait_slug)
 {
@@ -192,6 +210,9 @@ function get_koto_add_moji_html($trait_slug)
 
 /**
  * 3. 汎用とくせいテキスト生成関数
+ *
+ * @param array|null $row とくせいの行データ
+ * @return string 生成されたとくせいテキスト
  */
 function get_koto_trait_text_from_row($row)
 {
@@ -708,8 +729,14 @@ function get_koto_trait_text_from_row($row)
 
 /**
  * 4. わざ・すごわざ・コトワザのHTMLボディ生成 (タブUI対応・構造分離版)
+ *
+ * @param array|null $group_data スキルのグループデータ
+ * @param array|null $condition_data 発動条件のデータ
+ * @param string $skill_type スキルの種類（waza, sugo, kotowaza など）
+ * @param int|float $attack 火力計算用のATK値
+ * @return string 生成されたHTML
  */
-function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type = '', $attack = 0)
+function get_koto_sugowaza_html($group_data, $condition_data = null, $skill_type = '', $attack = 0)
 {
     ob_start();
     $post_id = get_the_ID();
@@ -1445,7 +1472,7 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
                         <?php foreach ($normal_effects as $cond_key => $effects): ?>
                             <?php
                             $cond_key = koto_replace_icons($cond_key);
-                            $combined = implode('＋', koto_replace_icons($effects));
+                            $combined = koto_replace_icons(implode('＋', $effects));
                             ?>
                             <div class="skill-effect-line">
                                 <span class="effect-num">(<?php echo $counter; ?>) </span>
@@ -1482,6 +1509,10 @@ function get_koto_sugowaza_html($condition_data = null, $group_data, $skill_type
 }
 /**
  * 5. リーダーとくせいHTML生成関数 (新規作成)
+ *
+ * @param int|null $post_id 投稿ID
+ * @param bool $is_back_count 要素数も返すかどうかのフラグ
+ * @return string|array 生成されたHTML文字列、または ['content' => HTML, 'count' => 数] の配列
  */
 function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
 {
@@ -1719,6 +1750,9 @@ function get_koto_leader_skill_html($post_id = null, $is_back_count = false)
 
 /**
  * 6. 祝福とくせい用：すごわざ条件解放リスト取得関数
+ *
+ * @param int|null $post_id 投稿ID
+ * @return array 条件追加のテキスト配列
  */
 function get_koto_blessing_sugo_list($post_id = null)
 {
@@ -1771,6 +1805,13 @@ function get_koto_blessing_sugo_list($post_id = null)
     return $results;
 }
 
+/**
+ * アイコン画像の自動置換関数
+ * テキスト内の属性・種族名をアイコンのimgタグに置換する
+ *
+ * @param string $buffer 置換対象のテキストバッファ
+ * @return string 置換後のテキスト
+ */
 function koto_replace_icons($buffer)
 {
     // ==========================================
@@ -1861,6 +1902,11 @@ function koto_replace_icons($buffer)
     return $buffer;
 }
 
+/**
+ * 属性・種族アイコン 自動置換機能（出力バッファリング開始）
+ *
+ * @return void
+ */
 function global_replace_buffer_end()
 {
     if (is_admin()) return;
