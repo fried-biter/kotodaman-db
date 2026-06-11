@@ -14,7 +14,6 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
 
     $warnings = $draft['warnings'] ?? [];
     update_post_meta($post_id, '_koto_ocr_draft', '1');
-    update_post_meta($post_id, '_spec_json', wp_json_encode($draft['spec'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
     $raw_text = [];
     foreach ($normalized['images'] ?? [] as $image) {
@@ -41,6 +40,7 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
         }
     }
 
+    update_post_meta($post_id, '_spec_json', wp_json_encode($draft['spec'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     update_post_meta($post_id, '_koto_ocr_warnings', wp_json_encode(koto_ocr_unique_warnings($warnings), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
     if (koto_ocr_debug_enabled()) {

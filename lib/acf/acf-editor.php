@@ -751,6 +751,7 @@ function koto_acf_editor_page_html()
             </form>
         </div>
         <?php if (function_exists('koto_ocr_render_draft_panel')) koto_ocr_render_draft_panel(); ?>
+        <?php if (function_exists('koto_ocr_render_existing_draft_review')) koto_ocr_render_existing_draft_review($edit_post_id); ?>
         <div class="acf-auto-input-container">
             <div class="acf-auto-input-header">自動入力を使用する</div>
             <div class="acf-auto-input-content">

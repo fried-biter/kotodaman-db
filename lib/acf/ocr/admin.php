@@ -65,6 +65,49 @@ function koto_ocr_render_draft_panel()
     <?php
 }
 
+function koto_ocr_render_existing_draft_review($post_id)
+{
+    $post_id = (int) $post_id;
+    if (!$post_id || get_post_meta($post_id, '_koto_ocr_draft', true) !== '1') {
+        return;
+    }
+
+    $warnings = json_decode((string) get_post_meta($post_id, '_koto_ocr_warnings', true), true);
+    $raw_text = json_decode((string) get_post_meta($post_id, '_koto_ocr_raw_text', true), true);
+    $normalized = json_decode((string) get_post_meta($post_id, '_koto_ocr_normalized', true), true);
+    ?>
+    <div class="koto-ocr-review-panel">
+        <h2>OCR下書き確認</h2>
+        <p class="description">この投稿はOCRから作成された下書きです。公開前に、下のOCR raw textと警告を見ながらDBエディタで手修正してください。</p>
+        <?php if (!empty($warnings) && is_array($warnings)) : ?>
+            <div class="notice notice-warning inline">
+                <ul>
+                    <?php foreach ($warnings as $warning) : ?>
+                        <li><strong><?php echo esc_html($warning['field'] ?? ''); ?></strong>: <?php echo esc_html($warning['message'] ?? ''); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($raw_text) && is_array($raw_text)) : ?>
+            <div class="koto-ocr-review-panel__raw">
+                <?php foreach ($raw_text as $item) : ?>
+                    <details>
+                        <summary><?php echo esc_html($item['source_image'] ?? 'image'); ?> OCR raw text</summary>
+                        <pre><?php echo esc_html($item['text'] ?? ''); ?></pre>
+                    </details>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+        <?php if (koto_ocr_debug_enabled() && !empty($normalized)) : ?>
+            <details>
+                <summary>normalized OCR JSON</summary>
+                <pre><?php echo esc_html(wp_json_encode($normalized, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)); ?></pre>
+            </details>
+        <?php endif; ?>
+    </div>
+    <?php
+}
+
 function koto_ocr_ajax_create_draft()
 {
     check_ajax_referer('koto_ocr_create_draft', 'nonce');

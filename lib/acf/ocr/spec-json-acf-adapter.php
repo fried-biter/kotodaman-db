@@ -19,6 +19,14 @@ function koto_ocr_spec_to_acf_data(array $spec)
             $acf['available_moji_loop'] = $rows;
         }
     }
+    foreach (['attribute', 'species'] as $taxonomy) {
+        if (!empty($spec[$taxonomy])) {
+            $term = get_term_by('slug', (string) $spec[$taxonomy], $taxonomy);
+            if ($term && !is_wp_error($term)) {
+                $acf[$taxonomy] = $term->term_id;
+            }
+        }
+    }
     if (!empty($spec['waza'])) {
         if (!empty($spec['waza']['name'])) $acf['waza_name'] = $spec['waza']['name'];
         if (!empty($spec['waza']['raw_text'])) $acf['waza_group_loop'] = [['description' => $spec['waza']['raw_text']]];
