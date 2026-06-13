@@ -3,6 +3,7 @@ acf-stubs.php
 search-moc.html
 *.pdf
 *.pem
+/.devcontainer/.env
+/auth.json
 /lib/character-search/all_characters_search.json
-/acf-json/*
 /documents/official-documents-for-AI/*

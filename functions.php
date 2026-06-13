@@ -1033,23 +1033,7 @@ add_action('wp_footer', function () {
 require_once get_stylesheet_directory() . '/lib/acf/acf-editor.php';
 require_once get_stylesheet_directory() . '/lib/acf/ocr/koto-ocr.php';
 require_once get_stylesheet_directory() . '/lib/character-search/koto-json-reformer.php';
-
-$current_domain = $_SERVER['HTTP_HOST'] ?? '';
-if (str_ends_with($current_domain, 'kotodaman-db.com')) {
-    // 保存先の指定
-    add_filter('acf/settings/save_json', function ($path) {
-        // 子テーマ直下の acf-json フォルダを自動取得
-        $path = get_stylesheet_directory() . '/acf-json';
-        return $path;
-    }, 20);
-
-    // 読み込み先の指定
-    add_filter('acf/settings/load_json', function ($paths) {
-        // 配列を一度クリアして、子テーマの acf-json だけを登録
-        $paths = array(get_stylesheet_directory() . '/acf-json');
-        return $paths;
-    }, 20);
-}
+require_once get_stylesheet_directory() . '/lib/acf/acf-local-json.php';
 
 // 解説：
 // register_meta は、特定のメタデータ（_spec_json）の「振る舞い」を定義する関数です。

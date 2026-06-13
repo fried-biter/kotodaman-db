@@ -18,6 +18,8 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+    env_file:
+      - .env
     ports:
       - "8080:80"
     environment:
@@ -31,6 +33,8 @@ services:
         if (!defined('WP_DEBUG_DISPLAY')) define('WP_DEBUG_DISPLAY', false);
         if (!defined('SCRIPT_DEBUG')) define('SCRIPT_DEBUG', true);
         if (!defined('FS_METHOD')) define('FS_METHOD', 'direct');
+        $$acf_pro_license = getenv('ACF_PRO_LICENSE');
+        if ($$acf_pro_license && !defined('ACF_PRO_LICENSE')) define('ACF_PRO_LICENSE', $$acf_pro_license);
     volumes:
       - ..:/var/www/html/wp-content/themes/cocoon-child-master
       - wordpress_uploads:/var/www/html/wp-content/uploads
