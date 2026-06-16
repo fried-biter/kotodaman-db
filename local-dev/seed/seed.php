@@ -112,7 +112,7 @@ if (!function_exists('kotodaman_local_upsert_character')) {
     }
 }
 
-$seed_version = 1;
+$seed_version = 3;
 $existing_seed_version = (int) get_option('kotodaman_local_seed_version', 0);
 
 if ($existing_seed_version >= $seed_version) {
@@ -126,9 +126,17 @@ $terms = [
     ['attribute', 'wood', '木', null],
     ['attribute', 'light', '光', null],
     ['attribute', 'dark', '闇', null],
+    ['attribute', 'void', '冥', null],
+    ['attribute', 'heaven', '天', null],
+    ['attribute', 'rainbow', '虹', null],
     ['species', 'god', '神', null],
+    ['species', 'demon', '魔', null],
     ['species', 'hero', '英', null],
     ['species', 'dragon', '龍', null],
+    ['species', 'beast', '獣', null],
+    ['species', 'spirit', '霊', null],
+    ['species', 'artifact', '物', null],
+    ['species', 'yokai', '妖', null],
     ['affiliation', 'starter-party', 'スターターパーティ', null],
     ['affiliation', 'summer-fes', 'サマーフェス', null],
     ['event', 'launch-event', 'リリース記念', null],
@@ -140,8 +148,29 @@ $terms = [
     ['available_moji', 'あ', 'あ', null],
     ['available_moji', 'い', 'い', null],
     ['available_moji', 'う', 'う', null],
+    ['available_moji', 'お', 'お', null],
     ['available_moji', 'か', 'か', null],
+    ['available_moji', 'が', 'が', null],
+    ['available_moji', 'け', 'け', null],
+    ['available_moji', 'げ', 'げ', null],
+    ['available_moji', 'こ', 'こ', null],
+    ['available_moji', 'ご', 'ご', null],
     ['available_moji', 'さ', 'さ', null],
+    ['available_moji', 'し', 'し', null],
+    ['available_moji', 'す', 'す', null],
+    ['available_moji', 'ず', 'ず', null],
+    ['available_moji', 'た', 'た', null],
+    ['available_moji', 'だ', 'だ', null],
+    ['available_moji', 'そ', 'そ', null],
+    ['available_moji', 'ぞ', 'ぞ', null],
+    ['available_moji', 'と', 'と', null],
+    ['available_moji', 'ま', 'ま', null],
+    ['available_moji', 'ゆ', 'ゆ', null],
+    ['available_moji', 'ゅ', 'ゅ', null],
+    ['available_moji', 'よ', 'よ', null],
+    ['available_moji', 'ょ', 'ょ', null],
+    ['available_moji', 'り', 'り', null],
+    ['available_moji', 'ろ', 'ろ', null],
     ['available_moji', 'ん', 'ん', null],
 ];
 

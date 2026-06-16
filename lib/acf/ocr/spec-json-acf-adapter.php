@@ -4,15 +4,16 @@ if (!defined('ABSPATH')) exit;
 function koto_ocr_spec_to_acf_data(array $spec)
 {
     $acf = [];
-    if (!empty($spec['name'])) {
-        $acf['character_name'] = $spec['name'];
-    }
     if (!empty($spec['chars']) && is_array($spec['chars'])) {
         $rows = [];
         foreach ($spec['chars'] as $char) {
-            $term = get_term_by('name', (string) $char, 'available_moji');
+            $term = koto_ocr_resolve_available_moji_term((string) $char);
             if ($term && !is_wp_error($term)) {
-                $rows[] = ['available_moji' => [$term->term_id]];
+                $rows[] = [
+                    'available_moji' => [$term->term_id],
+                    'moji_attr' => koto_ocr_resolve_term_id($spec['attribute'] ?? '', 'attribute'),
+                    'unlock_place' => 'default',
+                ];
             }
         }
         if (!empty($rows)) {
@@ -29,19 +30,132 @@ function koto_ocr_spec_to_acf_data(array $spec)
     }
     if (!empty($spec['waza'])) {
         if (!empty($spec['waza']['name'])) $acf['waza_name'] = $spec['waza']['name'];
-        if (!empty($spec['waza']['raw_text'])) $acf['waza_group_loop'] = [['description' => $spec['waza']['raw_text']]];
+        if (!empty($spec['waza']['raw_text'])) {
+            $rows = koto_ocr_build_skill_group_rows($spec['waza']['raw_text'], $spec['attribute'] ?? '');
+            if (!empty($rows)) $acf['waza_group_loop'] = $rows;
+        }
     }
     if (!empty($spec['sugowaza'])) {
         if (!empty($spec['sugowaza']['name'])) $acf['sugowaza_name'] = $spec['sugowaza']['name'];
-        if (!empty($spec['sugowaza']['condition'])) $acf['sugowaza_condition'] = $spec['sugowaza']['condition'];
-        if (!empty($spec['sugowaza']['raw_text'])) $acf['sugowaza_group_loop'] = [['description' => $spec['sugowaza']['raw_text']]];
-    }
-    foreach (['trait1' => 'first_trait_loop', 'trait2' => 'second_trait_loop', 'blessing' => 'blessing_trait_loop'] as $spec_key => $acf_key) {
-        if (!empty($spec[$spec_key]['raw_text'])) {
-            $acf[$acf_key] = [['description' => $spec[$spec_key]['raw_text']]];
+        if (!empty($spec['sugowaza']['condition'])) {
+            $condition_rows = koto_ocr_build_sugowaza_condition_rows($spec['sugowaza']['condition']);
+            if (!empty($condition_rows)) $acf['sugowaza_condition'] = $condition_rows;
+        }
+        if (!empty($spec['sugowaza']['raw_text'])) {
+            $rows = koto_ocr_build_skill_group_rows($spec['sugowaza']['raw_text'], $spec['attribute'] ?? '');
+            if (!empty($rows)) $acf['sugowaza_group_loop'] = $rows;
         }
     }
     return $acf;
+}
+
+function koto_ocr_resolve_term_id($slug, $taxonomy)
+{
+    if ($slug === '') {
+        return null;
+    }
+    $term = get_term_by('slug', (string) $slug, $taxonomy);
+    return ($term && !is_wp_error($term)) ? (int) $term->term_id : null;
+}
+
+function koto_ocr_resolve_available_moji_term($char)
+{
+    $term = get_term_by('slug', $char, 'available_moji');
+    if ($term && !is_wp_error($term) && $term->name === $char) {
+        return $term;
+    }
+
+    $terms = get_terms([
+        'taxonomy' => 'available_moji',
+        'hide_empty' => false,
+        'name' => $char,
+    ]);
+    if (!is_wp_error($terms)) {
+        foreach ($terms as $candidate) {
+            if ($candidate->name === $char) {
+                return $candidate;
+            }
+        }
+    }
+
+    return null;
+}
+
+function koto_ocr_build_sugowaza_condition_rows($condition_text)
+{
+    $condition_text = (string) $condition_text;
+    $conditions = [];
+
+    if (preg_match('/(\d+)文字以上/u', $condition_text, $m)) {
+        $conditions[] = [
+            'sugo_cond_type' => 'char_count',
+            'sugo_cond_val' => (string) $m[1],
+        ];
+    }
+    if (preg_match('/(\d+)コンボ以上/u', $condition_text, $m)) {
+        $conditions[] = [
+            'sugo_cond_type' => 'combo',
+            'sugo_cond_val' => (string) $m[1],
+        ];
+    }
+
+    if (empty($conditions)) {
+        return [];
+    }
+
+    return [[
+        'get_palce' => 'default',
+        'need_blessing_point' => '',
+        'sugo_cond_loop' => $conditions,
+    ]];
+}
+
+function koto_ocr_build_skill_group_rows($raw_text, $attribute_slug)
+{
+    $detail = koto_ocr_build_skill_detail_row((string) $raw_text, (string) $attribute_slug);
+    if (empty($detail)) {
+        return [];
+    }
+    return [[
+        'sugo_detail_loop' => [$detail],
+    ]];
+}
+
+function koto_ocr_build_skill_detail_row($raw_text, $attribute_slug)
+{
+    if (mb_strpos($raw_text, '攻撃') === false) {
+        return [];
+    }
+
+    $target = 'single_oppo';
+    if (mb_strpos($raw_text, '敵全体') !== false) {
+        $target = 'all_oppo';
+    } elseif (mb_strpos($raw_text, 'ランダム') !== false) {
+        $target = 'random_oppo';
+    }
+
+    $prefix = 'none';
+    if (mb_strpos($raw_text, '爆絶強力') !== false) {
+        $prefix = 'most_strong';
+    } elseif (mb_strpos($raw_text, '超絶強力') !== false) {
+        $prefix = 'super_strong';
+    } elseif (mb_strpos($raw_text, '超強力') !== false) {
+        $prefix = 'very_strong';
+    } elseif (mb_strpos($raw_text, '強力') !== false) {
+        $prefix = 'strong';
+    }
+
+    return [
+        'waza_type' => 'attack',
+        'attack_type' => 'normal',
+        'waza_target' => $target,
+        'waza_target_detail' => 'none',
+        'attack_attr' => koto_ocr_resolve_term_id($attribute_slug, 'attribute'),
+        'attack_prefix' => $prefix,
+        'hit_count' => 1,
+        'waza_value' => '',
+        'waza_value_last' => '',
+    ];
 }
 
 function koto_ocr_apply_existing_auto_input_rules(array $fields)
