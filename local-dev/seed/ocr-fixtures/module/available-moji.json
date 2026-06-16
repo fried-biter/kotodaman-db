@@ -1,0 +1,20 @@
+{
+  "description": "使用可能文字抽出は単一ひらがなのみ採用し、UI文言やノイズを除外する",
+  "cases": [
+    {
+      "name": "single hiragana separated by punctuation",
+      "input": "使用可能文字: あ・い、う / え",
+      "expected": ["あ", "い", "う", "え"]
+    },
+    {
+      "name": "noise words are ignored",
+      "input": "使用可能文字: あ・以上・い・ATK\nHP 1234",
+      "expected": ["あ", "い"]
+    },
+    {
+      "name": "multi-character kana token is ignored",
+      "input": "使用可能文字: あ・かき・く",
+      "expected": ["あ", "く"]
+    }
+  ]
+}

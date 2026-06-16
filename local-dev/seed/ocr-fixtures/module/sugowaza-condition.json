@@ -1,0 +1,20 @@
+{
+  "description": "すごわざ条件の文字数条件とコンボ条件を同一条件行に保持する",
+  "condition": "4文字以上、または8コンボ以上",
+  "expected": [
+    {
+      "get_palce": "default",
+      "need_blessing_point": "",
+      "sugo_cond_loop": [
+        {
+          "sugo_cond_type": "char_count",
+          "sugo_cond_val": "4"
+        },
+        {
+          "sugo_cond_type": "combo",
+          "sugo_cond_val": "8"
+        }
+      ]
+    }
+  ]
+}

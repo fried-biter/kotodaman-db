@@ -1,0 +1,30 @@
+{
+  "description": "わざ名の末尾UI文言を除去し、敵全体/超強力の攻撃行に変換する",
+  "attribute": "fire",
+  "normalized": {
+    "images": [
+      {
+        "source_image": "waza-attack",
+        "screen_type": "waza",
+        "fullText": "爆炎斬 詳細 とじる\n敵全体に超強力な火属性攻撃",
+        "blocks": [
+          {
+            "region": "modal_body",
+            "text": "敵全体に超強力な火属性攻撃"
+          }
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "expected": {
+    "waza_name": "爆炎斬",
+    "attack_detail": {
+      "waza_type": "attack",
+      "attack_type": "normal",
+      "waza_target": "all_oppo",
+      "attack_prefix": "very_strong",
+      "hit_count": 1
+    }
+  }
+}

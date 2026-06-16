@@ -1,0 +1,16 @@
+{
+  "description": "すごわざ条件の開始文字条件。未実装ならpendingにする",
+  "condition": "「か」から始まることば",
+  "expected": [
+    {
+      "get_palce": "default",
+      "need_blessing_point": "",
+      "sugo_cond_loop": [
+        {
+          "sugo_cond_type": "start_char",
+          "sugo_cond_val": "か"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "description": "2枚のとくせい画面をtrait1/trait2に割り当て、とくせい内の①②では分割しない",
+  "normalized": {
+    "images": [
+      {
+        "source_image": "trait-1",
+        "screen_type": "trait",
+        "fullText": "①シールドブレイカー\n②火属性キラー50%"
+      },
+      {
+        "source_image": "trait-2",
+        "screen_type": "trait",
+        "fullText": "ドロー時英種族ATKUP小"
+      }
+    ],
+    "warnings": []
+  },
+  "expected": {
+    "trait1": "①シールドブレイカー\n②火属性キラー50%",
+    "trait2": "ドロー時英種族ATKUP小"
+  }
+}
