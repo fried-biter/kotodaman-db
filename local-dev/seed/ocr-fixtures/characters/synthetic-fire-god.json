@@ -1,0 +1,77 @@
+{
+  "description": "PoCに依存しないsynthetic character-level OCR fixture",
+  "normalized": {
+    "images": [
+      {
+        "source_image": "synthetic-main",
+        "screen_type": "main",
+        "fullText": "テスト火神\n属性: 火\n種族: 神\n使用可能文字: あ・い",
+        "blocks": [
+          { "region": "main_name_text", "text": "テスト火神" }
+        ]
+      },
+      {
+        "source_image": "synthetic-waza",
+        "screen_type": "waza",
+        "fullText": "火炎斬 詳細 とじる\n敵単体に強力な火属性攻撃",
+        "blocks": [
+          { "region": "modal_body", "text": "敵単体に強力な火属性攻撃" }
+        ]
+      },
+      {
+        "source_image": "synthetic-sugowaza",
+        "screen_type": "sugowaza",
+        "fullText": "神炎斬 詳細 とじる\n発動条件: 4文字以上、または8コンボ以上\n敵全体に超強力な火属性攻撃",
+        "blocks": [
+          { "region": "modal_trigger", "text": "4文字以上、または8コンボ以上" },
+          { "region": "modal_body", "text": "敵全体に超強力な火属性攻撃" }
+        ]
+      },
+      {
+        "source_image": "synthetic-trait-1",
+        "screen_type": "trait",
+        "fullText": "①シールドブレイカー\n②火属性キラー50%"
+      },
+      {
+        "source_image": "synthetic-trait-2",
+        "screen_type": "trait",
+        "fullText": "ドロー時神種族ATKUP小"
+      },
+      {
+        "source_image": "synthetic-blessing",
+        "screen_type": "blessing",
+        "fullText": "祝福とくせい\n火属性ダメージ軽減"
+      }
+    ],
+    "warnings": []
+  },
+  "expected": {
+    "spec": {
+      "name": "テスト火神",
+      "attribute": "fire",
+      "species": "god",
+      "chars": ["あ", "い"],
+      "waza_name": "火炎斬",
+      "waza_raw": "火炎斬 詳細 とじる\n敵単体に強力な火属性攻撃",
+      "sugowaza_name": "神炎斬",
+      "sugowaza_condition": "4文字以上、または8コンボ以上",
+      "sugowaza_raw": "神炎斬 詳細 とじる\n発動条件: 4文字以上、または8コンボ以上\n敵全体に超強力な火属性攻撃",
+      "trait1_raw": "①シールドブレイカー\n②火属性キラー50%",
+      "trait2_raw": "ドロー時神種族ATKUP小",
+      "blessing_raw": "祝福とくせい\n火属性ダメージ軽減"
+    },
+    "acf": {
+      "waza_name": "火炎斬",
+      "sugowaza_name": "神炎斬",
+      "sugowaza_condition_types": ["char_count", "combo"],
+      "waza_attack": {
+        "waza_target": "single_oppo",
+        "attack_prefix": "strong"
+      },
+      "sugowaza_attack": {
+        "waza_target": "all_oppo",
+        "attack_prefix": "very_strong"
+      }
+    }
+  }
+}

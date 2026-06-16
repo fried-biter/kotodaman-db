@@ -59,6 +59,20 @@ function koto_ocr_test_assert_array_contains_assoc(array $expected, array $actua
     }
 }
 
+function koto_ocr_test_assert_has_keys(array $keys, array $actual, $message)
+{
+    foreach ($keys as $key) {
+        if (!array_key_exists($key, $actual)) {
+            throw new Koto_Ocr_Test_Failure($message . ' missing key=' . $key);
+        }
+    }
+}
+
+function koto_ocr_test_first_skill_detail(array $acf, $group_key)
+{
+    return $acf[$group_key][0]['sugo_detail_loop'][0] ?? [];
+}
+
 function koto_ocr_test_build_draft_from_normalized(array $normalized)
 {
     $extracted = koto_ocr_extract_fields($normalized);
@@ -79,6 +93,62 @@ function koto_ocr_test_cases()
                     $fixture['expected']['spec'],
                     $draft['spec'] ?? [],
                     'draft spec mismatch'
+                );
+            },
+        ],
+        [
+            'suite' => 'pipeline',
+            'name' => 'character normalized OCR builds draft spec and ACF data',
+            'run' => function () {
+                $fixture = koto_ocr_test_fixture('characters/synthetic-fire-god.json');
+                $normalized = $fixture['normalized'];
+                $extracted = koto_ocr_extract_fields($normalized);
+                $fragment = koto_ocr_build_spec_fragments($extracted);
+                $draft = koto_ocr_build_draft_spec($normalized, $extracted, $fragment);
+                $spec = $draft['spec'] ?? [];
+                $expected_spec = $fixture['expected']['spec'];
+
+                koto_ocr_test_assert_same($expected_spec['name'], $spec['name'] ?? null, 'draft name mismatch');
+                koto_ocr_test_assert_same($expected_spec['attribute'], $spec['attribute'] ?? null, 'draft attribute mismatch');
+                koto_ocr_test_assert_same($expected_spec['species'], $spec['species'] ?? null, 'draft species mismatch');
+                koto_ocr_test_assert_same($expected_spec['chars'], $spec['chars'] ?? null, 'draft chars mismatch');
+                koto_ocr_test_assert_same($expected_spec['waza_name'], $spec['waza']['name'] ?? null, 'draft waza name mismatch');
+                koto_ocr_test_assert_same($expected_spec['waza_raw'], $spec['waza']['raw_text'] ?? null, 'draft waza raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_name'], $spec['sugowaza']['name'] ?? null, 'draft sugowaza name mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_condition'], $spec['sugowaza']['condition'] ?? null, 'draft sugowaza condition mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_raw'], $spec['sugowaza']['raw_text'] ?? null, 'draft sugowaza raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['trait1_raw'], $spec['trait1']['raw_text'] ?? null, 'draft trait1 raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['trait2_raw'], $spec['trait2']['raw_text'] ?? null, 'draft trait2 raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['blessing_raw'], $spec['blessing']['raw_text'] ?? null, 'draft blessing raw mismatch');
+
+                $acf = koto_ocr_spec_to_acf_data($spec);
+                koto_ocr_test_assert_has_keys(
+                    ['available_moji_loop', 'attribute', 'species', 'waza_name', 'waza_group_loop', 'sugowaza_name', 'sugowaza_condition', 'sugowaza_group_loop'],
+                    $acf,
+                    'ACF data mismatch'
+                );
+                koto_ocr_test_assert_same($fixture['expected']['acf']['waza_name'], $acf['waza_name'], 'ACF waza name mismatch');
+                koto_ocr_test_assert_same($fixture['expected']['acf']['sugowaza_name'], $acf['sugowaza_name'], 'ACF sugowaza name mismatch');
+                koto_ocr_test_assert_same(count($expected_spec['chars']), count($acf['available_moji_loop']), 'ACF available moji row count mismatch');
+                foreach ($acf['available_moji_loop'] as $row) {
+                    koto_ocr_test_assert_has_keys(['available_moji', 'moji_attr', 'unlock_place'], $row, 'ACF available moji row mismatch');
+                    koto_ocr_test_assert_true(is_array($row['available_moji']) && count($row['available_moji']) === 1, 'ACF available moji term shape mismatch');
+                    koto_ocr_test_assert_same('default', $row['unlock_place'], 'ACF available moji unlock place mismatch');
+                }
+
+                $condition_types = array_map(function ($row) {
+                    return $row['sugo_cond_type'] ?? null;
+                }, $acf['sugowaza_condition'][0]['sugo_cond_loop'] ?? []);
+                koto_ocr_test_assert_same($fixture['expected']['acf']['sugowaza_condition_types'], $condition_types, 'ACF sugowaza condition type mismatch');
+                koto_ocr_test_assert_array_contains_assoc(
+                    $fixture['expected']['acf']['waza_attack'],
+                    koto_ocr_test_first_skill_detail($acf, 'waza_group_loop'),
+                    'ACF waza attack detail mismatch'
+                );
+                koto_ocr_test_assert_array_contains_assoc(
+                    $fixture['expected']['acf']['sugowaza_attack'],
+                    koto_ocr_test_first_skill_detail($acf, 'sugowaza_group_loop'),
+                    'ACF sugowaza attack detail mismatch'
                 );
             },
         ],
