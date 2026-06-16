@@ -1,0 +1,24 @@
+{
+  "description": "main画面のnormalized OCRから基本spec fragmentを作る最小fixture",
+  "normalized": {
+    "images": [
+      {
+        "source_image": "main",
+        "screen_type": "main",
+        "fullText": "テストキャラ\n属性: 火\n種族: 神\n使用可能文字: あ・い",
+        "blocks": [
+          { "region": "main_name_text", "text": "テストキャラ" }
+        ]
+      }
+    ],
+    "warnings": []
+  },
+  "expected": {
+    "spec": {
+      "name": "テストキャラ",
+      "attribute": "fire",
+      "species": "god",
+      "chars": ["あ", "い"]
+    }
+  }
+}
