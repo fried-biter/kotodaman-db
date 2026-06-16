@@ -86,6 +86,16 @@ function koto_ocr_build_sugowaza_condition_rows($condition_text)
     $condition_text = (string) $condition_text;
     $conditions = [];
 
+    if (preg_match('/[「\"]([^」\"]+)[」\"].*(?:からはじまる|から始まる|ではじまる|で始まる)/u', $condition_text)) {
+        $chars = koto_ocr_extract_quoted_chars($condition_text);
+        if (!empty($chars)) {
+            $conditions[] = [
+                'sugo_cond_type' => 'start_char',
+                'sugo_cond_val' => implode(',', $chars),
+            ];
+        }
+    }
+
     if (preg_match('/(\d+)文字以上/u', $condition_text, $m)) {
         $conditions[] = [
             'sugo_cond_type' => 'char_count',
