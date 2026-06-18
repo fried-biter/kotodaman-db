@@ -73,6 +73,45 @@ function koto_ocr_test_first_skill_detail(array $acf, $group_key)
     return $acf[$group_key][0]['sugo_detail_loop'][0] ?? [];
 }
 
+function koto_ocr_test_condition_loop($condition_text)
+{
+    $rows = koto_ocr_build_sugowaza_condition_rows($condition_text);
+    return $rows[0]['sugo_cond_loop'] ?? [];
+}
+
+function koto_ocr_test_assert_character_reading(array $case)
+{
+    $id = $case['id'] ?? 'unknown';
+    $draft = koto_ocr_test_build_draft_from_normalized($case['normalized']);
+    $spec = $draft['spec'] ?? [];
+    $expected = $case['expected'];
+
+    koto_ocr_test_assert_same($expected['name'], $spec['name'] ?? null, $id . ' name mismatch');
+    koto_ocr_test_assert_same($expected['attribute'], $spec['attribute'] ?? null, $id . ' attribute mismatch');
+    koto_ocr_test_assert_same($expected['species'], $spec['species'] ?? null, $id . ' species mismatch');
+    koto_ocr_test_assert_same($expected['chars'], $spec['chars'] ?? null, $id . ' chars mismatch');
+    koto_ocr_test_assert_same($expected['waza_name'], $spec['waza']['name'] ?? null, $id . ' waza name mismatch');
+    koto_ocr_test_assert_array_contains_assoc(
+        $expected['waza_attack'],
+        koto_ocr_build_skill_detail_row($spec['waza']['raw_text'] ?? '', $expected['attribute']),
+        $id . ' waza attack mismatch'
+    );
+    koto_ocr_test_assert_same($expected['sugowaza_name'], $spec['sugowaza']['name'] ?? null, $id . ' sugowaza name mismatch');
+    koto_ocr_test_assert_same(
+        $expected['sugowaza_condition'],
+        koto_ocr_test_condition_loop($spec['sugowaza']['condition'] ?? ''),
+        $id . ' sugowaza condition mismatch'
+    );
+    koto_ocr_test_assert_array_contains_assoc(
+        $expected['sugowaza_attack'],
+        koto_ocr_build_skill_detail_row($spec['sugowaza']['raw_text'] ?? '', $expected['attribute']),
+        $id . ' sugowaza attack mismatch'
+    );
+    koto_ocr_test_assert_same($expected['trait1_raw'], $spec['trait1']['raw_text'] ?? null, $id . ' trait1 mismatch');
+    koto_ocr_test_assert_same($expected['trait2_raw'], $spec['trait2']['raw_text'] ?? null, $id . ' trait2 mismatch');
+    koto_ocr_test_assert_same($expected['blessing_raw'], $spec['blessing']['raw_text'] ?? null, $id . ' blessing mismatch');
+}
+
 function koto_ocr_test_build_draft_from_normalized(array $normalized)
 {
     $extracted = koto_ocr_extract_fields($normalized);
@@ -150,6 +189,17 @@ function koto_ocr_test_cases()
                     koto_ocr_test_first_skill_detail($acf, 'sugowaza_group_loop'),
                     'ACF sugowaza attack detail mismatch'
                 );
+            },
+        ],
+        [
+            'suite' => 'matrix',
+            'name' => 'seven character reading matrix covers all OCR modules',
+            'run' => function () {
+                $fixture = koto_ocr_test_fixture('characters/reading-matrix.json');
+                foreach ($fixture['cases'] as $case) {
+                    koto_ocr_test_assert_character_reading($case);
+                    WP_CLI::line('matrix ' . $case['id'] . ' - name/chars/terms/waza/sugowaza/traits/blessing ok');
+                }
             },
         ],
         [

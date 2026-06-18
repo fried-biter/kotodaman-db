@@ -1,0 +1,338 @@
+{
+  "description": "PoC OCR replayに依存しない、キャラ別normalized OCR読み取りmatrix",
+  "cases": [
+    {
+      "id": "comforgo",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "comforgo-main",
+            "screen_type": "main",
+            "fullText": "激熱の音言神・コンフォーゴ\n属性: 火\n種族: 龍\n使用可能文字: こ・ご・け・げ",
+            "blocks": [{ "region": "main_name_text", "text": "激熱の音言神・コンフォーゴ" }]
+          },
+          {
+            "source_image": "comforgo-waza",
+            "screen_type": "waza",
+            "fullText": "奏でるは激熱の旋律 詳細 とじる\n敵単体に強力な火属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "敵単体に強力な火属性攻撃" }]
+          },
+          {
+            "source_image": "comforgo-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "激震のオーバーヒート 詳細 とじる\n発動条件: 「こ・ご・け・げ」からはじまる4文字以上、または2文字以上8コンボ以上\n味方全体の防御を強化+敵全体に超強力な火属性攻撃",
+            "blocks": [
+              { "region": "modal_trigger", "text": "「こ・ご・け・げ」からはじまる4文字以上、または2文字以上8コンボ以上" },
+              { "region": "modal_body", "text": "味方全体の防御を強化+敵全体に超強力な火属性攻撃" }
+            ]
+          },
+          { "source_image": "comforgo-trait1", "screen_type": "trait", "fullText": "ヒールブレイカー\n火属性ATKUP小" },
+          { "source_image": "comforgo-trait2", "screen_type": "trait", "fullText": "弱体ガード\nコンボ+1" },
+          { "source_image": "comforgo-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n木属性キラー\n物種族キラー" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "激熱の音言神・コンフォーゴ",
+        "attribute": "fire",
+        "species": "dragon",
+        "chars": ["こ", "ご", "け", "げ"],
+        "waza_name": "奏でるは激熱の旋律",
+        "waza_attack": { "waza_target": "single_oppo", "attack_prefix": "strong" },
+        "sugowaza_name": "激震のオーバーヒート",
+        "sugowaza_condition": [
+          { "sugo_cond_type": "start_char", "sugo_cond_val": "こ,ご,け,げ" },
+          { "sugo_cond_type": "char_count", "sugo_cond_val": "4" },
+          { "sugo_cond_type": "combo", "sugo_cond_val": "8" }
+        ],
+        "sugowaza_attack": { "waza_target": "all_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "ヒールブレイカー\n火属性ATKUP小",
+        "trait2_raw": "弱体ガード\nコンボ+1",
+        "blessing_raw": "祝福とくせい\n木属性キラー\n物種族キラー"
+      }
+    },
+    {
+      "id": "danto",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "danto-main",
+            "screen_type": "main",
+            "fullText": "騒擾の音聖神・ダント\n属性: 木\n種族: 物\n使用可能文字: た・だ・そ・ぞ・ん",
+            "blocks": [{ "region": "main_name_text", "text": "騒擾の音聖神・ダント" }]
+          },
+          {
+            "source_image": "danto-waza",
+            "screen_type": "waza",
+            "fullText": "騒擾 詳細 とじる\nランダムな敵に強力な木属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "ランダムな敵に強力な木属性攻撃" }]
+          },
+          {
+            "source_image": "danto-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "第四楽章・騒乱の調べ 詳細 とじる\n発動条件: 「た・だ・そ・ぞ」からはじまる4文字以上、または2文字以上9コンボ以上\n敵単体に被ダメージ増加状態を付与+敵単体に爆絶強力な木属性攻撃",
+            "blocks": [
+              { "region": "modal_trigger", "text": "「た・だ・そ・ぞ」からはじまる4文字以上、または2文字以上9コンボ以上" },
+              { "region": "modal_body", "text": "敵単体に被ダメージ増加状態を付与+敵単体に爆絶強力な木属性攻撃" }
+            ]
+          },
+          { "source_image": "danto-trait1", "screen_type": "trait", "fullText": "弱体ガード\n物種族ATKUP小" },
+          { "source_image": "danto-trait2", "screen_type": "trait", "fullText": "コピーガード\nコンボ+1" },
+          { "source_image": "danto-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n水属性キラー\nスーパーコピーガード" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "騒擾の音聖神・ダント",
+        "attribute": "wood",
+        "species": "artifact",
+        "chars": ["た", "だ", "そ", "ぞ", "ん"],
+        "waza_name": "騒擾",
+        "waza_attack": { "waza_target": "random_oppo", "attack_prefix": "strong" },
+        "sugowaza_name": "第四楽章・騒乱の調べ",
+        "sugowaza_condition": [
+          { "sugo_cond_type": "start_char", "sugo_cond_val": "た,だ,そ,ぞ" },
+          { "sugo_cond_type": "char_count", "sugo_cond_val": "4" },
+          { "sugo_cond_type": "combo", "sugo_cond_val": "9" }
+        ],
+        "sugowaza_attack": { "waza_target": "single_oppo", "attack_prefix": "most_strong" },
+        "trait1_raw": "弱体ガード\n物種族ATKUP小",
+        "trait2_raw": "コピーガード\nコンボ+1",
+        "blessing_raw": "祝福とくせい\n水属性キラー\nスーパーコピーガード"
+      }
+    },
+    {
+      "id": "itadori_okkotsu_dream",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "itadori-main",
+            "screen_type": "main",
+            "fullText": "虎杖悠仁vs乙骨憂太\n属性: 冥\n種族: 英\n使用可能文字: い・ゆ・ゅ・お・り・か",
+            "blocks": [{ "region": "main_name_text", "text": "虎杖悠仁vs乙骨憂太" }]
+          },
+          {
+            "source_image": "itadori-waza",
+            "screen_type": "waza",
+            "fullText": "俺の役割 詳細 とじる\n敵単体に超強力な冥属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "敵単体に超強力な冥属性攻撃" }]
+          },
+          {
+            "source_image": "itadori-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "同じ師を持つ二人 詳細 とじる\n発動条件: 4文字以上、または2文字以上12コンボ以上\n敵単体に超強力な冥属性攻撃+HPを回復",
+            "blocks": [
+              { "region": "modal_trigger", "text": "4文字以上、または2文字以上12コンボ以上" },
+              { "region": "modal_body", "text": "敵単体に超強力な冥属性攻撃+HPを回復" }
+            ]
+          },
+          { "source_image": "itadori-trait1", "screen_type": "trait", "fullText": "コピーガード\nチェンジガード" },
+          { "source_image": "itadori-trait2", "screen_type": "trait", "fullText": "スマッシュブレイカー\n黒閃" },
+          { "source_image": "itadori-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n光属性キラー\n闇属性キラー" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "虎杖悠仁vs乙骨憂太",
+        "attribute": "void",
+        "species": "hero",
+        "chars": ["い", "ゆ", "ゅ", "お", "り", "か"],
+        "waza_name": "俺の役割",
+        "waza_attack": { "waza_target": "single_oppo", "attack_prefix": "very_strong" },
+        "sugowaza_name": "同じ師を持つ二人",
+        "sugowaza_condition": [
+          { "sugo_cond_type": "char_count", "sugo_cond_val": "4" },
+          { "sugo_cond_type": "combo", "sugo_cond_val": "12" }
+        ],
+        "sugowaza_attack": { "waza_target": "single_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "コピーガード\nチェンジガード",
+        "trait2_raw": "スマッシュブレイカー\n黒閃",
+        "blessing_raw": "祝福とくせい\n光属性キラー\n闇属性キラー"
+      }
+    },
+    {
+      "id": "karen_ibutsu",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "karen-main",
+            "screen_type": "main",
+            "fullText": "孤高ナル威圧・カレン(音遺物)\n属性: 木\n種族: 獣\n使用可能文字: か・が・こ",
+            "blocks": [{ "region": "main_name_text", "text": "孤高ナル威圧・カレン(音遺物)" }]
+          },
+          {
+            "source_image": "karen-waza",
+            "screen_type": "waza",
+            "fullText": "勇言隊の戦士 詳細 とじる\nランダムな敵に強力な木属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "ランダムな敵に強力な木属性攻撃" }]
+          },
+          {
+            "source_image": "karen-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "音遺物「コラーヴ」 詳細 とじる\n発動条件: 4文字以上\nランダムな敵に超強力な木属性攻撃",
+            "blocks": [
+              { "region": "modal_trigger", "text": "4文字以上" },
+              { "region": "modal_body", "text": "ランダムな敵に超強力な木属性攻撃" }
+            ]
+          },
+          { "source_image": "karen-trait1", "screen_type": "trait", "fullText": "ウォールブレイカー" },
+          { "source_image": "karen-trait2", "screen_type": "trait", "fullText": "スーパー ヒールブレイカー\n呪い耐性" },
+          { "source_image": "karen-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n光属性キラー\n水属性キラー" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "孤高ナル威圧・カレン(音遺物)",
+        "attribute": "wood",
+        "species": "beast",
+        "chars": ["か", "が", "こ"],
+        "waza_name": "勇言隊の戦士",
+        "waza_attack": { "waza_target": "random_oppo", "attack_prefix": "strong" },
+        "sugowaza_name": "音遺物「コラーヴ」",
+        "sugowaza_condition": [{ "sugo_cond_type": "char_count", "sugo_cond_val": "4" }],
+        "sugowaza_attack": { "waza_target": "random_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "ウォールブレイカー",
+        "trait2_raw": "スーパー ヒールブレイカー\n呪い耐性",
+        "blessing_raw": "祝福とくせい\n光属性キラー\n水属性キラー"
+      }
+    },
+    {
+      "id": "mashiro7",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "mashiro7-main",
+            "screen_type": "main",
+            "fullText": "言祝ぎの祝典に・ましろ(7th Anniv.)\n属性: 天\n種族: 神\n使用可能文字: ま・し・ろ・う",
+            "blocks": [{ "region": "main_name_text", "text": "言祝ぎの祝典に・ましろ(7th Anniv.)" }]
+          },
+          {
+            "source_image": "mashiro7-waza",
+            "screen_type": "waza",
+            "fullText": "一歩ずつ、進化を 詳細 とじる\n敵全体に強力な天属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "敵全体に強力な天属性攻撃" }]
+          },
+          {
+            "source_image": "mashiro7-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "言祝ぎのケーキ 詳細 とじる\n発動条件: 4文字以上\n敵単体に超強力な天属性攻撃+HPを回復",
+            "blocks": [
+              { "region": "modal_trigger", "text": "4文字以上" },
+              { "region": "modal_body", "text": "敵単体に超強力な天属性攻撃+HPを回復" }
+            ]
+          },
+          { "source_image": "mashiro7-trait1", "screen_type": "trait", "fullText": "フリーズブレイカー" },
+          { "source_image": "mashiro7-trait2", "screen_type": "trait", "fullText": "スマッシュブレイカー" },
+          { "source_image": "mashiro7-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n全属性キラー\n全属性ダメージ軽減" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "言祝ぎの祝典に・ましろ(7th Anniv.)",
+        "attribute": "heaven",
+        "species": "god",
+        "chars": ["ま", "し", "ろ", "う"],
+        "waza_name": "一歩ずつ、進化を",
+        "waza_attack": { "waza_target": "all_oppo", "attack_prefix": "strong" },
+        "sugowaza_name": "言祝ぎのケーキ",
+        "sugowaza_condition": [{ "sugo_cond_type": "char_count", "sugo_cond_val": "4" }],
+        "sugowaza_attack": { "waza_target": "single_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "フリーズブレイカー",
+        "trait2_raw": "スマッシュブレイカー",
+        "blessing_raw": "祝福とくせい\n全属性キラー\n全属性ダメージ軽減"
+      }
+    },
+    {
+      "id": "yomitaru_light",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "yomitaru-light-main",
+            "screen_type": "main",
+            "fullText": "世世に廻る・ヨヨヨミ&イィタル\n属性: 光\n種族: 魔\n使用可能文字: よ・ょ・い・す・ず・し",
+            "blocks": [{ "region": "main_name_text", "text": "世世に廻る・ヨヨヨミ&イィタル" }]
+          },
+          {
+            "source_image": "yomitaru-light-waza",
+            "screen_type": "waza",
+            "fullText": "ずーっと、ずっと 詳細 とじる\n敵全体に超強力な光属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "敵全体に超強力な光属性攻撃" }]
+          },
+          {
+            "source_image": "yomitaru-light-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "黄泉を照らす言祓 詳細 とじる\n発動条件: 4文字以上\n敵単体に超強力な光属性攻撃+敵全体に超強力な光属性攻撃",
+            "blocks": [
+              { "region": "modal_trigger", "text": "4文字以上" },
+              { "region": "modal_body", "text": "敵単体に超強力な光属性攻撃+敵全体に超強力な光属性攻撃" }
+            ]
+          },
+          { "source_image": "yomitaru-light-trait1", "screen_type": "trait", "fullText": "ニードルガード\nチェンジガード" },
+          { "source_image": "yomitaru-light-trait2", "screen_type": "trait", "fullText": "フリーズブレイカー\n水・光属性ATKUP小" },
+          { "source_image": "yomitaru-light-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n闇属性キラー\n火属性キラー" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "世世に廻る・ヨヨヨミ&イィタル",
+        "attribute": "light",
+        "species": "demon",
+        "chars": ["よ", "ょ", "い", "す", "ず", "し"],
+        "waza_name": "ずーっと、ずっと",
+        "waza_attack": { "waza_target": "all_oppo", "attack_prefix": "very_strong" },
+        "sugowaza_name": "黄泉を照らす言祓",
+        "sugowaza_condition": [{ "sugo_cond_type": "char_count", "sugo_cond_val": "4" }],
+        "sugowaza_attack": { "waza_target": "all_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "ニードルガード\nチェンジガード",
+        "trait2_raw": "フリーズブレイカー\n水・光属性ATKUP小",
+        "blessing_raw": "祝福とくせい\n闇属性キラー\n火属性キラー"
+      }
+    },
+    {
+      "id": "yomitaru_water",
+      "normalized": {
+        "images": [
+          {
+            "source_image": "yomitaru-water-main",
+            "screen_type": "main",
+            "fullText": "依依たる想い・イィタル&ヨヨヨミ\n属性: 水\n種族: 霊\n使用可能文字: い・よ・ょ・す・ず・し",
+            "blocks": [{ "region": "main_name_text", "text": "依依たる想い・イィタル&ヨヨヨミ" }]
+          },
+          {
+            "source_image": "yomitaru-water-waza",
+            "screen_type": "waza",
+            "fullText": "なかよしこよし！ 詳細 とじる\n敵全体に超強力な水属性攻撃",
+            "blocks": [{ "region": "modal_body", "text": "敵全体に超強力な水属性攻撃" }]
+          },
+          {
+            "source_image": "yomitaru-water-sugowaza",
+            "screen_type": "sugowaza",
+            "fullText": "次に繋ぐ言祓 詳細 とじる\n発動条件: 4文字以上\n敵単体に超強力な水属性攻撃+敵全体に超強力な水属性攻撃",
+            "blocks": [
+              { "region": "modal_trigger", "text": "4文字以上" },
+              { "region": "modal_body", "text": "敵単体に超強力な水属性攻撃+敵全体に超強力な水属性攻撃" }
+            ]
+          },
+          { "source_image": "yomitaru-water-trait1", "screen_type": "trait", "fullText": "ニードルガード\nチェンジガード" },
+          { "source_image": "yomitaru-water-trait2", "screen_type": "trait", "fullText": "地雷ガード\n水・光属性ATKUP小" },
+          { "source_image": "yomitaru-water-blessing", "screen_type": "blessing", "fullText": "祝福とくせい\n闇属性キラー\n火属性キラー" }
+        ],
+        "warnings": []
+      },
+      "expected": {
+        "name": "依依たる想い・イィタル&ヨヨヨミ",
+        "attribute": "water",
+        "species": "spirit",
+        "chars": ["い", "よ", "ょ", "す", "ず", "し"],
+        "waza_name": "なかよしこよし！",
+        "waza_attack": { "waza_target": "all_oppo", "attack_prefix": "very_strong" },
+        "sugowaza_name": "次に繋ぐ言祓",
+        "sugowaza_condition": [{ "sugo_cond_type": "char_count", "sugo_cond_val": "4" }],
+        "sugowaza_attack": { "waza_target": "all_oppo", "attack_prefix": "very_strong" },
+        "trait1_raw": "ニードルガード\nチェンジガード",
+        "trait2_raw": "地雷ガード\n水・光属性ATKUP小",
+        "blessing_raw": "祝福とくせい\n闇属性キラー\n火属性キラー"
+      }
+    }
+  ]
+}
