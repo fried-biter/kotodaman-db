@@ -1,0 +1,192 @@
+{
+    "metadata": {
+        "case": "mashiro_grand",
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "recorded_at": "2026-06-18 17:24:42",
+        "image_count": 11,
+        "images": [
+            {
+                "source_image": "IMG_6038.PNG",
+                "mime_type": "image/png",
+                "bytes": 2828341
+            },
+            {
+                "source_image": "IMG_6039.PNG",
+                "mime_type": "image/png",
+                "bytes": 2826659
+            },
+            {
+                "source_image": "IMG_6040.PNG",
+                "mime_type": "image/png",
+                "bytes": 800628
+            },
+            {
+                "source_image": "IMG_6041.PNG",
+                "mime_type": "image/png",
+                "bytes": 949799
+            },
+            {
+                "source_image": "IMG_6042.PNG",
+                "mime_type": "image/png",
+                "bytes": 780737
+            },
+            {
+                "source_image": "IMG_6043.PNG",
+                "mime_type": "image/png",
+                "bytes": 1050792
+            },
+            {
+                "source_image": "IMG_6044.PNG",
+                "mime_type": "image/png",
+                "bytes": 1074681
+            },
+            {
+                "source_image": "IMG_6045.PNG",
+                "mime_type": "image/png",
+                "bytes": 1080065
+            },
+            {
+                "source_image": "IMG_6046.PNG",
+                "mime_type": "image/png",
+                "bytes": 3207566
+            },
+            {
+                "source_image": "IMG_6047.PNG",
+                "mime_type": "image/png",
+                "bytes": 3250444
+            },
+            {
+                "source_image": "IMG_6048.PNG",
+                "mime_type": "image/png",
+                "bytes": 906873
+            }
+        ]
+    },
+    "payload": {
+        "images": [
+            {
+                "source_image": "image_1",
+                "screen_type": "main",
+                "fullText": "言の葉を紡ぐ・ましろ",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "言の葉を紡ぐ・ましろ"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_2",
+                "screen_type": "main",
+                "fullText": "言の葉を紡ぐ・ましろ",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "言の葉を紡ぐ・ましろ"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_3",
+                "screen_type": "waza",
+                "fullText": "ことばの光たち このターン攻撃する味方のATKを少し強化+敵全体に超絶強力な冥属性攻撃 3文字以上",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "ことばの光たち このターン攻撃する味方のATKを少し強化+敵全体に超絶強力な冥属性攻撃 3文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_4",
+                "screen_type": "sugowaza",
+                "fullText": "真白き願い ①このターン攻撃する味方のATKを大きく強化+敵全体に超絶強力な冥属性攻撃 ②8コンボ以上の場合、追加で敵単体に超絶強力な冥属性攻撃 ③さらに12コンボ以上の場合、追加で敵全体に超絶強力な冥属性攻撃+このターン受ける味方のダメージを軽減 4文字以上",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "真白き願い ①このターン攻撃する味方のATKを大きく強化+敵全体に超絶強力な冥属性攻撃 ②8コンボ以上の場合、追加で敵単体に超絶強力な冥属性攻撃 ③さらに12コンボ以上の場合、追加で敵全体に超絶強力な冥属性攻撃+このターン受ける味方のダメージを軽減 4文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_5",
+                "screen_type": "leader",
+                "fullText": "①火・水・木・光・闇・冥・天属性HP100%・ATK120%UP ②「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」ATK200%UP",
+                "blocks": [
+                    {
+                        "region": "leader_body",
+                        "text": "①火・水・木・光・闇・冥・天属性HP100%・ATK120%UP ②「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」ATK200%UP"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_6",
+                "screen_type": "trait",
+                "fullText": "①コピーマスと地雷マスの効果を受けない ②文字変換に「し・ろ・う・ん・い」を追加する ③このコトダマンは「セイユニマ」「ブリタンディ」「リザンテクス」のグループに属しているものとして扱われる ④単位・通貨テーマの言葉を作成した時、自身の威力が15%UP ⑤10コンボ以上で自身の威力が15%UP ⑥5文字以上の言葉を作成した時、自身の威力が15%UP ⑦自身の文字が「ま・し・ろ」の時、自身の威力が15%UP",
+                "blocks": [
+                    {
+                        "region": "trait_body",
+                        "text": "①コピーマスと地雷マスの効果を受けない ②文字変換に「し・ろ・う・ん・い」を追加する ③このコトダマンは「セイユニマ」「ブリタンディ」「リザンテクス」のグループに属しているものとして扱われる ④単位・通貨テーマの言葉を作成した時、自身の威力が15%UP ⑤10コンボ以上で自身の威力が15%UP ⑥5文字以上の言葉を作成した時、自身の威力が15%UP ⑦自身の文字が「ま・し・ろ」の時、自身の威力が15%UP"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_7",
+                "screen_type": "trait",
+                "fullText": "①ウォールブロックへのダメージUP ②「援護(三大国への呼応)」を所持しているコトダマンが、ドロー候補または準備状態にあり、実体化した「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」のコトダマンがすごわざを発動させたとき、ドロー候補または準備状態の「援護(三大国への呼応)」を所持しているコトダマンのわざが1ターンにつき1回まで発動する ※同じとくせいを持ったコトダマンが複数いる場合、1ターンに2体まで発動する",
+                "blocks": [
+                    {
+                        "region": "trait_body",
+                        "text": "①ウォールブロックへのダメージUP ②「援護(三大国への呼応)」を所持しているコトダマンが、ドロー候補または準備状態にあり、実体化した「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」のコトダマンがすごわざを発動させたとき、ドロー候補または準備状態の「援護(三大国への呼応)」を所持しているコトダマンのわざが1ターンにつき1回まで発動する ※同じとくせいを持ったコトダマンが複数いる場合、1ターンに2体まで発動する"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_8",
+                "screen_type": "blessing",
+                "fullText": "HP基礎値UP HPの基礎値を200UP 天属性キラー+ 天属性の敵に与えるダメージが15%UP 冥属性キラー+ 冥属性の敵に与えるダメージが13%UP 神種族キラー+ 神種族の敵に与えるダメージが15%UP ドロー時HP10%回復 ドロー時にHPを10%回復 バリア貫通75% バリアを使用している敵に75%のダメージを与える",
+                "blocks": [
+                    {
+                        "region": "blessing_body",
+                        "text": "HP基礎値UP HPの基礎値を200UP 天属性キラー+ 天属性の敵に与えるダメージが15%UP 冥属性キラー+ 冥属性の敵に与えるダメージが13%UP 神種族キラー+ 神種族の敵に与えるダメージが15%UP ドロー時HP10%回復 ドロー時にHPを10%回復 バリア貫通75% バリアを使用している敵に75%のダメージを与える"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_9",
+                "screen_type": "main",
+                "fullText": "暖かな光たちと・ましろ",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "暖かな光たちと・ましろ"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_10",
+                "screen_type": "main",
+                "fullText": "言の葉を紡ぐ・ましろ",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "言の葉を紡ぐ・ましろ"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_11",
+                "screen_type": "EX_skill",
+                "fullText": "【全文字付与】手札のコトダマン1体を選択して、このターンすべての文字に変換できる状態にする。さらに選択したコトダマンは、すべての状態異常が回復し、このターン自身のATKが大きく強化される",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "【全文字付与】手札のコトダマン1体を選択して、このターンすべての文字に変換できる状態にする。さらに選択したコトダマンは、すべての状態異常が回復し、このターン自身のATKが大きく強化される"
+                    }
+                ]
+            }
+        ]
+    }
+}

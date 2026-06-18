@@ -1,0 +1,1296 @@
+{
+    "id": 2536,
+    "name": "騒擾の音聖神・ダント",
+    "_val_99_hp": 2169,
+    "_val_99_atk": 787,
+    "_val_120_hp": 2399,
+    "_val_120_atk": 871,
+    "talent_hp": 151,
+    "talent_atk": 55,
+    "is_no_lv120": false,
+    "rarity": 6,
+    "rarity_detail": "special",
+    "max_lavel": 99,
+    "release_date": "2021-05-25",
+    "attribute": "wood",
+    "sub_attributes": [],
+    "species": "artifact",
+    "groups": [
+        {
+            "slug": "strike_melody",
+            "name": "打の戦律"
+        },
+        {
+            "slug": "special",
+            "name": "スペシャル"
+        }
+    ],
+    "chars": [
+        {
+            "val": "た",
+            "slug": "ta",
+            "unlock": "default",
+            "attr": "wood"
+        },
+        {
+            "val": "だ",
+            "slug": "da",
+            "unlock": "default",
+            "attr": "wood"
+        },
+        {
+            "val": "そ",
+            "slug": "so",
+            "unlock": "blessing",
+            "attr": "wood"
+        },
+        {
+            "val": "ぞ",
+            "slug": "zo",
+            "unlock": "blessing",
+            "attr": "wood"
+        },
+        {
+            "val": "ん",
+            "slug": "nn",
+            "unlock": "super_copy",
+            "attr": "wood"
+        }
+    ],
+    "buff_counts_board": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+    ],
+    "buff_counts_hand": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+    ],
+    "debuff_counts": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+    ],
+    "name_ruby": "だんと",
+    "cv": "小松未可子",
+    "acquisition": "ガチャ",
+    "max_ls_hp": 100,
+    "max_ls_atk": 350,
+    "firepower_index": 0,
+    "is_estimate": false,
+    "is_koto_estimate": false,
+    "pre_evo_name": "調律の音聖・ダント",
+    "another_image_name": "",
+    "waza": {
+        "name": "騒擾",
+        "variations": [
+            {
+                "shift_value": [],
+                "timelines": [
+                    {
+                        "type": "attack",
+                        "attack_type": [
+                            "normal"
+                        ],
+                        "at_type_target": {
+                            "type": "self",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "killer_rate": 0,
+                        "target": {
+                            "main": "random_oppo",
+                            "type": "",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "color_order": [],
+                        "value": 16,
+                        "value_last": 0,
+                        "hit_count": 1,
+                        "is_moji_healing": false,
+                        "resist_status": false,
+                        "token_id": "",
+                        "moji_exhaust": false,
+                        "omni_advantage": false,
+                        "element": "wood",
+                        "turn_count": 2,
+                        "pressure_debuff": [],
+                        "bt_field_eff": [
+                            {
+                                "target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                },
+                                "value_type": "normal",
+                                "value": 0
+                            }
+                        ],
+                        "conditions": [
+                            {
+                                "type": "",
+                                "val": [],
+                                "hp_detail": "",
+                                "cond_target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "scaling": {
+            "type": "enemy",
+            "rows": []
+        }
+    },
+    "sugowaza": {
+        "name": "第四楽章・騒乱の調べ",
+        "condition": [
+            {
+                "get_place": "default",
+                "need_point": "",
+                "conditions": [
+                    {
+                        "type": "start_char",
+                        "values": [
+                            "た",
+                            "だ",
+                            "そ",
+                            "ぞ"
+                        ]
+                    },
+                    {
+                        "type": "char_count",
+                        "values": [
+                            4
+                        ]
+                    }
+                ]
+            },
+            {
+                "get_place": "default",
+                "need_point": "",
+                "conditions": [
+                    {
+                        "type": "char_count",
+                        "values": [
+                            2
+                        ]
+                    },
+                    {
+                        "type": "combo",
+                        "values": [
+                            9
+                        ]
+                    }
+                ]
+            }
+        ],
+        "shift_type": "none",
+        "variations": [
+            {
+                "shift_value": [],
+                "timelines": [
+                    {
+                        "type": "def_debuff",
+                        "attack_type": [
+                            "normal"
+                        ],
+                        "at_type_target": {
+                            "type": "self",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "killer_rate": 0,
+                        "target": {
+                            "main": "single_oppo",
+                            "type": "",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "color_order": [],
+                        "value": 3,
+                        "value_last": 0,
+                        "hit_count": 12,
+                        "is_moji_healing": false,
+                        "resist_status": false,
+                        "token_id": "",
+                        "moji_exhaust": false,
+                        "omni_advantage": false,
+                        "element": "dark",
+                        "turn_count": 2,
+                        "pressure_debuff": [],
+                        "bt_field_eff": [
+                            {
+                                "target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                },
+                                "value_type": "normal",
+                                "value": 0
+                            }
+                        ],
+                        "conditions": [
+                            {
+                                "type": "",
+                                "val": [],
+                                "hp_detail": "",
+                                "cond_target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "attack",
+                        "attack_type": [
+                            "normal"
+                        ],
+                        "at_type_target": {
+                            "type": "self",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "killer_rate": 0,
+                        "target": {
+                            "main": "single_oppo",
+                            "type": "",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "color_order": [],
+                        "value": 16,
+                        "value_last": 0,
+                        "hit_count": 1,
+                        "is_moji_healing": false,
+                        "resist_status": false,
+                        "token_id": "",
+                        "moji_exhaust": false,
+                        "omni_advantage": false,
+                        "element": "wood",
+                        "turn_count": 2,
+                        "pressure_debuff": [],
+                        "bt_field_eff": [
+                            {
+                                "target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                },
+                                "value_type": "normal",
+                                "value": 0
+                            }
+                        ],
+                        "conditions": [
+                            {
+                                "type": "",
+                                "val": [],
+                                "hp_detail": "",
+                                "cond_target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "shift_value": [],
+                "timelines": [
+                    {
+                        "type": "atk_buff",
+                        "attack_type": [
+                            "normal"
+                        ],
+                        "at_type_target": {
+                            "type": "self",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "killer_rate": 0,
+                        "target": {
+                            "main": "limited_ally",
+                            "type": "group",
+                            "obj": [
+                                {
+                                    "slug": "strike_melody",
+                                    "name": "打の戦律"
+                                }
+                            ]
+                        },
+                        "color_order": [],
+                        "value": 1,
+                        "value_last": 0,
+                        "hit_count": 0,
+                        "is_moji_healing": false,
+                        "resist_status": false,
+                        "token_id": "",
+                        "moji_exhaust": false,
+                        "omni_advantage": false,
+                        "element": "",
+                        "turn_count": 2,
+                        "pressure_debuff": [],
+                        "bt_field_eff": [
+                            {
+                                "target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                },
+                                "value_type": "normal",
+                                "value": 0
+                            }
+                        ],
+                        "conditions": [
+                            {
+                                "type": "group",
+                                "val": [],
+                                "target_cond_detail": "",
+                                "hp_detail": false,
+                                "cond_target": {
+                                    "type": "group",
+                                    "obj": []
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "type": "atk_buff",
+                        "attack_type": [
+                            "normal"
+                        ],
+                        "at_type_target": {
+                            "type": "self",
+                            "obj": [
+                                {
+                                    "slug": "",
+                                    "name": ""
+                                }
+                            ]
+                        },
+                        "killer_rate": 0,
+                        "target": {
+                            "main": "limited_hand",
+                            "type": "species",
+                            "obj": [
+                                {
+                                    "slug": "artifact",
+                                    "name": "物"
+                                }
+                            ]
+                        },
+                        "color_order": [],
+                        "value": 2,
+                        "value_last": 0,
+                        "hit_count": 0,
+                        "is_moji_healing": false,
+                        "resist_status": false,
+                        "token_id": "",
+                        "moji_exhaust": false,
+                        "omni_advantage": false,
+                        "element": "",
+                        "turn_count": 2,
+                        "pressure_debuff": [],
+                        "bt_field_eff": [
+                            {
+                                "target": {
+                                    "type": "",
+                                    "obj": [
+                                        {
+                                            "slug": "",
+                                            "name": ""
+                                        }
+                                    ]
+                                },
+                                "value_type": "normal",
+                                "value": 0
+                            }
+                        ],
+                        "conditions": [
+                            {
+                                "type": "group",
+                                "val": [],
+                                "target_cond_detail": "",
+                                "hp_detail": false,
+                                "cond_target": {
+                                    "type": "group",
+                                    "obj": []
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "scaling": null
+    },
+    "kotowaza": [],
+    "priority": 2,
+    "trait1": {
+        "name": "",
+        "contents": [
+            {
+                "type": "gimmick",
+                "sub_type": "weakening",
+                "rate_type": "percentage",
+                "value": 0,
+                "mojis": [],
+                "levels": [],
+                "whose": {
+                    "type": "self",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "",
+                "target_info": {
+                    "type": "",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            },
+            {
+                "type": "on_play_eff",
+                "sub_type": "atk_buff",
+                "rate_type": "fixed",
+                "value": 1,
+                "mojis": [],
+                "levels": [],
+                "whose": {
+                    "type": "self",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "",
+                "target_info": {
+                    "type": "species",
+                    "obj": [
+                        {
+                            "slug": "artifact",
+                            "name": "物"
+                        }
+                    ]
+                },
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            }
+        ]
+    },
+    "trait2": {
+        "name": "",
+        "contents": [
+            {
+                "type": "gimmick",
+                "sub_type": "copy",
+                "rate_type": "percentage",
+                "value": 0,
+                "mojis": [],
+                "levels": [],
+                "whose": {
+                    "type": "self",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "",
+                "target_info": {
+                    "type": "",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            },
+            {
+                "type": "other_traits",
+                "sub_type": "combo_plus",
+                "rate_type": "fixed",
+                "value": 1,
+                "mojis": [],
+                "levels": [],
+                "whose": {
+                    "type": "self",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "",
+                "target_info": {
+                    "type": "",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            },
+            {
+                "type": "status_up",
+                "sub_type": "resistance",
+                "rate_type": "percentage",
+                "value": 20,
+                "mojis": [],
+                "levels": [],
+                "whose": {
+                    "type": "self",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "curse",
+                "target_info": {
+                    "type": "group",
+                    "obj": [
+                        {
+                            "slug": "strike_melody",
+                            "name": "打の戦律"
+                        }
+                    ]
+                },
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            }
+        ]
+    },
+    "blessing": [
+        {
+            "type": "status_up",
+            "sub_type": "hp",
+            "rate_type": "fixed",
+            "value": 200,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 200,
+                    "point": 1
+                },
+                {
+                    "lv": 2,
+                    "value": 225,
+                    "point": 2
+                },
+                {
+                    "lv": 3,
+                    "value": 250,
+                    "point": 3
+                },
+                {
+                    "lv": 4,
+                    "value": 275,
+                    "point": 4
+                },
+                {
+                    "lv": 5,
+                    "value": 300,
+                    "point": 5
+                },
+                {
+                    "lv": 6,
+                    "value": 330,
+                    "point": 7
+                },
+                {
+                    "lv": 7,
+                    "value": 360,
+                    "point": 9
+                },
+                {
+                    "lv": 8,
+                    "value": 390,
+                    "point": 12
+                },
+                {
+                    "lv": 9,
+                    "value": 420,
+                    "point": 15
+                },
+                {
+                    "lv": 10,
+                    "value": 450,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        },
+        {
+            "type": "damage_correction",
+            "sub_type": "killer",
+            "rate_type": "percentage",
+            "value": 10,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 10,
+                    "point": 1
+                },
+                {
+                    "lv": 2,
+                    "value": 12,
+                    "point": 2
+                },
+                {
+                    "lv": 3,
+                    "value": 13,
+                    "point": 3
+                },
+                {
+                    "lv": 4,
+                    "value": 14,
+                    "point": 4
+                },
+                {
+                    "lv": 5,
+                    "value": 15,
+                    "point": 5
+                },
+                {
+                    "lv": 6,
+                    "value": 16,
+                    "point": 7
+                },
+                {
+                    "lv": 7,
+                    "value": 17,
+                    "point": 9
+                },
+                {
+                    "lv": 8,
+                    "value": 18,
+                    "point": 12
+                },
+                {
+                    "lv": 9,
+                    "value": 19,
+                    "point": 15
+                },
+                {
+                    "lv": 10,
+                    "value": 20,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "attr",
+                "obj": [
+                    {
+                        "slug": "water",
+                        "name": "水"
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        },
+        {
+            "type": "damage_correction",
+            "sub_type": "killer",
+            "rate_type": "percentage",
+            "value": 15,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 15,
+                    "point": 1
+                },
+                {
+                    "lv": 2,
+                    "value": 17,
+                    "point": 2
+                },
+                {
+                    "lv": 3,
+                    "value": 18,
+                    "point": 3
+                },
+                {
+                    "lv": 4,
+                    "value": 19,
+                    "point": 4
+                },
+                {
+                    "lv": 5,
+                    "value": 20,
+                    "point": 5
+                },
+                {
+                    "lv": 6,
+                    "value": 21,
+                    "point": 7
+                },
+                {
+                    "lv": 7,
+                    "value": 22,
+                    "point": 9
+                },
+                {
+                    "lv": 8,
+                    "value": 23,
+                    "point": 12
+                },
+                {
+                    "lv": 9,
+                    "value": 24,
+                    "point": 15
+                },
+                {
+                    "lv": 10,
+                    "value": 25,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "species",
+                "obj": [
+                    {
+                        "slug": "beast",
+                        "name": "獣"
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        },
+        {
+            "type": "status_up",
+            "sub_type": "mitigation",
+            "rate_type": "percentage",
+            "value": 10,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 10,
+                    "point": 1
+                },
+                {
+                    "lv": 2,
+                    "value": 12,
+                    "point": 2
+                },
+                {
+                    "lv": 3,
+                    "value": 13,
+                    "point": 3
+                },
+                {
+                    "lv": 4,
+                    "value": 14,
+                    "point": 4
+                },
+                {
+                    "lv": 5,
+                    "value": 15,
+                    "point": 5
+                },
+                {
+                    "lv": 6,
+                    "value": 16,
+                    "point": 7
+                },
+                {
+                    "lv": 7,
+                    "value": 17,
+                    "point": 9
+                },
+                {
+                    "lv": 8,
+                    "value": 18,
+                    "point": 12
+                },
+                {
+                    "lv": 9,
+                    "value": 19,
+                    "point": 15
+                },
+                {
+                    "lv": 10,
+                    "value": 20,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "attr",
+                "obj": [
+                    {
+                        "slug": "water",
+                        "name": "水"
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        },
+        {
+            "type": "damage_correction",
+            "sub_type": "killer",
+            "rate_type": "percentage",
+            "value": 15,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 15,
+                    "point": 1
+                },
+                {
+                    "lv": 2,
+                    "value": 17,
+                    "point": 2
+                },
+                {
+                    "lv": 3,
+                    "value": 18,
+                    "point": 3
+                },
+                {
+                    "lv": 4,
+                    "value": 19,
+                    "point": 4
+                },
+                {
+                    "lv": 5,
+                    "value": 20,
+                    "point": 5
+                },
+                {
+                    "lv": 6,
+                    "value": 21,
+                    "point": 7
+                },
+                {
+                    "lv": 7,
+                    "value": 22,
+                    "point": 9
+                },
+                {
+                    "lv": 8,
+                    "value": 23,
+                    "point": 12
+                },
+                {
+                    "lv": 9,
+                    "value": 24,
+                    "point": 15
+                },
+                {
+                    "lv": 10,
+                    "value": 25,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "species",
+                "obj": [
+                    {
+                        "slug": "artifact",
+                        "name": "物"
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        },
+        {
+            "type": "gimmick",
+            "sub_type": "super_copy",
+            "rate_type": "percentage",
+            "value": 0,
+            "mojis": [],
+            "levels": [
+                {
+                    "lv": 1,
+                    "value": 0,
+                    "point": 20
+                }
+            ],
+            "whose": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "super_heal": 0,
+            "limit_break": 0,
+            "turn_count": 1,
+            "resist_status": "",
+            "target_info": {
+                "type": "self",
+                "obj": [
+                    {
+                        "slug": "",
+                        "name": ""
+                    }
+                ]
+            },
+            "per_unit": false,
+            "conditions": [],
+            "crit_rate": 0,
+            "crit_damage": 0
+        }
+    ],
+    "leader": [
+        {
+            "type": "fixed",
+            "value_raws": [],
+            "conditions": [],
+            "limit_wave": 0,
+            "per_unit": false,
+            "main_eff": [
+                {
+                    "targets": [
+                        {
+                            "type": "species",
+                            "obj": [
+                                {
+                                    "slug": "artifact",
+                                    "name": "物"
+                                }
+                            ]
+                        }
+                    ],
+                    "value_raws": [
+                        {
+                            "status": "atk",
+                            "resist": false,
+                            "value": 250
+                        }
+                    ]
+                }
+            ],
+            "exp": 0,
+            "buff_count": 0,
+            "converge_rate": {
+                "conv_2": 0,
+                "conv_1": 0
+            },
+            "turn_count": 2
+        },
+        {
+            "type": "fixed",
+            "value_raws": [],
+            "conditions": [],
+            "limit_wave": 0,
+            "per_unit": false,
+            "main_eff": [
+                {
+                    "targets": [
+                        {
+                            "type": "group",
+                            "obj": [
+                                {
+                                    "slug": "strike_melody",
+                                    "name": "打の戦律"
+                                }
+                            ]
+                        }
+                    ],
+                    "value_raws": [
+                        {
+                            "status": "hp",
+                            "resist": false,
+                            "value": 100
+                        },
+                        {
+                            "status": "atk",
+                            "resist": false,
+                            "value": 100
+                        }
+                    ]
+                }
+            ],
+            "exp": 0,
+            "buff_count": 0,
+            "converge_rate": {
+                "conv_2": 0,
+                "conv_1": 0
+            },
+            "turn_count": 2
+        }
+    ],
+    "miracle_leader": null,
+    "EX_skill": {
+        "name": "",
+        "skill_kind": "",
+        "add_eff": {
+            "type": "",
+            "target": "",
+            "value": 0,
+            "turn_count": 1
+        },
+        "add_traits": [
+            {
+                "type": "",
+                "sub_type": "",
+                "rate_type": "",
+                "value": 0,
+                "mojis": [],
+                "levels": [],
+                "whose": "self",
+                "super_heal": 0,
+                "limit_break": 0,
+                "turn_count": 1,
+                "resist_status": "",
+                "target_info": [],
+                "per_unit": false,
+                "conditions": [],
+                "crit_rate": 0,
+                "crit_damage": 0
+            }
+        ],
+        "search_priority": {
+            "type": "",
+            "obj": [
+                {
+                    "slug": "",
+                    "name": ""
+                }
+            ]
+        }
+    },
+    "charge_skill": {
+        "name": "",
+        "need_charge": 0,
+        "effect": [
+            {
+                "type": "",
+                "target": {
+                    "main": "",
+                    "type": "",
+                    "obj": [
+                        {
+                            "slug": "",
+                            "name": ""
+                        }
+                    ]
+                },
+                "target_status": [],
+                "value": 0,
+                "turn_count": 1
+            }
+        ]
+    },
+    "corrections": {
+        "details": []
+    }
+}

@@ -3,16 +3,29 @@
         "backend": "openrouter-vlm-structured",
         "model": "google/gemini-3.1-flash-lite",
         "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
-        "generated_at": "2026-06-18 16:59:40",
-        "input": "/tmp/kotodaman-ss-to-spec-test-data"
+        "generated_at": "2026-06-18 17:24:57",
+        "input": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input",
+        "expected_source": "input_case_spec_json",
+        "case_discovery": "directories_with_spec_json_and_images",
+        "cases": [
+            "comforgo",
+            "danto",
+            "itadori_okkotsu_dream",
+            "karen_ibutsu",
+            "mashiro7",
+            "mashiro_grand",
+            "nhelp_grand",
+            "yomitaru_light",
+            "yomitaru_water"
+        ]
     },
     "reports": [
         {
             "case": "comforgo",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/comforgo/spec.json",
             "error": null,
             "normalized_diff": {
-                "expected_synthetic_images": 6,
                 "actual_live_images": 11,
                 "actual_images": [
                     {
@@ -386,6 +399,7 @@
         {
             "case": "danto",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/danto/spec.json",
             "error": {
                 "code": "koto_ocr_json_parse_failed",
                 "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"騒擾の音聖神・ダント\",\n      \"blocks\": [\n        {\n          \"region\": \"main_name_text\",\n          \"text\": \"騒擾の音聖神・ダント\"\n        }\n      ]\n    },\n    {\n      \"source_image\": \"image_2\",\n      \"screen_type\": \"w",
@@ -395,6 +409,7 @@
         {
             "case": "itadori_okkotsu_dream",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/itadori_okkotsu_dream/spec.json",
             "error": {
                 "code": "koto_ocr_json_parse_failed",
                 "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"虎杖悠仁vs乙骨憂太 Lv.120/120 10/99 0 コトノ語 英 呪術廻戦 ミラクル コトワリ HP 2203+487 ATK 707+157 いけせい わざ 俺の役割 すこわざ 同じ師を持つ二人 コトわざ ①このターン攻撃する味方のクリティカル発生率を少し上昇+このターン攻撃する英種族のクリティカル発生率を上昇+このターン攻撃する「呪術廻戦」のクリティカル発生率を少し上昇+敵単体に",
@@ -404,9 +419,9 @@
         {
             "case": "karen_ibutsu",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/karen_ibutsu/spec.json",
             "error": null,
             "normalized_diff": {
-                "expected_synthetic_images": 6,
                 "actual_live_images": 9,
                 "actual_images": [
                     {
@@ -610,6 +625,9 @@
                     "expected": [
                         "か",
                         "が",
+                        "こ",
+                        "か",
+                        "が",
                         "こ"
                     ],
                     "actual": [
@@ -656,7 +674,7 @@
                 "sugowaza_attack": {
                     "expected": {
                         "waza_target": "random_oppo",
-                        "attack_prefix": "very_strong"
+                        "attack_prefix": "strong"
                     },
                     "actual": {
                         "waza_target": "random_oppo",
@@ -721,9 +739,9 @@
         {
             "case": "mashiro7",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/mashiro7/spec.json",
             "error": null,
             "normalized_diff": {
-                "expected_synthetic_images": 6,
                 "actual_live_images": 8,
                 "actual_images": [
                     {
@@ -1030,11 +1048,358 @@
             ]
         },
         {
-            "case": "yomitaru_light",
-            "from_cache": true,
+            "case": "mashiro_grand",
+            "from_cache": false,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/mashiro_grand/spec.json",
             "error": null,
             "normalized_diff": {
-                "expected_synthetic_images": 6,
+                "actual_live_images": 11,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text"
+                        ],
+                        "text_preview": "言の葉を紡ぐ・ましろ"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text"
+                        ],
+                        "text_preview": "言の葉を紡ぐ・ましろ"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "ことばの光たち このターン攻撃する味方のATKを少し強化+敵全体に超絶強力な冥属性攻撃 3文字以上"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "真白き願い ①このターン攻撃する味方のATKを大きく強化+敵全体に超絶強力な冥属性攻撃 ②8コンボ以上の場合、追加で敵単体に超絶強力な冥属性攻撃 ③さらに12コンボ以上の場合、追加で敵全体に超絶強力な冥属性攻撃+このターン受ける味方のダメー"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "leader",
+                        "block_regions": [
+                            "leader_body"
+                        ],
+                        "text_preview": "①火・水・木・光・闇・冥・天属性HP100%・ATK120%UP ②「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」ATK200%UP"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "①コピーマスと地雷マスの効果を受けない ②文字変換に「し・ろ・う・ん・い」を追加する ③このコトダマンは「セイユニマ」「ブリタンディ」「リザンテクス」のグループに属しているものとして扱われる ④単位・通貨テーマの言葉を作成した時、自身の威力"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "①ウォールブロックへのダメージUP ②「援護(三大国への呼応)」を所持しているコトダマンが、ドロー候補または準備状態にあり、実体化した「三国の願い」または「セイユニマ・ブリタンディ・リザンテクス」のコトダマンがすごわざを発動させたとき、ドロ"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "HP基礎値UP HPの基礎値を200UP 天属性キラー+ 天属性の敵に与えるダメージが15%UP 冥属性キラー+ 冥属性の敵に与えるダメージが13%UP 神種族キラー+ 神種族の敵に与えるダメージが15%UP ドロー時HP10%回復 ドロー"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text"
+                        ],
+                        "text_preview": "暖かな光たちと・ましろ"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text"
+                        ],
+                        "text_preview": "言の葉を紡ぐ・ましろ"
+                    },
+                    {
+                        "source_image": "image_11",
+                        "screen_type": "EX_skill",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "【全文字付与】手札のコトダマン1体を選択して、このターンすべての文字に変換できる状態にする。さらに選択したコトダマンは、すべての状態異常が回復し、このターン自身のATKが大きく強化される"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "言の葉を紡ぐ・ましろ",
+                "attribute": "void",
+                "species": "",
+                "chars": [],
+                "waza": {
+                    "name": "ことばの光たち",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 30,
+                        "attack_prefix": "super_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "真白き願い",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 30,
+                        "attack_prefix": "super_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "leader",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_11",
+                        "screen_type": "EX_skill",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "言の葉を紡ぐ・ましろ",
+                    "actual": "言の葉を紡ぐ・ましろ",
+                    "status": "matched"
+                },
+                "attribute": {
+                    "expected": "void",
+                    "actual": "void",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "god",
+                    "actual": "",
+                    "status": "mismatched"
+                },
+                "chars": {
+                    "expected": [
+                        "ま",
+                        "し",
+                        "ろ",
+                        "う",
+                        "ん",
+                        "い"
+                    ],
+                    "actual": [],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "ことばの光たち",
+                    "actual": "ことばの光たち",
+                    "status": "matched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "super_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "sugowaza_name": {
+                    "expected": "真白き願い",
+                    "actual": "真白き願い",
+                    "status": "matched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "actual": [],
+                    "status": "mismatched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "super_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "leader",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "EX_skill",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        },
+        {
+            "case": "nhelp_grand",
+            "from_cache": false,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/nhelp_grand/spec.json",
+            "error": {
+                "code": "koto_ocr_openrouter_error",
+                "message": "OpenRouter APIエラー: HTTP 413 Downloaded image content cannot exceed 30MB",
+                "data": {
+                    "status": 413
+                }
+            }
+        },
+        {
+            "case": "yomitaru_light",
+            "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/yomitaru_light/spec.json",
+            "error": null,
+            "normalized_diff": {
                 "actual_live_images": 10,
                 "actual_images": [
                     {
@@ -1302,7 +1667,7 @@
                 },
                 "sugowaza_attack": {
                     "expected": {
-                        "waza_target": "all_oppo",
+                        "waza_target": "single_oppo",
                         "attack_prefix": "very_strong"
                     },
                     "actual": {
@@ -1373,9 +1738,9 @@
         {
             "case": "yomitaru_water",
             "from_cache": true,
+            "golden_spec_path": "/var/www/html/wp-content/themes/cocoon-child-master/local-dev/seed/ocr-fixtures/live-openrouter/input/yomitaru_water/spec.json",
             "error": null,
             "normalized_diff": {
-                "expected_synthetic_images": 6,
                 "actual_live_images": 9,
                 "actual_images": [
                     {
@@ -1628,7 +1993,7 @@
                 },
                 "sugowaza_attack": {
                     "expected": {
-                        "waza_target": "all_oppo",
+                        "waza_target": "single_oppo",
                         "attack_prefix": "very_strong"
                     },
                     "actual": {

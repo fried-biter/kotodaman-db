@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) exit;
 function koto_ocr_live_parse_args(array $argv)
 {
     $args = [
-        'input' => '/tmp/kotodaman-ss-to-spec-test-data',
+        'input' => get_stylesheet_directory() . '/local-dev/seed/ocr-fixtures/live-openrouter/input',
         'out' => get_stylesheet_directory() . '/local-dev/seed/ocr-fixtures/live-openrouter',
         'refresh' => false,
     ];
@@ -20,9 +20,30 @@ function koto_ocr_live_parse_args(array $argv)
     return $args;
 }
 
-function koto_ocr_live_cases()
+function koto_ocr_live_cases($input_dir)
 {
-    return ['comforgo', 'danto', 'itadori_okkotsu_dream', 'karen_ibutsu', 'mashiro7', 'yomitaru_light', 'yomitaru_water'];
+    if (!is_dir($input_dir)) {
+        return new WP_Error('koto_ocr_live_missing_input_dir', '入力ディレクトリがありません: ' . $input_dir);
+    }
+
+    $case_dirs = glob(rtrim($input_dir, '/') . '/*', GLOB_ONLYDIR) ?: [];
+    $cases = [];
+    foreach ($case_dirs as $case_dir) {
+        if (!is_readable($case_dir . '/spec.json')) {
+            continue;
+        }
+        if (empty(koto_ocr_live_case_images($case_dir))) {
+            continue;
+        }
+        $cases[] = basename($case_dir);
+    }
+    sort($cases, SORT_NATURAL);
+
+    if (empty($cases)) {
+        return new WP_Error('koto_ocr_live_no_cases', 'spec.jsonと画像を持つOCR caseがありません: ' . $input_dir);
+    }
+
+    return $cases;
 }
 
 function koto_ocr_live_backend_hash()
@@ -128,14 +149,102 @@ function koto_ocr_live_record_case($case, array $args, Koto_Ocr_Openrouter_Vlm $
     return ['recording' => $recording, 'from_cache' => false];
 }
 
-function koto_ocr_live_fixture_expected_by_case()
+function koto_ocr_live_expected_attack_summary(array $skill)
 {
-    $fixture = koto_ocr_live_json_read(get_stylesheet_directory() . '/local-dev/seed/ocr-fixtures/characters/reading-matrix.json');
-    $by_case = [];
-    foreach (($fixture['cases'] ?? []) as $case) {
-        if (!empty($case['id'])) {
-            $by_case[$case['id']] = $case;
+    foreach (($skill['variations'] ?? []) as $variation) {
+        foreach (($variation['timelines'] ?? []) as $timeline) {
+            if (($timeline['type'] ?? '') !== 'attack') {
+                continue;
+            }
+            return [
+                'waza_target' => $timeline['target']['main'] ?? '',
+                'attack_prefix' => koto_ocr_live_attack_prefix_from_value((float) ($timeline['value'] ?? 0)),
+            ];
         }
+    }
+    return [];
+}
+
+function koto_ocr_live_attack_prefix_from_value($value)
+{
+    if ($value >= 10) {
+        return 'most_strong';
+    }
+    if ($value >= 7) {
+        return 'very_strong';
+    }
+    if ($value > 0) {
+        return 'strong';
+    }
+    return 'none';
+}
+
+function koto_ocr_live_expected_condition_summary(array $spec)
+{
+    $start_chars = [];
+    $char_count = null;
+    $combo = null;
+
+    foreach (($spec['sugowaza']['condition'] ?? []) as $group) {
+        foreach (($group['conditions'] ?? []) as $condition) {
+            $values = $condition['values'] ?? [];
+            if (($condition['type'] ?? '') === 'start_char' && empty($start_chars)) {
+                $start_chars = array_map('strval', $values);
+            } elseif (($condition['type'] ?? '') === 'char_count') {
+                foreach ($values as $value) {
+                    $char_count = max((int) $value, (int) $char_count);
+                }
+            } elseif (($condition['type'] ?? '') === 'combo') {
+                foreach ($values as $value) {
+                    $combo = max((int) $value, (int) $combo);
+                }
+            }
+        }
+    }
+
+    $rows = [];
+    if (!empty($start_chars)) {
+        $rows[] = ['sugo_cond_type' => 'start_char', 'sugo_cond_val' => implode(',', $start_chars)];
+    }
+    if ($char_count !== null) {
+        $rows[] = ['sugo_cond_type' => 'char_count', 'sugo_cond_val' => (string) $char_count];
+    }
+    if ($combo !== null) {
+        $rows[] = ['sugo_cond_type' => 'combo', 'sugo_cond_val' => (string) $combo];
+    }
+    return $rows;
+}
+
+function koto_ocr_live_expected_from_spec(array $spec)
+{
+    return [
+        'name' => html_entity_decode((string) ($spec['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+        'attribute' => $spec['attribute'] ?? '',
+        'species' => $spec['species'] ?? '',
+        'chars' => array_values(array_map(function ($char) {
+            return (string) ($char['val'] ?? '');
+        }, $spec['chars'] ?? [])),
+        'waza_name' => $spec['waza']['name'] ?? '',
+        'waza_attack' => koto_ocr_live_expected_attack_summary($spec['waza'] ?? []),
+        'sugowaza_name' => $spec['sugowaza']['name'] ?? '',
+        'sugowaza_condition' => koto_ocr_live_expected_condition_summary($spec),
+        'sugowaza_attack' => koto_ocr_live_expected_attack_summary($spec['sugowaza'] ?? []),
+    ];
+}
+
+function koto_ocr_live_fixture_expected_by_case($input_dir, array $cases)
+{
+    $by_case = [];
+    foreach ($cases as $case) {
+        $spec_path = rtrim($input_dir, '/') . '/' . $case . '/spec.json';
+        $spec = koto_ocr_live_json_read($spec_path);
+        if (!$spec) {
+            continue;
+        }
+        $by_case[$case] = [
+            'expected' => koto_ocr_live_expected_from_spec($spec),
+            'golden_spec_path' => $spec_path,
+        ];
     }
     return $by_case;
 }
@@ -169,6 +278,7 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
     $report = [
         'case' => $case,
         'from_cache' => $record_result['from_cache'],
+        'golden_spec_path' => $expected_case['golden_spec_path'] ?? null,
         'error' => $recording['error'] ?? null,
     ];
     if (!empty($recording['error'])) {
@@ -229,7 +339,6 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
 
     return $report + [
         'normalized_diff' => [
-            'expected_synthetic_images' => count($expected_case['normalized']['images'] ?? []),
             'actual_live_images' => count($normalized['images'] ?? []),
             'actual_images' => $normalized_summary,
         ],
@@ -247,10 +356,14 @@ function koto_ocr_live_run(array $args)
     $model = koto_ocr_openrouter_model();
     $backend_hash = koto_ocr_live_backend_hash();
     $backend = new Koto_Ocr_Openrouter_Vlm(koto_ocr_openrouter_api_key(), $model, koto_ocr_openrouter_timeout());
-    $expected_cases = koto_ocr_live_fixture_expected_by_case();
+    $cases = koto_ocr_live_cases($args['input']);
+    if (is_wp_error($cases)) {
+        WP_CLI::error($cases->get_error_message());
+    }
+    $expected_cases = koto_ocr_live_fixture_expected_by_case($args['input'], $cases);
     $reports = [];
 
-    foreach (koto_ocr_live_cases() as $case) {
+    foreach ($cases as $case) {
         WP_CLI::line('OCR live survey: ' . $case);
         $record_result = koto_ocr_live_record_case($case, $args, $backend, $model, $backend_hash);
         if (is_wp_error($record_result)) {
@@ -280,6 +393,9 @@ function koto_ocr_live_run(array $args)
             'backend_source_hash' => $backend_hash,
             'generated_at' => current_time('mysql'),
             'input' => $args['input'],
+            'expected_source' => 'input_case_spec_json',
+            'case_discovery' => 'directories_with_spec_json_and_images',
+            'cases' => $cases,
         ],
         'reports' => $reports,
     ];

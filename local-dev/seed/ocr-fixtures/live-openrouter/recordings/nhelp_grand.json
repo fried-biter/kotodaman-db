@@ -1,0 +1,104 @@
+{
+    "metadata": {
+        "case": "nhelp_grand",
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "recorded_at": "2026-06-18 17:24:57",
+        "image_count": 17,
+        "images": [
+            {
+                "source_image": "IMG_6049.PNG",
+                "mime_type": "image/png",
+                "bytes": 2855973
+            },
+            {
+                "source_image": "IMG_6050.PNG",
+                "mime_type": "image/png",
+                "bytes": 769672
+            },
+            {
+                "source_image": "IMG_6051.PNG",
+                "mime_type": "image/png",
+                "bytes": 917537
+            },
+            {
+                "source_image": "IMG_6052.PNG",
+                "mime_type": "image/png",
+                "bytes": 1238527
+            },
+            {
+                "source_image": "IMG_6053.PNG",
+                "mime_type": "image/png",
+                "bytes": 1213214
+            },
+            {
+                "source_image": "IMG_6054.PNG",
+                "mime_type": "image/png",
+                "bytes": 894286
+            },
+            {
+                "source_image": "IMG_6055.PNG",
+                "mime_type": "image/png",
+                "bytes": 1230870
+            },
+            {
+                "source_image": "IMG_6056.PNG",
+                "mime_type": "image/png",
+                "bytes": 1179855
+            },
+            {
+                "source_image": "IMG_6057.PNG",
+                "mime_type": "image/png",
+                "bytes": 1074842
+            },
+            {
+                "source_image": "IMG_6058.PNG",
+                "mime_type": "image/png",
+                "bytes": 3238263
+            },
+            {
+                "source_image": "IMG_6059.PNG",
+                "mime_type": "image/png",
+                "bytes": 3272609
+            },
+            {
+                "source_image": "IMG_6060.PNG",
+                "mime_type": "image/png",
+                "bytes": 1014146
+            },
+            {
+                "source_image": "IMG_6061.PNG",
+                "mime_type": "image/png",
+                "bytes": 907737
+            },
+            {
+                "source_image": "IMG_6062.PNG",
+                "mime_type": "image/png",
+                "bytes": 1102265
+            },
+            {
+                "source_image": "IMG_6063.PNG",
+                "mime_type": "image/png",
+                "bytes": 1137144
+            },
+            {
+                "source_image": "IMG_6064.PNG",
+                "mime_type": "image/png",
+                "bytes": 1144700
+            },
+            {
+                "source_image": "IMG_6065.PNG",
+                "mime_type": "image/png",
+                "bytes": 1216414
+            }
+        ]
+    },
+    "error": {
+        "code": "koto_ocr_openrouter_error",
+        "message": "OpenRouter APIエラー: HTTP 413 Downloaded image content cannot exceed 30MB",
+        "data": {
+            "status": 413
+        }
+    }
+}
