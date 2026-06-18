@@ -16,9 +16,28 @@ function koto_ocr_extract_chars($text)
         $chars = array_merge($chars, koto_ocr_parse_moji_candidates($line));
     }
 
-    if (empty($chars) && preg_match_all('/[「\"]([^」\"]+)[」\"]/u', (string) $text, $matches)) {
+    if (empty($chars) && preg_match('/(使用可能文字|使用文字|文字変換|文字追加|もじ)/u', (string) $text) && preg_match_all('/[「\"]([^」\"]+)[」\"]/u', (string) $text, $matches)) {
         foreach ($matches[1] ?? [] as $match) {
             $chars = array_merge($chars, koto_ocr_parse_moji_candidates($match));
+        }
+    }
+
+    return array_values(array_unique($chars));
+}
+
+function koto_ocr_extract_chars_from_image(array $image)
+{
+    $chars = koto_ocr_extract_chars($image['fullText'] ?? '');
+    foreach ($image['blocks'] ?? [] as $block) {
+        $region = $block['region'] ?? '';
+        $text = (string) ($block['text'] ?? '');
+        if ($text === '') {
+            continue;
+        }
+        if (in_array($region, ['main_char_ball', 'trait_available_moji'], true)) {
+            $chars = array_merge($chars, koto_ocr_parse_moji_candidates($text));
+        } elseif ($region === 'trait_body') {
+            $chars = array_merge($chars, koto_ocr_extract_chars($text));
         }
     }
 

@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-function koto_ocr_append_basic_terms(array &$fields, $source, $text)
+function koto_ocr_append_basic_terms(array &$fields, $source, $text, array $image = [])
 {
     $attributes = [
         'fire' => ['火属性', '/属性[:：\s　]*火/u'],
@@ -13,11 +13,12 @@ function koto_ocr_append_basic_terms(array &$fields, $source, $text)
         'heaven' => ['天属性', '/属性[:：\s　]*天/u'],
         'rainbow' => ['虹属性', '/属性[:：\s　]*虹/u'],
     ];
-    foreach ($attributes as $slug => $patterns) {
-        if (koto_ocr_text_matches_any($text, $patterns)) {
-            $fields['attribute'][] = ['source_image' => $source, 'text' => $patterns[0], 'slug' => $slug];
-            break;
-        }
+    $attribute_slug = koto_ocr_find_basic_term_slug($text, $attributes);
+    if ($attribute_slug === '') {
+        $attribute_slug = koto_ocr_find_icon_term_slug($image, 'main_attribute_icon', $attributes);
+    }
+    if ($attribute_slug !== '') {
+        $fields['attribute'][] = ['source_image' => $source, 'text' => $attributes[$attribute_slug][0], 'slug' => $attribute_slug];
     }
 
     $species = [
@@ -30,12 +31,44 @@ function koto_ocr_append_basic_terms(array &$fields, $source, $text)
         'spirit' => ['霊種族', '/種族[:：\s　]*霊/u'],
         'yokai' => ['妖種族', '/種族[:：\s　]*妖/u'],
     ];
-    foreach ($species as $slug => $patterns) {
+    $species_slug = koto_ocr_find_basic_term_slug($text, $species);
+    if ($species_slug === '') {
+        $species_slug = koto_ocr_find_icon_term_slug($image, 'main_species_icon', $species);
+    }
+    if ($species_slug !== '') {
+        $fields['species'][] = ['source_image' => $source, 'text' => $species[$species_slug][0], 'slug' => $species_slug];
+    }
+}
+
+function koto_ocr_find_basic_term_slug($text, array $terms)
+{
+    foreach ($terms as $slug => $patterns) {
         if (koto_ocr_text_matches_any($text, $patterns)) {
-            $fields['species'][] = ['source_image' => $source, 'text' => $patterns[0], 'slug' => $slug];
-            break;
+            return $slug;
         }
     }
+    return '';
+}
+
+function koto_ocr_find_icon_term_slug(array $image, $region, array $terms)
+{
+    foreach ($image['blocks'] ?? [] as $block) {
+        if (($block['region'] ?? '') !== $region) {
+            continue;
+        }
+        $text = preg_replace('/[\s　]+/u', '', (string) ($block['text'] ?? ''));
+        if ($text === '') {
+            continue;
+        }
+        foreach ($terms as $slug => $patterns) {
+            $label = (string) ($patterns[0] ?? '');
+            $icon = mb_substr($label, 0, 1);
+            if ($icon !== '' && mb_strpos($text, $icon) !== false) {
+                return $slug;
+            }
+        }
+    }
+    return '';
 }
 
 function koto_ocr_text_matches_any($text, array $patterns)

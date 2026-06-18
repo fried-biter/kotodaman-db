@@ -7,16 +7,26 @@ function koto_ocr_live_parse_args(array $argv)
         'input' => get_stylesheet_directory() . '/local-dev/seed/ocr-fixtures/live-openrouter/input',
         'out' => get_stylesheet_directory() . '/local-dev/seed/ocr-fixtures/live-openrouter',
         'refresh' => false,
+        'cases' => [],
     ];
     foreach ($argv as $arg) {
         if (strpos($arg, 'input=') === 0) {
             $args['input'] = substr($arg, strlen('input='));
         } elseif (strpos($arg, 'out=') === 0) {
             $args['out'] = substr($arg, strlen('out='));
+        } elseif (strpos($arg, 'case=') === 0) {
+            $args['cases'][] = substr($arg, strlen('case='));
+        } elseif (strpos($arg, 'cases=') === 0) {
+            $args['cases'] = array_merge($args['cases'], explode(',', substr($arg, strlen('cases='))));
         } elseif ($arg === 'refresh=1') {
             $args['refresh'] = true;
         }
     }
+    $env_cases = getenv('KOTO_OCR_LIVE_CASES');
+    if (is_string($env_cases) && trim($env_cases) !== '') {
+        $args['cases'] = array_merge($args['cases'], explode(',', $env_cases));
+    }
+    $args['cases'] = array_values(array_unique(array_filter(array_map('trim', $args['cases']))));
     return $args;
 }
 
@@ -270,6 +280,15 @@ function koto_ocr_live_compare($expected, $actual)
     return ['expected' => $expected, 'actual' => $actual, 'status' => $expected === $actual ? 'matched' : 'mismatched'];
 }
 
+function koto_ocr_live_compare_char_set($expected, $actual)
+{
+    $expected_values = array_values(array_unique(array_map('strval', is_array($expected) ? $expected : [])));
+    $actual_values = array_values(array_unique(array_map('strval', is_array($actual) ? $actual : [])));
+    sort($expected_values, SORT_STRING);
+    sort($actual_values, SORT_STRING);
+    return ['expected' => $expected, 'actual' => $actual, 'status' => $expected_values === $actual_values ? 'matched' : 'mismatched'];
+}
+
 function koto_ocr_live_case_report($case, array $record_result, array $expected_cases)
 {
     $recording = $record_result['recording'];
@@ -326,15 +345,20 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
         'name' => koto_ocr_live_compare($expected['name'] ?? null, $actual['name']),
         'attribute' => koto_ocr_live_compare($expected['attribute'] ?? null, $actual['attribute']),
         'species' => koto_ocr_live_compare($expected['species'] ?? null, $actual['species']),
-        'chars' => koto_ocr_live_compare($expected['chars'] ?? null, $actual['chars']),
+        'chars' => koto_ocr_live_compare_char_set($expected['chars'] ?? null, $actual['chars']),
         'waza_name' => koto_ocr_live_compare($expected['waza_name'] ?? null, $actual['waza']['name']),
-        'waza_attack' => koto_ocr_live_compare($expected['waza_attack'] ?? null, array_intersect_key($actual['waza']['attack'], $expected['waza_attack'] ?? [])),
+        'waza_raw_present' => koto_ocr_live_compare(true, $actual['waza']['raw_present']),
         'sugowaza_name' => koto_ocr_live_compare($expected['sugowaza_name'] ?? null, $actual['sugowaza']['name']),
         'sugowaza_condition' => koto_ocr_live_compare($expected['sugowaza_condition'] ?? null, $actual['sugowaza_condition']),
-        'sugowaza_attack' => koto_ocr_live_compare($expected['sugowaza_attack'] ?? null, array_intersect_key($actual['sugowaza']['attack'], $expected['sugowaza_attack'] ?? [])),
+        'sugowaza_raw_present' => koto_ocr_live_compare(true, $actual['sugowaza']['raw_present']),
         'trait1_present' => koto_ocr_live_compare(true, $actual['trait1_present']),
         'trait2_present' => koto_ocr_live_compare(true, $actual['trait2_present']),
         'blessing_present' => koto_ocr_live_compare(true, $actual['blessing_present']),
+    ];
+
+    $skill_comparisons = [
+        'waza_attack' => koto_ocr_live_compare($expected['waza_attack'] ?? null, array_intersect_key($actual['waza']['attack'], $expected['waza_attack'] ?? [])),
+        'sugowaza_attack' => koto_ocr_live_compare($expected['sugowaza_attack'] ?? null, array_intersect_key($actual['sugowaza']['attack'], $expected['sugowaza_attack'] ?? [])),
     ];
 
     return $report + [
@@ -344,6 +368,7 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
         ],
         'actual' => $actual,
         'comparisons' => $comparisons,
+        'skill_comparisons' => $skill_comparisons,
         'warnings' => $draft['warnings'] ?? [],
     ];
 }
@@ -359,6 +384,14 @@ function koto_ocr_live_run(array $args)
     $cases = koto_ocr_live_cases($args['input']);
     if (is_wp_error($cases)) {
         WP_CLI::error($cases->get_error_message());
+    }
+    if (!empty($args['cases'])) {
+        $requested_cases = $args['cases'];
+        $cases = array_values(array_intersect($cases, $requested_cases));
+        $missing_cases = array_values(array_diff($requested_cases, $cases));
+        if (!empty($missing_cases)) {
+            WP_CLI::error('指定されたOCR caseが見つかりません: ' . implode(', ', $missing_cases));
+        }
     }
     $expected_cases = koto_ocr_live_fixture_expected_by_case($args['input'], $cases);
     $reports = [];
@@ -407,4 +440,5 @@ function koto_ocr_live_run(array $args)
     WP_CLI::success('live OCR report written: ' . $report_path);
 }
 
-koto_ocr_live_run(koto_ocr_live_parse_args($argv ?? []));
+$script_args = array_merge($argv ?? [], $_SERVER['argv'] ?? []);
+koto_ocr_live_run(koto_ocr_live_parse_args($script_args));

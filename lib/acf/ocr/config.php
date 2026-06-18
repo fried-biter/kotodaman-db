@@ -32,6 +32,10 @@ function koto_ocr_openrouter_timeout()
     if (defined('KOTO_OCR_OPENROUTER_TIMEOUT')) {
         return max(1, (int) KOTO_OCR_OPENROUTER_TIMEOUT);
     }
+    $value = getenv('KOTO_OCR_OPENROUTER_TIMEOUT');
+    if ($value !== false && $value !== '') {
+        return max(1, (int) $value);
+    }
     return 180;
 }
 

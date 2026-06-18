@@ -218,6 +218,78 @@ function koto_ocr_test_cases()
         ],
         [
             'suite' => 'module',
+            'name' => 'icon regions and multiple char sources build one spec',
+            'run' => function () {
+                $draft = koto_ocr_test_build_draft_from_normalized([
+                    'images' => [
+                        [
+                            'source_image' => 'image_1',
+                            'screen_type' => 'main',
+                            'fullText' => "テストキャラ",
+                            'blocks' => [
+                                ['region' => 'main_name_text', 'text' => 'テストキャラ'],
+                                ['region' => 'main_attribute_icon', 'text' => '水'],
+                                ['region' => 'main_species_icon', 'text' => '獣'],
+                                ['region' => 'main_char_ball', 'text' => 'こ・ご'],
+                            ],
+                        ],
+                        [
+                            'source_image' => 'image_2',
+                            'screen_type' => 'trait',
+                            'fullText' => '文字変換に「が」を追加する',
+                            'blocks' => [
+                                ['region' => 'trait_available_moji', 'text' => 'け・げ'],
+                            ],
+                        ],
+                    ],
+                ]);
+                $spec = $draft['spec'] ?? [];
+                koto_ocr_test_assert_same('water', $spec['attribute'] ?? null, 'icon attribute mismatch');
+                koto_ocr_test_assert_same('beast', $spec['species'] ?? null, 'icon species mismatch');
+                koto_ocr_test_assert_same(['こ', 'ご', 'が', 'け', 'げ'], $spec['chars'] ?? null, 'union chars mismatch');
+            },
+        ],
+        [
+            'suite' => 'module',
+            'name' => 'skill modal order corrects mislabeled waza screens',
+            'run' => function () {
+                $draft = koto_ocr_test_build_draft_from_normalized([
+                    'images' => [
+                        [
+                            'source_image' => 'image_1',
+                            'screen_type' => 'main',
+                            'fullText' => 'テストキャラ\n属性: 火\n種族: 神\n使用可能文字: あ',
+                            'blocks' => [['region' => 'main_name_text', 'text' => 'テストキャラ']],
+                        ],
+                        [
+                            'source_image' => 'image_2',
+                            'screen_type' => 'sugowaza',
+                            'fullText' => '通常わざ 詳細 敵単体に強力な火属性攻撃 発動条件 3文字以上',
+                            'blocks' => [
+                                ['region' => 'modal_header_title', 'text' => '通常わざ'],
+                                ['region' => 'modal_body', 'text' => '敵単体に強力な火属性攻撃'],
+                                ['region' => 'modal_trigger', 'text' => '3文字以上'],
+                            ],
+                        ],
+                        [
+                            'source_image' => 'image_3',
+                            'screen_type' => 'sugowaza',
+                            'fullText' => '超わざ 詳細 敵全体に超絶強力な火属性攻撃 発動条件 4文字以上',
+                            'blocks' => [
+                                ['region' => 'modal_header_title', 'text' => '超わざ'],
+                                ['region' => 'modal_body', 'text' => '敵全体に超絶強力な火属性攻撃'],
+                                ['region' => 'modal_trigger', 'text' => '4文字以上'],
+                            ],
+                        ],
+                    ],
+                ]);
+                $spec = $draft['spec'] ?? [];
+                koto_ocr_test_assert_same('通常わざ', $spec['waza']['name'] ?? null, 'ordered waza name mismatch');
+                koto_ocr_test_assert_same('超わざ', $spec['sugowaza']['name'] ?? null, 'ordered sugowaza name mismatch');
+            },
+        ],
+        [
+            'suite' => 'module',
             'name' => 'waza extracts cleaned name and all-target very-strong attack row',
             'run' => function () {
                 $fixture = koto_ocr_test_fixture('module/waza-attack.json');

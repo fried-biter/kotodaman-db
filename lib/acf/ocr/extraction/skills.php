@@ -13,6 +13,12 @@ function koto_ocr_extract_labeled_line($text, array $labels)
 
 function koto_ocr_extract_skill_name(array $image, array $labels)
 {
+    foreach ($image['blocks'] ?? [] as $block) {
+        if (($block['region'] ?? '') === 'modal_header_title' && trim((string) ($block['text'] ?? '')) !== '') {
+            return koto_ocr_clean_skill_name($block['text']);
+        }
+    }
+
     $text = (string) ($image['fullText'] ?? '');
     $labeled = koto_ocr_extract_labeled_line($text, $labels);
     if ($labeled !== '') return koto_ocr_clean_skill_name($labeled);

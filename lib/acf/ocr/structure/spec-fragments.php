@@ -11,8 +11,16 @@ function koto_ocr_build_spec_fragments(array $extracted)
     if (!empty($fields['character_name'][0]['text'])) {
         $fragment['name'] = $fields['character_name'][0]['text'];
     }
-    if (!empty($fields['chars'][0]['items'])) {
-        $fragment['chars'] = $fields['chars'][0]['items'];
+    $chars = [];
+    foreach ($fields['chars'] ?? [] as $chars_field) {
+        foreach ($chars_field['items'] ?? [] as $char) {
+            if (!in_array($char, $chars, true)) {
+                $chars[] = $char;
+            }
+        }
+    }
+    if (!empty($chars)) {
+        $fragment['chars'] = $chars;
     }
     if (!empty($fields['attribute'][0]['slug'])) {
         $fragment['attribute'] = $fields['attribute'][0]['slug'];

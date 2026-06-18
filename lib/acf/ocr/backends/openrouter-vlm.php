@@ -30,8 +30,70 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
             return new WP_Error('koto_ocr_no_api_key', 'OpenRouter APIキーが設定されていません。');
         }
 
+        if (count($images) > 1) {
+            return $this->recognize_in_chunks($images, 1);
+        }
+
+        return $this->recognize_batch($images, 1);
+    }
+
+    private function recognize_in_chunks(array $images, $chunk_size)
+    {
+        $merged_images = [];
+        $warnings = [];
+        $first_image_index = 1;
+        foreach (array_chunk($images, $chunk_size) as $chunk) {
+            $payload = $this->recognize_batch($chunk, $first_image_index);
+            if (is_wp_error($payload)) {
+                foreach (array_values($chunk) as $local_index => $_image) {
+                    $source_image = 'image_' . ($first_image_index + $local_index);
+                    $merged_images[] = [
+                        'source_image' => $source_image,
+                        'screen_type' => 'unknown',
+                        'fullText' => '',
+                        'blocks' => [],
+                    ];
+                    $warnings[] = koto_ocr_warning('ocr', 'image_recognition_failed', $source_image . ': ' . $payload->get_error_message());
+                }
+                $first_image_index += count($chunk);
+                continue;
+            }
+            if (empty($payload['images']) || !is_array($payload['images'])) {
+                foreach (array_values($chunk) as $local_index => $_image) {
+                    $source_image = 'image_' . ($first_image_index + $local_index);
+                    $merged_images[] = [
+                        'source_image' => $source_image,
+                        'screen_type' => 'unknown',
+                        'fullText' => '',
+                        'blocks' => [],
+                    ];
+                    $warnings[] = koto_ocr_warning('ocr', 'image_payload_missing', $source_image . ': OpenRouter応答にimages配列がありません。');
+                }
+                $first_image_index += count($chunk);
+                continue;
+            }
+            foreach (array_values($payload['images']) as $local_index => $image_payload) {
+                if (!is_array($image_payload)) {
+                    $image_payload = [];
+                }
+                $image_payload['source_image'] = 'image_' . ($first_image_index + $local_index);
+                $merged_images[] = $image_payload;
+            }
+            $first_image_index += count($chunk);
+        }
+
+        $payload = ['images' => $merged_images];
+        if (!empty($warnings)) {
+            $payload['warnings'] = $warnings;
+        }
+        return $payload;
+    }
+
+    private function recognize_batch(array $images, $first_image_index)
+    {
+
         $content = [
-            ['type' => 'text', 'text' => $this->build_prompt(count($images))],
+            ['type' => 'text', 'text' => $this->build_prompt(count($images), $first_image_index)],
         ];
 
         foreach ($images as $image) {
@@ -47,7 +109,7 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
             ];
         }
 
-        $response = wp_remote_post('https://openrouter.ai/api/v1/chat/completions', [
+        $request = [
             'timeout' => $this->timeout,
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->api_key,
@@ -64,7 +126,15 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
                     'content' => $content,
                 ]],
             ], JSON_UNESCAPED_UNICODE),
-        ]);
+        ];
+
+        $response = null;
+        for ($attempt = 0; $attempt < 2; $attempt++) {
+            $response = wp_remote_post('https://openrouter.ai/api/v1/chat/completions', $request);
+            if (!is_wp_error($response) || $response->get_error_code() !== 'http_request_failed') {
+                break;
+            }
+        }
 
         if (is_wp_error($response)) {
             return $response;
@@ -84,10 +154,11 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
             return new WP_Error('koto_ocr_empty_response', 'OpenRouter応答からOCR JSONを取得できませんでした。');
         }
 
-        $payload = json_decode($text, true);
+        $payload = $this->decode_json_content($text);
         if (!is_array($payload)) {
-            return new WP_Error('koto_ocr_json_parse_failed', 'OCR JSONの解析に失敗しました: ' . mb_substr($text, 0, 300));
+            return new WP_Error('koto_ocr_json_parse_failed', 'OCR JSONの解析に失敗しました: ' . mb_substr($text, 0, 300), ['json_error' => json_last_error_msg(), 'raw_content_preview' => mb_substr($text, 0, 2000)]);
         }
+        $payload = $this->normalize_decoded_payload($payload);
 
         if (koto_ocr_debug_enabled()) {
             $payload['_debug_openrouter_response'] = $body;
@@ -96,21 +167,193 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
         return $payload;
     }
 
-    private function build_prompt($image_count)
+    private function decode_json_content($text)
     {
-        $source_rule = $image_count > 1
-            ? 'トップレベルに images 配列を必ず置き、各要素の source_image は image_1, image_2 の順にしてください。'
-            : '単一画像でも source_image は image_1 としてください。';
+        $text = trim((string) $text);
+        $text = preg_replace('/^\xEF\xBB\xBF/u', '', $text);
+
+        $decoded = json_decode($text, true);
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+        $escaped_text = $this->escape_control_chars_in_json_strings($text);
+        if ($escaped_text !== $text) {
+            $decoded = json_decode($escaped_text, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        if (preg_match('/^```(?:json)?\s*(.*?)\s*```$/su', $text, $m)) {
+            $fenced = trim($m[1]);
+            $decoded = json_decode($fenced, true);
+            if (!is_array($decoded)) {
+                $decoded = json_decode($this->escape_control_chars_in_json_strings($fenced), true);
+            }
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        $start = strpos($text, '{');
+        $end = strrpos($text, '}');
+        if ($start !== false && $end !== false && $end > $start) {
+            $slice = substr($text, $start, $end - $start + 1);
+            $decoded = json_decode($slice, true);
+            if (!is_array($decoded)) {
+                $decoded = json_decode($this->escape_control_chars_in_json_strings($slice), true);
+            }
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        $balanced = $this->extract_first_balanced_json($text);
+        if ($balanced !== '') {
+            $decoded = json_decode($balanced, true);
+            if (!is_array($decoded)) {
+                $decoded = json_decode($this->escape_control_chars_in_json_strings($balanced), true);
+            }
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return null;
+    }
+
+    private function escape_control_chars_in_json_strings($text)
+    {
+        $result = '';
+        $in_string = false;
+        $escaped = false;
+        $length = strlen($text);
+        for ($i = 0; $i < $length; $i++) {
+            $char = $text[$i];
+            if ($in_string) {
+                if ($escaped) {
+                    $result .= $char;
+                    $escaped = false;
+                    continue;
+                }
+                if ($char === '\\') {
+                    $result .= $char;
+                    $escaped = true;
+                    continue;
+                }
+                if ($char === '"') {
+                    $result .= $char;
+                    $in_string = false;
+                    continue;
+                }
+                if ($char === "\n") {
+                    $result .= '\\n';
+                    continue;
+                }
+                if ($char === "\r") {
+                    $result .= '\\n';
+                    continue;
+                }
+                if ($char === "\t") {
+                    $result .= '\\t';
+                    continue;
+                }
+                if (ord($char) < 32) {
+                    continue;
+                }
+            } elseif ($char === '"') {
+                $in_string = true;
+            }
+            $result .= $char;
+        }
+        return $result;
+    }
+
+    private function extract_first_balanced_json($text)
+    {
+        $start_object = strpos($text, '{');
+        $start_array = strpos($text, '[');
+        if ($start_object === false && $start_array === false) {
+            return '';
+        }
+        if ($start_object === false) {
+            $start = $start_array;
+        } elseif ($start_array === false) {
+            $start = $start_object;
+        } else {
+            $start = min($start_object, $start_array);
+        }
+
+        $stack = [];
+        $in_string = false;
+        $escaped = false;
+        $length = strlen($text);
+        for ($i = $start; $i < $length; $i++) {
+            $char = $text[$i];
+            if ($in_string) {
+                if ($escaped) {
+                    $escaped = false;
+                } elseif ($char === '\\') {
+                    $escaped = true;
+                } elseif ($char === '"') {
+                    $in_string = false;
+                }
+                continue;
+            }
+
+            if ($char === '"') {
+                $in_string = true;
+            } elseif ($char === '{') {
+                $stack[] = '}';
+            } elseif ($char === '[') {
+                $stack[] = ']';
+            } elseif ($char === '}' || $char === ']') {
+                $expected = array_pop($stack);
+                if ($expected !== $char) {
+                    return '';
+                }
+                if (empty($stack)) {
+                    return substr($text, $start, $i - $start + 1);
+                }
+            }
+        }
+
+        return '';
+    }
+
+    private function normalize_decoded_payload(array $payload)
+    {
+        if (isset($payload['images']) && is_array($payload['images'])) {
+            return $payload;
+        }
+        if (isset($payload[0]) && is_array($payload[0]) && isset($payload[0]['images']) && is_array($payload[0]['images'])) {
+            return $payload[0];
+        }
+        if (isset($payload[0]) && is_array($payload[0]) && (isset($payload[0]['fullText']) || isset($payload[0]['full_text']))) {
+            return ['images' => $payload];
+        }
+        return $payload;
+    }
+
+    private function build_prompt($image_count, $first_image_index)
+    {
+        $labels = [];
+        for ($i = 0; $i < $image_count; $i++) {
+            $labels[] = 'image_' . ($first_image_index + $i);
+        }
+        $source_rule = 'source_image は添付順に ' . implode(', ', $labels) . ' だけを使ってください。';
 
         return implode("\n", [
             'あなたは日本語ゲーム「コトダマン」のスクリーンショット専用OCRです。翻訳、要約、推測、ゲーム知識による補完は禁止です。',
+            '返答はJSON objectのみ。Markdown、コードフェンス、前後説明、コメント、省略記号、末尾の補足文は禁止です。JSONは一度だけ閉じ、同じ } や ] を繰り返さないでください。読めない値は空文字または空配列にしてください。',
             $source_rule,
-            'DB field候補やspec_jsonは作らず、OCR結果だけをJSONで返してください。',
+            'DB field候補やspec_jsonは作らず、次のschemaだけで返してください: {"images":[{"source_image":"' . $labels[0] . '","screen_type":"main","fullText":"","blocks":[{"region":"main_name_text","text":""}]}]}',
             '許可するscreen_type: main, waza, sugowaza, trait, blessing, leader, kotowaza, EX_skill, charge_skill, unknown。',
-            '各画像は fullText と blocks を持ちます。blocksは text と region を含め、可能ならbbox/boxも含めてください。',
-            '重要region例: main_name_text, main_waza_preview, modal_body, modal_trigger, trait_body, blessing_body, leader_body。',
-            '小さいラベル、属性、種族、文字玉、発動条件を省略しないでください。倍率や数値は読めた文字だけを書き、推測しないでください。',
-            '出力例: {"images":[{"source_image":"image_1","screen_type":"main","fullText":"...","blocks":[{"region":"main_name_text","text":"..."}]}]}',
+            '各画像は必ず fullText と blocks を持ちます。blocks は region と text のみを含め、bbox/boxや余分なキーは出力しないでください。',
+            'JSON文字列内の改行は必ず \\n としてエスケープしてください。fullText は全文転記ではなく重要block.textの短い連結にし、最大300文字まで。各 block.text も最大300文字まで。長い説明文は文の区切りで短く切ってください。',
+            'main画面では main_name_text, main_attribute_icon, main_species_icon, main_char_ball, main_waza_preview, main_sugowaza_preview を可能な限り分けてください。属性/種族アイコンは 火/水/木/光/闇/冥/天/虹 と 龍/神/魔/獣/物/英/霊/妖 の1文字でもよいので省略しないでください。',
+            'modal画面では modal_header_title, modal_body, modal_trigger を分けてください。trait画面では trait_body と、文字変換/文字追加が読める場合は trait_available_moji を分けてください。blessing画面では blessing_body を使ってください。blocksは最大6個までです。',
+            '濁点、半濁点、小書きかな、長音、祓/祝など似た文字を特に注意して、読めた文字だけを書いてください。',
         ]);
     }
 }

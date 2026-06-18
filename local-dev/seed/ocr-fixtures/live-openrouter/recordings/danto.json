@@ -3,8 +3,8 @@
         "case": "danto",
         "backend": "openrouter-vlm-structured",
         "model": "google/gemini-3.1-flash-lite",
-        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
-        "recorded_at": "2026-06-18 16:57:21",
+        "backend_source_hash": "eb0f3ac9b0016e6128ee5b45d4260a44c87847e03bbc2766da4b915e07aa5002",
+        "recorded_at": "2026-06-18 19:41:08",
         "image_count": 9,
         "images": [
             {
@@ -54,9 +54,199 @@
             }
         ]
     },
-    "error": {
-        "code": "koto_ocr_json_parse_failed",
-        "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"騒擾の音聖神・ダント\",\n      \"blocks\": [\n        {\n          \"region\": \"main_name_text\",\n          \"text\": \"騒擾の音聖神・ダント\"\n        }\n      ]\n    },\n    {\n      \"source_image\": \"image_2\",\n      \"screen_type\": \"w",
-        "data": null
+    "payload": {
+        "images": [
+            {
+                "source_image": "image_1",
+                "screen_type": "main",
+                "fullText": "騒擾の音聖神・ダント",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "騒擾の音聖神・ダント"
+                    },
+                    {
+                        "region": "main_attribute_icon",
+                        "text": "木"
+                    },
+                    {
+                        "region": "main_species_icon",
+                        "text": "物"
+                    },
+                    {
+                        "region": "main_char_ball",
+                        "text": "た"
+                    },
+                    {
+                        "region": "main_waza_preview",
+                        "text": "騒擾"
+                    },
+                    {
+                        "region": "main_sugowaza_preview",
+                        "text": "第四楽章・騒乱の調べ"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_2",
+                "screen_type": "sugowaza",
+                "fullText": "騒擾\n敵単体に爆絶強力な木属性攻撃\n3文字以上",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "騒擾"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "敵単体に爆絶強力な木属性攻撃"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "3文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_3",
+                "screen_type": "sugowaza",
+                "fullText": "第四楽章・騒乱の調べ。①敵単体に被ダメージ大きく増加状態を2ターン付与＋敵単体に爆絶強力な木属性攻撃。②同時に「打の戦律」のコトダマンがわざ・すごわざを発動させていた場合、追加でこのターン攻撃する「打の戦律」にATKを少し強化＋手札の物種族にATK強化を2ターン付与。「た」「だ」「そ」「ぞ」からはじまる4文字以上。2文字以上9コンボ以上。",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "第四楽章・騒乱の調べ"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "①敵単体に被ダメージ大きく増加状態を2ターン付与＋敵単体に爆絶強力な木属性攻撃\n②同時に「打の戦律」のコトダマンがわざ・すごわざを発動させていた場合、追加でこのターン攻撃する「打の戦律」にATKを少し強化＋手札の物種族にATK強化を2ターン付与"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "「た」「だ」「そ」「ぞ」からはじまる4文字以上\n2文字以上9コンボ以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_4",
+                "screen_type": "trait",
+                "fullText": "とくせい詳細\n①物種族ATK250%UP\n②「打の戦律」HP100%・ATK100%UP",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "とくせい詳細"
+                    },
+                    {
+                        "region": "trait_body",
+                        "text": "①物種族ATK250%UP\n②「打の戦律」HP100%・ATK100%UP"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "とじる"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_5",
+                "screen_type": "trait",
+                "fullText": "とくせい詳細 ①弱体マスの効果を受けない ②実体化時に物種族のATKを少し強化",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "とくせい詳細"
+                    },
+                    {
+                        "region": "trait_body",
+                        "text": "①弱体マスの効果を受けない\n②実体化時に物種族のATKを少し強化"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "とじる"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_6",
+                "screen_type": "trait",
+                "fullText": "とくせい詳細\n(1)コピーマスの効果を受けない\n(2)実体化時に、ことばの判定でコンボの数を+1する\n※コンボ+の効果は重複せず、最も高い数値が加算されます\n(3)デッキ内の「打の戦律」の呪い耐性20%",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "とくせい詳細"
+                    },
+                    {
+                        "region": "trait_body",
+                        "text": "(1)コピーマスの効果を受けない\n(2)実体化時に、ことばの判定でコンボの数を+1する\n※コンボ+の効果は重複せず、最も高い数値が加算されます\n(3)デッキ内の「打の戦律」の呪い耐性20%"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "とじる"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_7",
+                "screen_type": "blessing",
+                "fullText": "祝福とくせい HP基礎値中UP 水属性キラー+ 獣種族キラー+ 水属性ダメージ軽減+ 物種族キラー+ コピーガード・スーパー化「ん」 文字変換「そ・ぞ」",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "祝福とくせい"
+                    },
+                    {
+                        "region": "blessing_body",
+                        "text": "HP基礎値中UP HPの基礎値を200UP\n水属性キラー+ 水属性の敵に与えるダメージが17%UP\n獣種族キラー+ 獣種族の敵に与えるダメージが15%UP\n水属性ダメージ軽減+ 水属性からのダメージを10%軽減\n物種族キラー+ 物種族の敵に与えるダメージが17%UP\nコピーガード・スーパー化「ん」 文字変換「そ・ぞ」"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_8",
+                "screen_type": "main",
+                "fullText": "乱戦も最高潮ってな！こういうの大好きだぜ。血湧き肉躍る戦いを、オレにもっとぉ！！CV:小松未可子 調律の音聖・ダント 音界の至宝「音遺物」の守護を司る騒擾の音聖神。勇猛無頼のその身に秘めた、激しく雄々しき戦乱の調べは、調律された音界に鳴り響く時を待つ。",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "乱戦も最高潮ってな！\nこういうの大好きだぜ。\n血湧き肉躍る戦いを、オレにもっとぉ！！"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "CV:小松未可子\n調律の音聖・ダント\n音界の至宝「音遺物」の守護を司る騒擾の音聖神。勇猛無頼のその身に秘めた、激しく雄々しき戦乱の調べは、調律された音界に鳴り響く時を待つ。"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "とじる"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_9",
+                "screen_type": "main",
+                "fullText": "オレは騒擾の音聖神ダント。音言界の調律を乱す者には聞かせてやる！衝撃の轟音を！騒擾の音聖神・ダント",
+                "blocks": [
+                    {
+                        "region": "modal_header_title",
+                        "text": "オレは騒擾の音聖神ダント。音言界の調律を乱す者には聞かせてやる！衝撃の轟音を！"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "CV:小松未可子"
+                    },
+                    {
+                        "region": "main_name_text",
+                        "text": "ソウジョウノオンセイジン・ダント\n騒擾の音聖神・ダント"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "「音遺物」が音言界に満たす「戦律」が乱れるとき、騒擾の音聖神の調べが響く。電光石火の轟音が、雄々しき音色で音言界を満たす。"
+                    },
+                    {
+                        "region": "modal_body",
+                        "text": "※進化状態を選択するとバトル時の見た目を変更できます\n変更してもステータスは下がりません"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "とじる"
+                    }
+                ]
+            }
+        ]
     }
 }
