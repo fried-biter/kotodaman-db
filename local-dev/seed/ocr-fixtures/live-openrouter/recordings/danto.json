@@ -1,0 +1,62 @@
+{
+    "metadata": {
+        "case": "danto",
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "recorded_at": "2026-06-18 16:57:21",
+        "image_count": 9,
+        "images": [
+            {
+                "source_image": "IMG_6168.PNG",
+                "mime_type": "image/png",
+                "bytes": 2607412
+            },
+            {
+                "source_image": "IMG_6169.PNG",
+                "mime_type": "image/png",
+                "bytes": 647154
+            },
+            {
+                "source_image": "IMG_6170.PNG",
+                "mime_type": "image/png",
+                "bytes": 872418
+            },
+            {
+                "source_image": "IMG_6171.PNG",
+                "mime_type": "image/png",
+                "bytes": 612298
+            },
+            {
+                "source_image": "IMG_6172.PNG",
+                "mime_type": "image/png",
+                "bytes": 623621
+            },
+            {
+                "source_image": "IMG_6173.PNG",
+                "mime_type": "image/png",
+                "bytes": 721587
+            },
+            {
+                "source_image": "IMG_6174.PNG",
+                "mime_type": "image/png",
+                "bytes": 1050437
+            },
+            {
+                "source_image": "IMG_6175.PNG",
+                "mime_type": "image/png",
+                "bytes": 3113976
+            },
+            {
+                "source_image": "IMG_6176.PNG",
+                "mime_type": "image/png",
+                "bytes": 3134820
+            }
+        ]
+    },
+    "error": {
+        "code": "koto_ocr_json_parse_failed",
+        "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"騒擾の音聖神・ダント\",\n      \"blocks\": [\n        {\n          \"region\": \"main_name_text\",\n          \"text\": \"騒擾の音聖神・ダント\"\n        }\n      ]\n    },\n    {\n      \"source_image\": \"image_2\",\n      \"screen_type\": \"w",
+        "data": null
+    }
+}

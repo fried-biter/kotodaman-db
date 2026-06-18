@@ -1,0 +1,1700 @@
+{
+    "metadata": {
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "generated_at": "2026-06-18 16:59:40",
+        "input": "/tmp/kotodaman-ss-to-spec-test-data"
+    },
+    "reports": [
+        {
+            "case": "comforgo",
+            "from_cache": true,
+            "error": null,
+            "normalized_diff": {
+                "expected_synthetic_images": 6,
+                "actual_live_images": 11,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text",
+                            "main_waza_preview",
+                            "main_sugowaza_preview",
+                            "leader_body",
+                            "trait_body"
+                        ],
+                        "text_preview": "激熱の音言神・コンフォーゴ Lv.99/99 13/99 1 奏では激熱の旋律 激震のオーバービート コトわざ 敵全体に超絶強力な火属性攻撃 発動条件 3文字以上 リーダーとくせい 火属性ATK250%UP とくせい ヒールブレイカー・実体"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body",
+                            "modal_trigger"
+                        ],
+                        "text_preview": "奏では激熱の旋律 敵全体に超絶強力な火属性攻撃 発動条件 3文字以上"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body",
+                            "modal_trigger"
+                        ],
+                        "text_preview": "激震のオーバービート ①このターン味方の受けるダメージを軽減 +敵全体に爆絶強力な火属性攻撃 ②10コンボ以上の場合、追加で手札の龍種族にATK強化を2ターン付与 発動条件 「こ」「こ」「け」「げ」からはじまる4文字以上 or 2文字以上8"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 火属性ATK250%UP"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①ヒールブロックへのダメージUP ②実体化時に火属性のATKを少し強化 ③このコトダマンは「斬・砲・突・重・超・打の戦律」のグループに属しているものとして扱われる"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①弱体マスの効果を受けない ②実体化時に、ことばの判定でコンボの数を+1する ※コンボ+の効果は重複せず、最も高い数値が加算されます"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "祝福とくせい HP基礎値UP HPの基礎値を200UP 木属性キラー+ 木属性の敵に与えるダメージが16%UP 物種族キラー+ 物種族の敵に与えるダメージが15%UP 木属性ダメージ軽減+ 木属性からのダメージを10%軽減 闇属性キラー+ "
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "音が聞こえる。魂が震える歌。熱情の先に激震あり！我、律動の神龍也！ CV:小野大輔 神の旋律・コンフォーゴ 音界にその名轟く音言神の一柱、轟音響く灼鼓洞を根城にする律動の神龍だ。激しく、情熱的な旋律は、ビートを刻む。"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "私はコンフォーゴ、激熱の音言神。込めよ熱情！刻めよビート！我、猛打激震の旋律なり！ CV:小野大輔 激熱の音言神・コンフォーゴ 律動の神龍は、少女の旋律に呼応して、言霊界へと顕現した。激熱のビートは時空すらも震撼させ、事象崩壊の衝撃をもたら"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "kotowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "コトわざ 敵全体に強力な火属性攻撃 2文字以上15コンボ以上 敵全体に強力な火属性攻撃+このターン攻撃する龍種族のATKを少し強化 2文字以上14コンボ以上 敵全体に超絶強力な火属性攻撃+このターン攻撃する龍種族のATKを少し強化 2文字以"
+                    },
+                    {
+                        "source_image": "image_11",
+                        "screen_type": "kotowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "コトわざ 敵全体に超絶強力な火属性攻撃+このターン攻撃する龍種族のATKを少し強化 2文字以上13コンボ以上 敵全体に超絶強力な火属性攻撃+このターン攻撃する龍種族のATKを少し強化 2文字以上12コンボ以上 敵全体に超絶強力な火属性攻撃+"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "激熱の音言神・コンフォーゴ",
+                "attribute": "fire",
+                "species": "dragon",
+                "chars": [
+                    "こ",
+                    "け",
+                    "げ"
+                ],
+                "waza": {
+                    "name": "奏では激熱の旋律",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 2,
+                        "attack_prefix": "super_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "激震のオーバービート",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 2,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [
+                    {
+                        "sugo_cond_type": "start_char",
+                        "sugo_cond_val": "こ,け,げ"
+                    },
+                    {
+                        "sugo_cond_type": "char_count",
+                        "sugo_cond_val": "4"
+                    },
+                    {
+                        "sugo_cond_type": "combo",
+                        "sugo_cond_val": "8"
+                    }
+                ],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "kotowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_11",
+                        "screen_type": "kotowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "激熱の音言神・コンフォーゴ",
+                    "actual": "激熱の音言神・コンフォーゴ",
+                    "status": "matched"
+                },
+                "attribute": {
+                    "expected": "fire",
+                    "actual": "fire",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "dragon",
+                    "actual": "dragon",
+                    "status": "matched"
+                },
+                "chars": {
+                    "expected": [
+                        "こ",
+                        "ご",
+                        "け",
+                        "げ"
+                    ],
+                    "actual": [
+                        "こ",
+                        "け",
+                        "げ"
+                    ],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "奏でるは激熱の旋律",
+                    "actual": "奏では激熱の旋律",
+                    "status": "mismatched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "single_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "super_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "sugowaza_name": {
+                    "expected": "激震のオーバーヒート",
+                    "actual": "激震のオーバービート",
+                    "status": "mismatched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "start_char",
+                            "sugo_cond_val": "こ,ご,け,げ"
+                        },
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        },
+                        {
+                            "sugo_cond_type": "combo",
+                            "sugo_cond_val": "8"
+                        }
+                    ],
+                    "actual": [
+                        {
+                            "sugo_cond_type": "start_char",
+                            "sugo_cond_val": "こ,け,げ"
+                        },
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        },
+                        {
+                            "sugo_cond_type": "combo",
+                            "sugo_cond_val": "8"
+                        }
+                    ],
+                    "status": "mismatched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "kotowaza",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        },
+        {
+            "case": "danto",
+            "from_cache": true,
+            "error": {
+                "code": "koto_ocr_json_parse_failed",
+                "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"騒擾の音聖神・ダント\",\n      \"blocks\": [\n        {\n          \"region\": \"main_name_text\",\n          \"text\": \"騒擾の音聖神・ダント\"\n        }\n      ]\n    },\n    {\n      \"source_image\": \"image_2\",\n      \"screen_type\": \"w",
+                "data": null
+            }
+        },
+        {
+            "case": "itadori_okkotsu_dream",
+            "from_cache": true,
+            "error": {
+                "code": "koto_ocr_json_parse_failed",
+                "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"虎杖悠仁vs乙骨憂太 Lv.120/120 10/99 0 コトノ語 英 呪術廻戦 ミラクル コトワリ HP 2203+487 ATK 707+157 いけせい わざ 俺の役割 すこわざ 同じ師を持つ二人 コトわざ ①このターン攻撃する味方のクリティカル発生率を少し上昇+このターン攻撃する英種族のクリティカル発生率を上昇+このターン攻撃する「呪術廻戦」のクリティカル発生率を少し上昇+敵単体に",
+                "data": null
+            }
+        },
+        {
+            "case": "karen_ibutsu",
+            "from_cache": true,
+            "error": null,
+            "normalized_diff": {
+                "expected_synthetic_images": 6,
+                "actual_live_images": 9,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text",
+                            "main_waza_preview",
+                            "main_sugowaza_preview",
+                            "leader_body",
+                            "trait_body"
+                        ],
+                        "text_preview": "孤高ナル威圧・カレン(音遺物) Lv.120/120 7/99 0 勇言隊の戦士 音遺物「コラーヴ」 自身の属性に応じて木属性の時は【木】、闇属性の時は【闇】に効果が変化する。12回、ランダムな敵に爆絶強力な【木|闇】属性攻撃。同時に「重の"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "勇言隊の戦士 詳細 発動例 9回、ランダムな敵に超絶強力な木属性攻撃を与える 発動条件 3文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "音遺物「コラーヴ」 詳細 発動例 自身の属性に応じて木属性の時は【木】、闇属性の時は【闇】に効果が変化する。12回、ランダムな敵に爆絶強力な【木|闇】属性攻撃。同時に「重の戦律」のコトダマンがわざ・すごわざを発動させていた場合、追加で敵単体"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "block_regions": [
+                            "leader_body"
+                        ],
+                        "text_preview": "とくせい詳細 「重の戦律」HP180%・ATK260%UP・改造耐性100%・呪い耐性40% とじる"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①ウォールブロックへのダメージUP ②文字変換に「こ」を追加する ③サブ属性として闇属性の文字「か・が・こ」を追加する。サブ属性を対象とするリーダーとくせい・とくせいの効果を受けることができる（受ける効果はメイン属性と重複しな"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①ヒールブロックへのダメージを大きくUP ②デッキ内の「重の戦律」の呪い耐性10% とじる"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "祝福とくせい HP基礎値UP HPの基礎値を200UP 光属性キラー+ 光属性の敵に与えるダメージが10%UP 水属性キラー+ 水属性の敵に与えるダメージが13%UP 獣種族キラー+ 獣種族の敵に与えるダメージが15%UP ドロー時「重の戦"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "咎人がもたらした悲しみや苦しみ……それを、二度と繰り返さないために私は戦うの CV:水瀬いのり 選択中 進化前 進化後 ユウゲンレンサ・カレン(オンイブツ) 勇言連鎖・カレン(音遺物) 無言大戦を戦いぬいた勇言隊1番隊隊長。咎人に対する私怨"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "もう誰も失わない……未来を作る者のため、コラーヴ！力を貸して！ CV:水瀬いのり 選択中 進化前 進化後 ココウナルイアツ・カレン(オンイブツ) 孤高ナル威圧・カレン(音遺物) 頼りなくも見えたソウガンカルーの覚悟の突撃を見て、かつての無謀"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "孤高ナル威圧・カレン(音遺物)",
+                "attribute": "wood",
+                "species": "",
+                "chars": [
+                    "こ"
+                ],
+                "waza": {
+                    "name": "勇言隊の戦士",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "random_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 4,
+                        "attack_prefix": "super_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "音遺物「コラーヴ」",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "random_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 4,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [
+                    {
+                        "sugo_cond_type": "char_count",
+                        "sugo_cond_val": "4"
+                    }
+                ],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "孤高ナル威圧・カレン(音遺物)",
+                    "actual": "孤高ナル威圧・カレン(音遺物)",
+                    "status": "matched"
+                },
+                "attribute": {
+                    "expected": "wood",
+                    "actual": "wood",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "beast",
+                    "actual": "",
+                    "status": "mismatched"
+                },
+                "chars": {
+                    "expected": [
+                        "か",
+                        "が",
+                        "こ"
+                    ],
+                    "actual": [
+                        "こ"
+                    ],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "勇言隊の戦士",
+                    "actual": "勇言隊の戦士",
+                    "status": "matched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "random_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "actual": {
+                        "waza_target": "random_oppo",
+                        "attack_prefix": "super_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "sugowaza_name": {
+                    "expected": "音遺物「コラーヴ」",
+                    "actual": "音遺物「コラーヴ」",
+                    "status": "matched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "actual": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "status": "matched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "random_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "random_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "leader",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        },
+        {
+            "case": "mashiro7",
+            "from_cache": true,
+            "error": null,
+            "normalized_diff": {
+                "expected_synthetic_images": 6,
+                "actual_live_images": 8,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text",
+                            "main_waza_preview",
+                            "leader_body",
+                            "trait_body"
+                        ],
+                        "text_preview": "言祝ぎの祝典に・ましろ(7th Anniv.) Lv.120/120 満/99(+682) 780 言気ハツラツ 発生率 極 コトノ語 此方へ スペシャル HP 2090+462 ATK 1377+304 コトワリ いくせいMAX わざ 一"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body",
+                            "modal_trigger"
+                        ],
+                        "text_preview": "一歩ずつ、進化を 詳細 発動例 敵全体に強力な天属性攻撃 発動条件 3文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body",
+                            "modal_trigger"
+                        ],
+                        "text_preview": "言祝ぎのケーキ 詳細 発動例 敵全体に文字数に応じて威力が上昇する天属性攻撃+HPを超大きく回復 発動条件 4文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "kotowaza",
+                        "block_regions": [
+                            "modal_body",
+                            "modal_trigger"
+                        ],
+                        "text_preview": "コトわざ 詳細 発動例 コトわざ コトわざ コトわざ コトわざ コトわざ 敵全体に爆絶強力な天属性攻撃+手札の味方にATK少し強化を2ターン付与 発動条件 6文字以上 or 「や」「ゆ」「よ」を含む4文字以上 or 「ま」「し」「ろ」「う」"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "leader",
+                        "block_regions": [
+                            "leader_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①デッキ内に火・水・木・光・闇・冥・天属性が各1体以上いる場合（メイン属性のみを参照する）、デッキ内全員のHP70%・ATK170%UP ②「ま・し・ろ」を含む言葉を作成した時、火・水・木・光・闇・冥・天属性のATK70%UP"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①フリーズブロックへのダメージUP ②文字変換に「し・ろ・う」を追加する とじる"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 スマッシュブロックへのダメージUP とじる"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "祝福とくせい 全属性キラー50% 全属性の敵に与えるダメージ50%UP 全属性ダメージ50%軽減 全属性からのダメージを50%軽減 「ま・し・ろ」自身威力15%UP 自身の文字が「ま・し・ろ」の時、自身の威力が15%U... とじる"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "言祝ぎの祝典に・ましろ(7th Anniv.)",
+                "attribute": "heaven",
+                "species": "",
+                "chars": [
+                    "ろ"
+                ],
+                "waza": {
+                    "name": "一歩ずつ、進化を",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 31,
+                        "attack_prefix": "strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "言祝ぎのケーキ",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 31,
+                        "attack_prefix": "none",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [
+                    {
+                        "sugo_cond_type": "char_count",
+                        "sugo_cond_val": "4"
+                    }
+                ],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "kotowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "leader",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "言祝ぎの祝典に・ましろ(7th Anniv.)",
+                    "actual": "言祝ぎの祝典に・ましろ(7th Anniv.)",
+                    "status": "matched"
+                },
+                "attribute": {
+                    "expected": "heaven",
+                    "actual": "heaven",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "god",
+                    "actual": "",
+                    "status": "mismatched"
+                },
+                "chars": {
+                    "expected": [
+                        "ま",
+                        "し",
+                        "ろ",
+                        "う"
+                    ],
+                    "actual": [
+                        "ろ"
+                    ],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "一歩ずつ、進化を",
+                    "actual": "一歩ずつ、進化を",
+                    "status": "matched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "strong"
+                    },
+                    "status": "matched"
+                },
+                "sugowaza_name": {
+                    "expected": "言祝ぎのケーキ",
+                    "actual": "言祝ぎのケーキ",
+                    "status": "matched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "actual": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "status": "matched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "single_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "none"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "leader",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "kotowaza",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        },
+        {
+            "case": "yomitaru_light",
+            "from_cache": true,
+            "error": null,
+            "normalized_diff": {
+                "expected_synthetic_images": 6,
+                "actual_live_images": 10,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text",
+                            "main_waza_preview",
+                            "main_sugowaza_preview"
+                        ],
+                        "text_preview": "世世に廻る・ヨヨヨミ&イィタル Lv.120/120 5/99 0 廻る魂 グランド HP 2202+487+121 ATK 739+169+40 わざ ずーっと、ずっと すごわざ 黄泉を照らす言祓 敵全体に爆絶強力な光属性攻撃 発動条件 "
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "ずーっと、ずっと 詳細 発動例 敵全体に爆絶強力な光属性攻撃 発動条件 3文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "黄泉を照らす言祓 詳細 発動例 敵単体に爆絶強力な光属性の2回攻撃+敵 全体に爆絶強力な光属性攻撃+わざ・すこ わざを発動させた味方が追加で爆絶多量な 光属性攻撃 発動条件 4文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "block_regions": [
+                            "leader_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①水・光・冥・天属性HP120%・ ATK180%UP ②デッキ内全員のATKを「廻る魂」× 10%UP ③デッキ内に水属性が8体以上いる場 合（メイン属性のみを参照する）、 デッキ内全員の炎上耐性100% ④デッキ内に光属性"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①トゲブロックから受けるダメージを 軽減し、チェンジマスの効果を受けな い ②文字変換に「い・す・ず・し」を追加 する ③全属性からのダメージを50%軽減 とじる"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①フリーズブロックへのダメージUP ②実体化時に水・光属性のATKを少し 強化 ③デッキ内の「廻る魂」のATK10% UP ④詳細画面で「イィタル&ヨヨヨミ」 に切り替えてデッキに編成できる とじる"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "祝福とくせい 闇属性キラー+ 闇属性の敵に与えるダメージが10%UP 火属性キラー+ 火属性の敵に与えるダメージが10%UP 英種族キラー+ 英種族の敵に与えるダメージが15%UP 神種族キラー+ 神種族の敵に与えるダメージが15%UP 実"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "EX_skill",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "EXスキル詳細 みんな、来て来て！ 【サーチ】ドロー候補と準備状態の中 から「廻る魂」を優先条件として選ば れた4体のうち1体を指定して、手札 のコトダマンと入れ替えることができ る。さらに入れ替えるコトダマンに「 ドロー時に自身のATKを"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "私とお出かけで……いいの？ うん、大好きなヨヨヨミちゃんを独り占め！ 今日のこと、ずっと忘れないよーー。 CV:桑原由気&田中美海 選択中 進化前 進化後 サイゴノトキマデ・ヨヨヨミ&イィタル 最後の刻まで・ヨヨヨミ&イィタル あの日出会え"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "unknown",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "あのね、イィタルちゃん。私……、 がんばるよ。だから傍で、一緒にーー。 もちろん！背中を押しちゃうよっ！ CV:桑原由気&田中美海 選択中 進化前 進化後 ヨヨニメグル・ヨヨヨミ&イィタル 世世に廻る・ヨヨヨミ&イィタル いつも、背中を押し"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "世世に廻る・ヨヨヨミ&イィタル",
+                "attribute": "light",
+                "species": "",
+                "chars": [
+                    "い",
+                    "す",
+                    "ず"
+                ],
+                "waza": {
+                    "name": "ずーっと、ずっと",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 5,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "黄泉を照らす言祓",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "single_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 5,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [
+                    {
+                        "sugo_cond_type": "char_count",
+                        "sugo_cond_val": "4"
+                    }
+                ],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "EX_skill",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    },
+                    {
+                        "source_image": "image_10",
+                        "screen_type": "unknown",
+                        "confidence": 0.1,
+                        "reason": "no_strong_keyword"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "世世に廻る・ヨヨヨミ&イィタル",
+                    "actual": "世世に廻る・ヨヨヨミ&イィタル",
+                    "status": "matched"
+                },
+                "attribute": {
+                    "expected": "light",
+                    "actual": "light",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "demon",
+                    "actual": "",
+                    "status": "mismatched"
+                },
+                "chars": {
+                    "expected": [
+                        "よ",
+                        "ょ",
+                        "い",
+                        "す",
+                        "ず",
+                        "し"
+                    ],
+                    "actual": [
+                        "い",
+                        "す",
+                        "ず"
+                    ],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "ずーっと、ずっと",
+                    "actual": "ずーっと、ずっと",
+                    "status": "matched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "sugowaza_name": {
+                    "expected": "黄泉を照らす言祓",
+                    "actual": "黄泉を照らす言祓",
+                    "status": "matched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "actual": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "status": "matched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "single_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "leader",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "EX_skill",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        },
+        {
+            "case": "yomitaru_water",
+            "from_cache": true,
+            "error": null,
+            "normalized_diff": {
+                "expected_synthetic_images": 6,
+                "actual_live_images": 9,
+                "actual_images": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text",
+                            "main_waza_preview",
+                            "leader_body",
+                            "trait_body"
+                        ],
+                        "text_preview": "依依たる想い・イイタル&ヨヨヨミ Lv.120/120 5/99 0 HP 2202+487+121 ATK 739+169+40 わざ なかよしこよし！ すこわざ 次に繋ぐ言祝 敵単体に爆絶強力な水属性の2回攻撃+敵全体に爆絶強力な水属性"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "なかよしこよし！ 詳細 発動例 敵全体に爆絶強力な水属性攻撃 発動条件 3文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "次に繋ぐ言祝 詳細 発動例 敵単体に爆絶強力な水属性の2回攻撃+敵全体に爆絶強力な水属性攻撃+わざ・すこわざを発動させた味方が追加で爆絶多量な水属性攻撃 発動条件 4文字以上 とじる"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "block_regions": [
+                            "leader_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①水・光・冥・天属性HP120%・ ATK180%UP ②デッキ内全員のATKを「廻る魂」× 10%UP ③デッキ内に水属性が8体以上いる場 合（メイン属性のみを参照する）、 デッキ内全員の炎上耐性100% ④デッキ内に光属性"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①トゲブロックから受けるダメージを 軽減し、チェンジマスの効果を受けな い ②文字変換に「よ・よ・す・す・し」を追加 する ③全属性からのダメージを50%軽減 とじる"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "block_regions": [
+                            "trait_body"
+                        ],
+                        "text_preview": "とくせい詳細 ①地雷マスの効果を受けない ②実体化時に水・光属性のATKを少し 強化 ③デッキ内の「廻る魂」のATK10% UP ④詳細画面で「ヨヨヨミ&イイタル」 に切り替えてデッキに編成できる とじる"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "block_regions": [
+                            "blessing_body"
+                        ],
+                        "text_preview": "祝福とくせい 闇属性キラー+ 闇属性の敵に与えるダメージが10%UP 火属性キラー+ 火属性の敵に与えるダメージが10%UP 英種族キラー+ 英種族の敵に与えるダメージが15%UP 神種族キラー+ 神種族の敵に与えるダメージが15%UP 実"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "EX_skill",
+                        "block_regions": [
+                            "modal_body"
+                        ],
+                        "text_preview": "EXスキル詳細 みんな、来て来て！ 【サーチ】ドロー候補と準備状態の中 から「廻る魂」を優先条件として選ば れた4体のうち1体を指定して、手札 のコトダマンと入れ替えることができ る。さらに入れ替えるコトダマンに「 ドロー時に自身のATKを"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "main",
+                        "block_regions": [
+                            "main_name_text"
+                        ],
+                        "text_preview": "ねえ、ヨヨヨミちゃん。いっこだけお願い。 わたしのこと、ずっとずーっと覚えててね。 もう、そんなの……当たり前だよ。 CV:田中美海&桑原由気 イイタルオモイ・イイタル&ヨヨヨミ 依依たる想い・イイタル&ヨヨヨミ 泣いてばかりだけど優しい、"
+                    }
+                ]
+            },
+            "actual": {
+                "name": "依依たる想い・イイタル&ヨヨヨミ",
+                "attribute": "water",
+                "species": "",
+                "chars": [
+                    "よ",
+                    "す"
+                ],
+                "waza": {
+                    "name": "なかよしこよし！",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 3,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza": {
+                    "name": "次に繋ぐ言祝",
+                    "raw_present": true,
+                    "attack": {
+                        "waza_type": "attack",
+                        "attack_type": "normal",
+                        "waza_target": "all_oppo",
+                        "waza_target_detail": "none",
+                        "attack_attr": 3,
+                        "attack_prefix": "most_strong",
+                        "hit_count": 1,
+                        "waza_value": "",
+                        "waza_value_last": ""
+                    }
+                },
+                "sugowaza_condition": [
+                    {
+                        "sugo_cond_type": "char_count",
+                        "sugo_cond_val": "4"
+                    }
+                ],
+                "trait1_present": true,
+                "trait2_present": true,
+                "blessing_present": true,
+                "classifications": [
+                    {
+                        "source_image": "image_1",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_2",
+                        "screen_type": "waza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_3",
+                        "screen_type": "sugowaza",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_4",
+                        "screen_type": "leader",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_5",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_6",
+                        "screen_type": "trait",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_7",
+                        "screen_type": "blessing",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_8",
+                        "screen_type": "EX_skill",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    },
+                    {
+                        "source_image": "image_9",
+                        "screen_type": "main",
+                        "confidence": 0.8,
+                        "reason": "vlm_screen_type"
+                    }
+                ]
+            },
+            "comparisons": {
+                "name": {
+                    "expected": "依依たる想い・イィタル&ヨヨヨミ",
+                    "actual": "依依たる想い・イイタル&ヨヨヨミ",
+                    "status": "mismatched"
+                },
+                "attribute": {
+                    "expected": "water",
+                    "actual": "water",
+                    "status": "matched"
+                },
+                "species": {
+                    "expected": "spirit",
+                    "actual": "",
+                    "status": "mismatched"
+                },
+                "chars": {
+                    "expected": [
+                        "い",
+                        "よ",
+                        "ょ",
+                        "す",
+                        "ず",
+                        "し"
+                    ],
+                    "actual": [
+                        "よ",
+                        "す"
+                    ],
+                    "status": "mismatched"
+                },
+                "waza_name": {
+                    "expected": "なかよしこよし！",
+                    "actual": "なかよしこよし！",
+                    "status": "matched"
+                },
+                "waza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "sugowaza_name": {
+                    "expected": "次に繋ぐ言祓",
+                    "actual": "次に繋ぐ言祝",
+                    "status": "mismatched"
+                },
+                "sugowaza_condition": {
+                    "expected": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "actual": [
+                        {
+                            "sugo_cond_type": "char_count",
+                            "sugo_cond_val": "4"
+                        }
+                    ],
+                    "status": "matched"
+                },
+                "sugowaza_attack": {
+                    "expected": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "very_strong"
+                    },
+                    "actual": {
+                        "waza_target": "all_oppo",
+                        "attack_prefix": "most_strong"
+                    },
+                    "status": "mismatched"
+                },
+                "trait1_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "trait2_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                },
+                "blessing_present": {
+                    "expected": true,
+                    "actual": true,
+                    "status": "matched"
+                }
+            },
+            "warnings": [
+                {
+                    "field": "waza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "sugowaza",
+                    "code": "manual_numeric_required",
+                    "message": "倍率/数値は画像本文から安全に確定できないため手入力してください。"
+                },
+                {
+                    "field": "trait1",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "trait2",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "blessing",
+                    "code": "raw_text_only",
+                    "message": "OCR本文を保存しました。公開前に内容を確認してください。"
+                },
+                {
+                    "field": "leader",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "EX_skill",
+                    "code": "raw_text_only",
+                    "message": "初期実装ではraw textのみ保存します。"
+                },
+                {
+                    "field": "draft",
+                    "code": "review_required",
+                    "message": "OCR下書きです。公開前に必須項目と数値を確認してください。"
+                }
+            ]
+        }
+    ]
+}

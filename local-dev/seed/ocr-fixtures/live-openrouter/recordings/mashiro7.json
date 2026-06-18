@@ -1,0 +1,168 @@
+{
+    "metadata": {
+        "case": "mashiro7",
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "recorded_at": "2026-06-18 16:58:34",
+        "image_count": 8,
+        "images": [
+            {
+                "source_image": "IMG_6024.PNG",
+                "mime_type": "image/png",
+                "bytes": 2758745
+            },
+            {
+                "source_image": "IMG_6025.PNG",
+                "mime_type": "image/png",
+                "bytes": 768479
+            },
+            {
+                "source_image": "IMG_6026.PNG",
+                "mime_type": "image/png",
+                "bytes": 804324
+            },
+            {
+                "source_image": "IMG_6027.PNG",
+                "mime_type": "image/png",
+                "bytes": 1041800
+            },
+            {
+                "source_image": "IMG_6028.PNG",
+                "mime_type": "image/png",
+                "bytes": 941571
+            },
+            {
+                "source_image": "IMG_6029.PNG",
+                "mime_type": "image/png",
+                "bytes": 723572
+            },
+            {
+                "source_image": "IMG_6030.PNG",
+                "mime_type": "image/png",
+                "bytes": 706074
+            },
+            {
+                "source_image": "IMG_6031.PNG",
+                "mime_type": "image/png",
+                "bytes": 946949
+            }
+        ]
+    },
+    "payload": {
+        "images": [
+            {
+                "source_image": "image_1",
+                "screen_type": "main",
+                "fullText": "言祝ぎの祝典に・ましろ(7th Anniv.) Lv.120/120 満/99(+682) 780 言気ハツラツ 発生率 極 コトノ語 此方へ スペシャル HP 2090+462 ATK 1377+304 コトワリ いくせいMAX わざ 一歩ずつ、進化を すごわざ 言祝ぎのケーキ コトわざ 敵全体に文字数に応じて威力が上昇する天属性攻撃+HPを超大きく回復 発動条件 4文字以上 リーダーとくせい ①デッキ内に火・水・木・光・闇・冥・天属性が各1体以上いる場合、デッキ内全員のHP70%・ATK170%UP とくせい フリーズブレイカー・文字変換「し・ろ・う」 ①フリーズブロックへのダメージUP②文字変換に「し・ろ・う」を追加 スマッシュブレイカー スマッシュブロックへのダメージUP 祝福とくせい",
+                "blocks": [
+                    {
+                        "region": "main_name_text",
+                        "text": "言祝ぎの祝典に・ましろ(7th Anniv.)"
+                    },
+                    {
+                        "region": "main_waza_preview",
+                        "text": "敵全体に文字数に応じて威力が上昇する天属性攻撃+HPを超大きく回復"
+                    },
+                    {
+                        "region": "leader_body",
+                        "text": "①デッキ内に火・水・木・光・闇・冥・天属性が各1体以上いる場合、デッキ内全員のHP70%・ATK170%UP"
+                    },
+                    {
+                        "region": "trait_body",
+                        "text": "フリーズブレイカー・文字変換「し・ろ・う」 ①フリーズブロックへのダメージUP②文字変換に「し・ろ・う」を追加 スマッシュブレイカー スマッシュブロックへのダメージUP"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_2",
+                "screen_type": "waza",
+                "fullText": "一歩ずつ、進化を 詳細 発動例 敵全体に強力な天属性攻撃 発動条件 3文字以上 とじる",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "敵全体に強力な天属性攻撃"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "3文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_3",
+                "screen_type": "sugowaza",
+                "fullText": "言祝ぎのケーキ 詳細 発動例 敵全体に文字数に応じて威力が上昇する天属性攻撃+HPを超大きく回復 発動条件 4文字以上 とじる",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "敵全体に文字数に応じて威力が上昇する天属性攻撃+HPを超大きく回復"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "4文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_4",
+                "screen_type": "kotowaza",
+                "fullText": "コトわざ 詳細 発動例 コトわざ コトわざ コトわざ コトわざ コトわざ 敵全体に爆絶強力な天属性攻撃+手札の味方にATK少し強化を2ターン付与 発動条件 6文字以上 or 「や」「ゆ」「よ」を含む4文字以上 or 「ま」「し」「ろ」「う」からはじまる4文字以上 or 「ま」「し」「ろ」「う」でおわる4文字以上",
+                "blocks": [
+                    {
+                        "region": "modal_body",
+                        "text": "敵全体に爆絶強力な天属性攻撃+手札の味方にATK少し強化を2ターン付与"
+                    },
+                    {
+                        "region": "modal_trigger",
+                        "text": "6文字以上 「や」「ゆ」「よ」を含む4文字以上 「ま」「し」「ろ」「う」からはじまる4文字以上 「ま」「し」「ろ」「う」でおわる4文字以上"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_5",
+                "screen_type": "leader",
+                "fullText": "とくせい詳細 ①デッキ内に火・水・木・光・闇・冥・天属性が各1体以上いる場合（メイン属性のみを参照する）、デッキ内全員のHP70%・ATK170%UP ②「ま・し・ろ」を含む言葉を作成した時、火・水・木・光・闇・冥・天属性のATK70%UP ③「う」を含む言葉を作成した時、火・水・木・光・闇・冥・天属性のATK70%UP とじる",
+                "blocks": [
+                    {
+                        "region": "leader_body",
+                        "text": "①デッキ内に火・水・木・光・闇・冥・天属性が各1体以上いる場合（メイン属性のみを参照する）、デッキ内全員のHP70%・ATK170%UP ②「ま・し・ろ」を含む言葉を作成した時、火・水・木・光・闇・冥・天属性のATK70%UP ③「う」を含む言葉を作成した時、火・水・木・光・闇・冥・天属性のATK70%UP"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_6",
+                "screen_type": "trait",
+                "fullText": "とくせい詳細 ①フリーズブロックへのダメージUP ②文字変換に「し・ろ・う」を追加する とじる",
+                "blocks": [
+                    {
+                        "region": "trait_body",
+                        "text": "①フリーズブロックへのダメージUP ②文字変換に「し・ろ・う」を追加する"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_7",
+                "screen_type": "trait",
+                "fullText": "とくせい詳細 スマッシュブロックへのダメージUP とじる",
+                "blocks": [
+                    {
+                        "region": "trait_body",
+                        "text": "スマッシュブロックへのダメージUP"
+                    }
+                ]
+            },
+            {
+                "source_image": "image_8",
+                "screen_type": "blessing",
+                "fullText": "祝福とくせい 全属性キラー50% 全属性の敵に与えるダメージ50%UP 全属性ダメージ50%軽減 全属性からのダメージを50%軽減 「ま・し・ろ」自身威力15%UP 自身の文字が「ま・し・ろ」の時、自身の威力が15%U... とじる",
+                "blocks": [
+                    {
+                        "region": "blessing_body",
+                        "text": "全属性キラー50% 全属性の敵に与えるダメージ50%UP 全属性ダメージ50%軽減 全属性からのダメージを50%軽減 「ま・し・ろ」自身威力15%UP 自身の文字が「ま・し・ろ」の時、自身の威力が15%U..."
+                    }
+                ]
+            }
+        ]
+    }
+}

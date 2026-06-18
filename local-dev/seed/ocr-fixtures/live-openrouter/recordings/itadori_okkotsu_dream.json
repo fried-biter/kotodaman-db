@@ -1,0 +1,72 @@
+{
+    "metadata": {
+        "case": "itadori_okkotsu_dream",
+        "backend": "openrouter-vlm-structured",
+        "model": "google/gemini-3.1-flash-lite",
+        "backend_source_hash": "90191d95a5ca92377680b2db892dc4d8bae110cc4cf3ae492abd3435888fed16",
+        "recorded_at": "2026-06-18 16:57:49",
+        "image_count": 11,
+        "images": [
+            {
+                "source_image": "IMG_6137.PNG",
+                "mime_type": "image/png",
+                "bytes": 2716758
+            },
+            {
+                "source_image": "IMG_6138.PNG",
+                "mime_type": "image/png",
+                "bytes": 626850
+            },
+            {
+                "source_image": "IMG_6139.PNG",
+                "mime_type": "image/png",
+                "bytes": 1044753
+            },
+            {
+                "source_image": "IMG_6140.PNG",
+                "mime_type": "image/png",
+                "bytes": 873141
+            },
+            {
+                "source_image": "IMG_6141.PNG",
+                "mime_type": "image/png",
+                "bytes": 708282
+            },
+            {
+                "source_image": "IMG_6142.PNG",
+                "mime_type": "image/png",
+                "bytes": 1085440
+            },
+            {
+                "source_image": "IMG_6143.PNG",
+                "mime_type": "image/png",
+                "bytes": 976334
+            },
+            {
+                "source_image": "IMG_6144.PNG",
+                "mime_type": "image/png",
+                "bytes": 2958473
+            },
+            {
+                "source_image": "IMG_6145.PNG",
+                "mime_type": "image/png",
+                "bytes": 3061996
+            },
+            {
+                "source_image": "IMG_6146.PNG",
+                "mime_type": "image/png",
+                "bytes": 1013678
+            },
+            {
+                "source_image": "IMG_6147.PNG",
+                "mime_type": "image/png",
+                "bytes": 1005231
+            }
+        ]
+    },
+    "error": {
+        "code": "koto_ocr_json_parse_failed",
+        "message": "OCR JSONの解析に失敗しました: {\n  \"images\": [\n    {\n      \"source_image\": \"image_1\",\n      \"screen_type\": \"main\",\n      \"fullText\": \"虎杖悠仁vs乙骨憂太 Lv.120/120 10/99 0 コトノ語 英 呪術廻戦 ミラクル コトワリ HP 2203+487 ATK 707+157 いけせい わざ 俺の役割 すこわざ 同じ師を持つ二人 コトわざ ①このターン攻撃する味方のクリティカル発生率を少し上昇+このターン攻撃する英種族のクリティカル発生率を上昇+このターン攻撃する「呪術廻戦」のクリティカル発生率を少し上昇+敵単体に",
+        "data": null
+    }
+}
