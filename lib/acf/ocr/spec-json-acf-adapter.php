@@ -173,30 +173,36 @@ function koto_ocr_apply_existing_auto_input_rules(array $fields)
     if (!function_exists('koto_build_acf_data_from_inputs')) {
         return [];
     }
-    $inputs = [];
-    if (!empty($fields['trait1'][0]['text'])) $inputs['auto_input_trait1'] = $fields['trait1'][0]['text'];
-    if (!empty($fields['trait2'][0]['text'])) $inputs['auto_input_trait2'] = $fields['trait2'][0]['text'];
-    if (!empty($fields['blessing'][0]['text'])) $inputs['auto_input_blessing'] = $fields['blessing'][0]['text'];
-    if (empty($inputs)) {
-        return [];
-    }
     $csv_path = get_stylesheet_directory() . '/lib/ゲーム内文言ーACF-対応表.csv';
     $grouped_csv = koto_group_csv_by_type(koto_load_csv_dictionary($csv_path));
-    return koto_build_acf_data_from_inputs($inputs, $grouped_csv);
-}
-
-function koto_ocr_merge_rule_acf_data(array $acf, array $rule_data)
-{
+    $rule_data = [];
     $map = [
-        'auto_input_trait1' => 'first_trait_loop',
-        'auto_input_trait2' => 'second_trait_loop',
-        'auto_input_blessing' => 'blessing_trait_loop',
+        'trait1' => 'auto_input_trait1',
+        'trait2' => 'auto_input_trait2',
+        'blessing' => 'auto_input_blessing',
     ];
-    foreach ($map as $input_key => $acf_key) {
-        if (!empty($rule_data[$input_key])) {
-            // 既存CSVルールがACF行を返せた場合はOCR fragmentより優先する。
-            $acf[$acf_key] = $rule_data[$input_key];
+
+    foreach ($map as $field => $input_key) {
+        foreach ($fields[$field] ?? [] as $item) {
+            $text = trim((string) ($item['text'] ?? ''));
+            if ($text === '') {
+                continue;
+            }
+            $parsed = koto_build_acf_data_from_inputs([$input_key => $text], $grouped_csv);
+            if (empty($parsed[$input_key]) || !is_array($parsed[$input_key])) {
+                continue;
+            }
+            if (empty($rule_data[$input_key])) {
+                $rule_data[$input_key] = [];
+            }
+            $rows = isset($parsed[$input_key][0]) ? $parsed[$input_key] : [$parsed[$input_key]];
+            foreach ($rows as $row) {
+                if (!empty($row) && is_array($row)) {
+                    $rule_data[$input_key][] = $row;
+                }
+            }
         }
     }
-    return $acf;
+
+    return $rule_data;
 }

@@ -29,7 +29,6 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
     update_post_meta($post_id, '_koto_ocr_generated_at', current_time('mysql'));
 
     $acf_data = koto_ocr_spec_to_acf_data($draft['spec']);
-    $acf_data = koto_ocr_merge_rule_acf_data($acf_data, koto_ocr_apply_existing_auto_input_rules($extracted['fields'] ?? []));
     foreach ($acf_data as $field_name => $value) {
         if (koto_ocr_is_empty_acf_value($value)) {
             continue;
@@ -38,6 +37,11 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
         if (!$saved) {
             $warnings[] = koto_ocr_warning($field_name, 'acf_save_failed', $field_name . ' のACF保存に失敗しました。');
         }
+    }
+
+    $rule_data = koto_ocr_apply_existing_auto_input_rules($extracted['fields'] ?? []);
+    if (!empty($rule_data) && function_exists('koto_update_character_post_with_acf')) {
+        koto_update_character_post_with_acf($post_id, $rule_data);
     }
 
     update_post_meta($post_id, '_spec_json', wp_json_encode($draft['spec'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

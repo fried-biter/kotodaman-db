@@ -134,6 +134,8 @@ function koto_ocr_ajax_create_draft()
     if (current_user_can('edit_post', $post_id)) {
         $links['editPost'] = get_edit_post_link($post_id, 'raw');
         $links['dbEditor'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_69204fa4dd82e');
+        $links['dbEditorTraits'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_693790ee221c3');
+        $links['dbEditorBlessing'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_693971a11a6b2');
     }
 
     wp_send_json_success([

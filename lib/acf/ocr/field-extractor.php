@@ -61,15 +61,17 @@ function koto_ocr_extract_fields(array $normalized)
             if (!empty($chars)) $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
             koto_ocr_append_basic_terms($fields, $source, $text, $image);
         } elseif ($type === 'trait') {
-            koto_ocr_append_split_traits($fields, $source, $text);
+            $trait_text = koto_ocr_extract_block_text($image, ['trait_body'], $text);
+            koto_ocr_append_split_traits($fields, $source, $trait_text);
             $chars = koto_ocr_extract_chars_from_image($image);
             if (!empty($chars)) {
                 $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
             }
-            koto_ocr_append_basic_terms($fields, $source, $text, $image);
+            koto_ocr_append_basic_terms($fields, $source, $trait_text, $image);
         } elseif ($type === 'blessing') {
-            $fields['blessing'][] = ['source_image' => $source, 'text' => $text];
-            $chars = koto_ocr_extract_quoted_chars($text);
+            $blessing_text = koto_ocr_extract_block_text($image, ['blessing_body'], $text);
+            $fields['blessing'][] = ['source_image' => $source, 'text' => $blessing_text];
+            $chars = koto_ocr_extract_quoted_chars($blessing_text);
             if (!empty($chars)) $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
         } elseif (in_array($type, ['leader', 'kotowaza', 'EX_skill', 'charge_skill'], true)) {
             $fields[$type][] = ['source_image' => $source, 'text' => $text];
@@ -78,6 +80,20 @@ function koto_ocr_extract_fields(array $normalized)
     }
 
     return ['fields' => $fields, 'classifications' => $classifications];
+}
+
+function koto_ocr_extract_block_text(array $image, array $regions, $fallback = '')
+{
+    $parts = [];
+    foreach ($image['blocks'] ?? [] as $block) {
+        if (in_array($block['region'] ?? '', $regions, true)) {
+            $text = trim((string) ($block['text'] ?? ''));
+            if ($text !== '') {
+                $parts[] = $text;
+            }
+        }
+    }
+    return !empty($parts) ? implode("\n", $parts) : trim((string) $fallback);
 }
 
 function koto_ocr_image_has_skill_modal_body(array $image)

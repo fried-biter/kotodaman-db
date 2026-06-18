@@ -192,6 +192,59 @@ function koto_ocr_test_cases()
             },
         ],
         [
+            'suite' => 'pipeline',
+            'name' => 'live OCR trait rows are saved through existing auto input rules',
+            'run' => function () {
+                $inserted_terms = [];
+                $post_id = 0;
+                try {
+                    foreach (['フリーズブレイカー', 'スマッシュブレイカー'] as $term_name) {
+                        if (get_term_by('name', $term_name, 'gimmick')) {
+                            continue;
+                        }
+                        $term = wp_insert_term($term_name, 'gimmick');
+                        if (!is_wp_error($term)) {
+                            $inserted_terms[] = (int) $term['term_id'];
+                        }
+                    }
+
+                    $fixture = koto_ocr_test_fixture('live-openrouter/recordings/mashiro7.json');
+                    $normalized = koto_ocr_normalize_payload($fixture['payload'], count($fixture['payload']['images']));
+                    $extracted = koto_ocr_extract_fields($normalized);
+                    $rule_data = koto_ocr_apply_existing_auto_input_rules($extracted['fields'] ?? []);
+
+                    koto_ocr_test_assert_true(!empty($rule_data['auto_input_trait2']), 'OCR trait2 auto input rules were not generated');
+                    koto_ocr_test_assert_same(3, count($rule_data['auto_input_trait2']), 'OCR trait2 should include both gimmicks and available moji');
+
+                    $post_id = wp_insert_post([
+                        'post_title' => 'OCR trait save test',
+                        'post_type' => 'character',
+                        'post_status' => 'draft',
+                    ], true);
+                    if (is_wp_error($post_id)) {
+                        throw new Koto_Ocr_Test_Failure('temporary post create failed: ' . $post_id->get_error_message());
+                    }
+                    koto_update_character_post_with_acf($post_id, $rule_data);
+
+                    $trait_rows = get_field('second_trait_loop', $post_id);
+                    koto_ocr_test_assert_true(is_array($trait_rows) && count($trait_rows) === 2, 'saved second trait row count mismatch');
+                    koto_ocr_test_assert_true(!empty($trait_rows[0]['gimmick']), 'saved first gimmick is empty');
+                    koto_ocr_test_assert_true(!empty($trait_rows[1]['gimmick']), 'saved second gimmick is empty');
+
+                    $moji_rows = get_field('available_moji_loop', $post_id);
+                    koto_ocr_test_assert_true(is_array($moji_rows) && count($moji_rows) === 1, 'saved available moji row count mismatch');
+                    koto_ocr_test_assert_same('second_trait', $moji_rows[0]['unlock_place'] ?? null, 'saved available moji unlock place mismatch');
+                } finally {
+                    if ($post_id && !is_wp_error($post_id)) {
+                        wp_delete_post($post_id, true);
+                    }
+                    foreach ($inserted_terms as $term_id) {
+                        wp_delete_term($term_id, 'gimmick');
+                    }
+                }
+            },
+        ],
+        [
             'suite' => 'matrix',
             'name' => 'seven character reading matrix covers all OCR modules',
             'run' => function () {
