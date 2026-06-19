@@ -245,6 +245,45 @@ function koto_ocr_test_cases()
             },
         ],
         [
+            'suite' => 'pipeline',
+            'name' => 'OCR trait auto input keeps unsupported text and splits compound guards',
+            'run' => function () {
+                $inserted_terms = [];
+                try {
+                    foreach ([
+                        ['gimmick', 'copy', 'コピーガード'],
+                        ['gimmick', 'change', 'チェンジガード'],
+                        ['affiliation', 'jujutsu-kaisen', '呪術廻戦'],
+                    ] as $term_config) {
+                        [$taxonomy, $slug, $name] = $term_config;
+                        if (get_term_by('name', $name, $taxonomy)) {
+                            continue;
+                        }
+                        $term = wp_insert_term($name, $taxonomy, ['slug' => $slug]);
+                        if (!is_wp_error($term)) {
+                            $inserted_terms[] = [$taxonomy, (int) $term['term_id']];
+                        }
+                    }
+
+                    $csv_path = get_stylesheet_directory() . '/lib/ゲーム内文言ーACF-対応表.csv';
+                    $grouped_csv = koto_group_csv_by_type(koto_load_csv_dictionary($csv_path));
+                    $acf_data = koto_build_acf_data_from_inputs([
+                        'auto_input_trait1' => '①「呪術廻戦」HP160%・ATK260%UP・消去耐性100%・変異耐性100%',
+                        'auto_input_trait2' => '①コピーマスとチェンジマスの効果を受けないn②文字変換に「ゆ・ゆ」を追加する',
+                    ], $grouped_csv);
+
+                    koto_ocr_test_assert_same('other_traits', $acf_data['auto_input_trait1'][0]['trait_type'] ?? null, 'unsupported trait should fall back to other');
+                    koto_ocr_test_assert_same('コピーガード', get_term((int) ($acf_data['auto_input_trait2'][0]['gimmick'] ?? 0), 'gimmick')->name ?? null, 'copy guard mismatch');
+                    koto_ocr_test_assert_same('チェンジガード', get_term((int) ($acf_data['auto_input_trait2'][1]['gimmick'] ?? 0), 'gimmick')->name ?? null, 'change guard mismatch');
+                    koto_ocr_test_assert_true(!empty($acf_data['auto_input_trait2'][2]['available_moji']), 'literal n separator should not block available moji parsing');
+                } finally {
+                    foreach (array_reverse($inserted_terms) as $term_info) {
+                        wp_delete_term($term_info[1], $term_info[0]);
+                    }
+                }
+            },
+        ],
+        [
             'suite' => 'matrix',
             'name' => 'seven character reading matrix covers all OCR modules',
             'run' => function () {

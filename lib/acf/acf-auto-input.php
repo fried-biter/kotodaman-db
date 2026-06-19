@@ -395,6 +395,7 @@ function koto_preprocess_text($text)
         ' ',
     ];
     $text = trim(str_replace($ignore_texts, '', $text));
+    $text = preg_replace('/n(?=[①②③④⑤⑥⑦⑧⑨⑩])/u', "\n", $text);
 
     $text = preg_replace('/\(敵の行動時、そのターンに自身が各敵にわざ・すごわざ・コトわざで与えた合計ダメージの\d+%の値で固定ダメージを与える効果\)/u', '', $text);
 
@@ -414,7 +415,21 @@ function koto_split_by_circled_numbers($text)
     if (empty($result)) {
         $result[] = trim($text);
     }
-    return $result;
+    return koto_expand_compound_trait_parts($result);
+}
+
+function koto_expand_compound_trait_parts(array $parts)
+{
+    $expanded = [];
+    foreach ($parts as $part) {
+        if (preg_match('/^(.+?マス)と(.+?マス)の効果を受けない$/u', $part, $matches)) {
+            $expanded[] = $matches[1] . 'の効果を受けない';
+            $expanded[] = $matches[2] . 'の効果を受けない';
+            continue;
+        }
+        $expanded[] = $part;
+    }
+    return $expanded;
 }
 
 // =================================================================
@@ -471,6 +486,14 @@ function koto_parse_trait($text, $grouped_csv, $input_key = '')
         $effect_rows = koto_is_csv_template_match($match)
             ? koto_ensure_acf_data_list($match['acf_data'])
             : [];
+
+        if (empty($effect_rows) && $remaining_text !== '') {
+            $effect_rows = [[
+                'trait_type' => 'other_traits',
+                'other_traits' => 'other',
+                'other_text' => $remaining_text,
+            ]];
+        }
 
         foreach ($effect_rows as $effect_data) {
             if (!is_array($effect_data) || empty($effect_data)) {
