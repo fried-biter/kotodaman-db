@@ -593,3 +593,54 @@ docker exec -w /var/www/html/wp-content/themes/cocoon-child-master devcontainer-
 - 祝福保存が 0/7（成功済みケース）かつ2ケース未確認 -> 9/9 非0件に改善
 - `danto` のわざ/すごわざ分類は、今回の再実行では expected 名と一致
 - 使用文字missingはまだ残るが、`danto` は `だ` 欠落が解消
+
+---
+
+# 追記 2026-06-20 mashiro_grand 手動E2E指摘後の修正
+
+手動で `mashiro_grand` を再実行したところ、`#721` で以下の問題を確認した。
+
+- 属性が `冥` ではなく `天` として保存された
+- わざ/すごわざが入れ替わった
+- レアリティ、CV、EXスキルが未保存だった
+- 自動レポートがレアリティ/CV/EX/効果詳細を見ておらず、実用上の未入力を検知できていなかった
+
+修正内容:
+
+- 基本属性/種族/名前/レアリティは `main_attribute_icon`, `main_species_icon`, `main_rarity_text`, `main_waza_preview`, `main_sugowaza_preview` を持つ信頼できるmain画面だけから採用する
+- わざ/すごわざmodalは画像順ではなく、main画面の `main_waza_preview` / `main_sugowaza_preview` とmodal headerを照合して分類する
+- profile画面を追加し、`cv_text` から `voice_actor` を保存する
+- EXスキルは `modal_body` から `ex_skill_label`, `ex_skill_name`, `ex_skill_discription` へ最低限保存する
+- わざ/すごわざ効果に `ATKを強化` -> `atk_buff`、`ダメージを軽減` -> `def_buff` を最低限保存する
+- 自動レポートに `rarity`, `cv`, `EX`, 効果値空欄数を追加する
+
+最終確認:
+
+```bash
+docker exec -w /var/www/html/wp-content/themes/cocoon-child-master devcontainer-wordpress-1 wp eval-file local-dev/seed/ocr-webui-e2e-report.php cases=mashiro_grand:725 out=/tmp/kotodaman-ocr-e2e-report-mashiro-final --path=/var/www/html --allow-root
+```
+
+| case | postId | title | attr | species | rarity | cv | chars | waza | sugowaza | values | traits | blessing | EX | cost USD |
+|---|---:|---|---|---|---|---|---|---|---|---|---:|---:|---|---:|
+| `mashiro_grand` | 725 | OK | OK | OK | OK | OK | OK | OK | OK | 2 blank | 2/9 | 6 | OK | 0.006883 |
+
+保存確認:
+
+- `attribute`: `void/冥`
+- `species`: `god/神`
+- `rarity`: `grand/グランド`
+- `voice_actor`: `青山吉能`
+- `name_ruby`: `ましろ`
+- `waza_name`: `ことばの光たち`
+- `waza_group_loop`: 1行、詳細に `atk_buff` と `attack`
+- `sugowaza_name`: `真白き願い`
+- `sugowaza_group_loop`: 1行、詳細に `atk_buff`, `def_buff`, `attack`
+- `blessing_trait_loop`: 6行
+- `ex_skill_label`: `新たな「ことば」の力`
+- `ex_skill_name`: `全文字付与`
+- `ex_skill_discription`: 保存あり
+
+残る注意点:
+
+- `values 2 blank` は攻撃倍率値で、現仕様では安全のため未入力にしている。
+- 祝福はまだraw fallback中心で、文言結合や構造化は追加改善対象。

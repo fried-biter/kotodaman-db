@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) exit;
 
 function koto_ocr_allowed_screen_types()
 {
-    return ['main', 'waza', 'sugowaza', 'trait', 'blessing', 'leader', 'kotowaza', 'EX_skill', 'charge_skill', 'unknown'];
+    return ['main', 'profile', 'waza', 'sugowaza', 'trait', 'blessing', 'leader', 'kotowaza', 'EX_skill', 'charge_skill', 'unknown'];
 }
 
 function koto_ocr_normalize_screen_type($screen_type)
@@ -23,6 +23,7 @@ function koto_ocr_classify_image(array $image)
     $text = (string) ($image['fullText'] ?? '');
     $rules = [
         'blessing' => ['祝福とくせい', '祝福特性'],
+        'profile' => ['CV:', 'CV：', 'プロフィール'],
         'sugowaza' => ['すごわざ'],
         'leader' => ['リーダーとくせい', 'リーダー特性'],
         'kotowaza' => ['コトわざ'],

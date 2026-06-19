@@ -78,7 +78,15 @@ function koto_ocr_extract_fields(array $normalized)
             $fields['blessing'][] = ['source_image' => $source, 'text' => $blessing_text];
             $chars = koto_ocr_extract_quoted_chars($blessing_text);
             if (!empty($chars)) $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
-        } elseif (in_array($type, ['leader', 'kotowaza', 'EX_skill', 'charge_skill'], true)) {
+        } elseif ($type === 'profile') {
+            $fields['profile'][] = ['source_image' => $source, 'text' => $text];
+            $cv_text = koto_ocr_extract_block_text($image, ['cv_text'], '');
+            if ($cv_text !== '') {
+                $fields['cv'][] = ['source_image' => $source, 'text' => koto_ocr_clean_cv_text($cv_text)];
+            }
+        } elseif ($type === 'EX_skill') {
+            $fields[$type][] = ['source_image' => $source, 'text' => koto_ocr_extract_block_text($image, ['modal_body'], $text)];
+        } elseif (in_array($type, ['leader', 'kotowaza', 'charge_skill'], true)) {
             $fields[$type][] = ['source_image' => $source, 'text' => $text];
         }
 
@@ -144,6 +152,12 @@ function koto_ocr_extract_cv($text)
         return trim($m[1]);
     }
     return '';
+}
+
+function koto_ocr_clean_cv_text($text)
+{
+    $text = preg_replace('/^CV[:：]\s*/u', '', (string) $text);
+    return trim($text);
 }
 
 function koto_ocr_extract_block_text(array $image, array $regions, $fallback = '')

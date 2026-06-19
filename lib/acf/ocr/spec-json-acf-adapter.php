@@ -28,6 +28,12 @@ function koto_ocr_spec_to_acf_data(array $spec)
             }
         }
     }
+    if (!empty($spec['rarity'])) {
+        $term = get_term_by('slug', (string) $spec['rarity'], 'rarity');
+        if ($term && !is_wp_error($term)) {
+            $acf['rarity'] = $term->term_id;
+        }
+    }
     if (!empty($spec['name'])) {
         $acf['name_ruby'] = koto_ocr_name_to_ruby($spec['name']);
     }
@@ -101,6 +107,9 @@ function koto_ocr_build_ex_skill_fields($raw_text)
     $acf = [];
     if ($label !== '' && $label !== 'EXスキル詳細') {
         $acf['ex_skill_label'] = $label;
+    }
+    if (preg_match('/^【([^】]+)】/u', $description, $m)) {
+        $acf['ex_skill_name'] = trim($m[1]);
     }
     if ($description !== '') {
         $acf['ex_skill_discription'] = $description;
@@ -181,13 +190,39 @@ function koto_ocr_build_sugowaza_condition_rows($condition_text)
 
 function koto_ocr_build_skill_group_rows($raw_text, $attribute_slug)
 {
-    $detail = koto_ocr_build_skill_detail_row((string) $raw_text, (string) $attribute_slug);
-    if (empty($detail)) {
+    $details = koto_ocr_build_skill_detail_rows((string) $raw_text, (string) $attribute_slug);
+    if (empty($details)) {
         return [];
     }
     return [[
-        'sugo_detail_loop' => [$detail],
+        'sugo_detail_loop' => $details,
     ]];
+}
+
+function koto_ocr_build_skill_detail_rows($raw_text, $attribute_slug)
+{
+    $rows = [];
+    if (preg_match('/ATKを(?:少し|大きく)?強化/u', $raw_text)) {
+        $rows[] = koto_ocr_build_buff_detail_row('atk_buff');
+    }
+    if (preg_match('/ダメージを(?:少し|大きく)?軽減/u', $raw_text)) {
+        $rows[] = koto_ocr_build_buff_detail_row('def_buff');
+    }
+    $attack = koto_ocr_build_skill_detail_row($raw_text, $attribute_slug);
+    if (!empty($attack)) {
+        $rows[] = $attack;
+    }
+    return $rows;
+}
+
+function koto_ocr_build_buff_detail_row($type)
+{
+    return [
+        'waza_type' => $type,
+        'advantage_target' => ['target_type' => 'all'],
+        'advantage_rate' => '',
+        'turn_count' => 2,
+    ];
 }
 
 function koto_ocr_build_skill_detail_row($raw_text, $attribute_slug)

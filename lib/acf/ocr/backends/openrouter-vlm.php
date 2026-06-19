@@ -390,11 +390,12 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
             '返答はJSON objectのみ。Markdown、コードフェンス、前後説明、コメント、省略記号、末尾の補足文は禁止です。JSONは一度だけ閉じ、同じ } や ] を繰り返さないでください。読めない値は空文字または空配列にしてください。',
             $source_rule,
             'DB field候補やspec_jsonは作らず、次のschemaだけで返してください: {"images":[{"source_image":"' . $labels[0] . '","screen_type":"main","fullText":"","blocks":[{"region":"main_name_text","text":""}]}]}',
-            '許可するscreen_type: main, waza, sugowaza, trait, blessing, leader, kotowaza, EX_skill, charge_skill, unknown。',
+            '許可するscreen_type: main, profile, waza, sugowaza, trait, blessing, leader, kotowaza, EX_skill, charge_skill, unknown。',
             '各画像は必ず fullText と blocks を持ちます。blocks は region と text のみを含め、bbox/boxや余分なキーは出力しないでください。',
             'JSON文字列内の改行は必ず \\n としてエスケープしてください。fullText は全文転記ではなく重要block.textの短い連結にし、最大300文字まで。各 block.text も最大300文字まで。長い説明文は文の区切りで短く切ってください。',
-            'main画面では main_name_text, main_attribute_icon, main_species_icon, main_char_ball, main_waza_preview, main_sugowaza_preview を可能な限り分けてください。属性/種族アイコンは 火/水/木/光/闇/冥/天/虹 と 龍/神/魔/獣/物/英/霊/妖 の1文字でもよいので省略しないでください。',
-            'modal画面では modal_header_title, modal_body, modal_trigger を分けてください。trait画面では trait_body と、文字変換/文字追加が読める場合は trait_available_moji を分けてください。blessing画面では blessing_body を使ってください。blocksは最大6個までです。',
+            'main画面では main_name_text, main_attribute_icon, main_species_icon, main_rarity_text, main_char_ball, main_waza_preview, main_sugowaza_preview を可能な限り分けてください。属性/種族アイコンは 火/水/木/光/闇/冥/天/虹 と 龍/神/魔/獣/物/英/霊/妖 の1文字でもよいので省略しないでください。レアリティは 星6, ★6, グランド, レジェンド など読めた表記を main_rarity_text に入れてください。',
+            'profile画面やプロフィール/セリフ画面では cv_text と profile_body を分けてください。CV:青山吉能 のような声優名は省略せず cv_text に入れてください。',
+            'modal画面では modal_header_title, modal_body, modal_trigger を分けてください。trait画面では trait_body と、文字変換/文字追加が読める場合は trait_available_moji を分けてください。blessing画面では blessing_body を使ってください。blocksは最大8個までです。',
             '濁点、半濁点、小書きかな、長音、祓/祝など似た文字を特に注意して、読めた文字だけを書いてください。',
         ]);
     }

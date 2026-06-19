@@ -38,6 +38,30 @@ function koto_ocr_append_basic_terms(array &$fields, $source, $text, array $imag
     if ($species_slug !== '') {
         $fields['species'][] = ['source_image' => $source, 'text' => $species[$species_slug][0], 'slug' => $species_slug];
     }
+
+    $rarity_slug = koto_ocr_find_rarity_slug($text, $image);
+    if ($rarity_slug !== '') {
+        $fields['rarity'][] = ['source_image' => $source, 'text' => $rarity_slug, 'slug' => $rarity_slug];
+    }
+}
+
+function koto_ocr_find_rarity_slug($text, array $image = [])
+{
+    $candidate = (string) $text;
+    foreach ($image['blocks'] ?? [] as $block) {
+        if (($block['region'] ?? '') === 'main_rarity_text') {
+            $candidate .= "\n" . (string) ($block['text'] ?? '');
+        }
+    }
+
+    if (preg_match('/グランド/u', $candidate)) return 'grand';
+    if (preg_match('/レジェンド/u', $candidate)) return 'legend';
+    if (preg_match('/スペシャル/u', $candidate)) return 'special';
+    if (preg_match('/ドリーム/u', $candidate)) return 'dream';
+    if (preg_match('/ミラクル/u', $candidate)) return 'miracle';
+    if (preg_match('/(?:星|★|☆)?\s*([1-6])\s*(?:星|★|☆)?/u', $candidate, $m)) return (string) $m[1];
+
+    return '';
 }
 
 function koto_ocr_find_basic_term_slug($text, array $terms)
