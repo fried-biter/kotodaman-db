@@ -75,10 +75,26 @@ function koto_ocr_render_existing_draft_review($post_id)
     $warnings = json_decode((string) get_post_meta($post_id, '_koto_ocr_warnings', true), true);
     $raw_text = json_decode((string) get_post_meta($post_id, '_koto_ocr_raw_text', true), true);
     $normalized = json_decode((string) get_post_meta($post_id, '_koto_ocr_normalized', true), true);
+    $saved_summary = koto_ocr_saved_acf_summary($post_id);
     ?>
     <div class="koto-ocr-review-panel">
         <h2>OCR下書き確認</h2>
         <p class="description">この投稿はOCRから作成された下書きです。公開前に、下のOCR raw textと警告を見ながらDBエディタで手修正してください。</p>
+        <?php if (!empty($saved_summary)) : ?>
+            <div class="notice notice-info inline">
+                <p><strong>OCRから保存済みの主なACF:</strong></p>
+                <ul>
+                    <?php foreach ($saved_summary as $item) : ?>
+                        <li>
+                            <?php echo esc_html($item['label']); ?>: <?php echo esc_html($item['count']); ?>件
+                            <?php if (!empty($item['url'])) : ?>
+                                <a href="<?php echo esc_url($item['url']); ?>">この欄を開く</a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <?php if (!empty($warnings) && is_array($warnings)) : ?>
             <div class="notice notice-warning inline">
                 <ul>
@@ -106,6 +122,47 @@ function koto_ocr_render_existing_draft_review($post_id)
         <?php endif; ?>
     </div>
     <?php
+}
+
+function koto_ocr_saved_acf_summary($post_id)
+{
+    $groups = [
+        'group_69204fa4dd82e' => [
+            '基本データ' => ['available_moji_loop'],
+        ],
+        'group_6937900895bf1' => [
+            'わざ' => ['waza_name', 'waza_group_loop'],
+            'すごわざ' => ['sugowaza_name', 'sugowaza_group_loop', 'sugowaza_condition'],
+        ],
+        'group_693790ee221c3' => [
+            'とくせい' => ['first_trait_loop', 'second_trait_loop'],
+        ],
+        'group_693971a11a6b2' => [
+            '祝福' => ['blessing_trait_loop'],
+        ],
+    ];
+    $summary = [];
+    foreach ($groups as $group_key => $labels) {
+        foreach ($labels as $label => $field_names) {
+            $count = 0;
+            foreach ($field_names as $field_name) {
+                $value = get_field($field_name, $post_id);
+                if (is_array($value)) {
+                    $count += count($value);
+                } elseif ($value !== null && $value !== false && $value !== '') {
+                    $count++;
+                }
+            }
+            if ($count > 0) {
+                $summary[] = [
+                    'label' => $label,
+                    'count' => $count,
+                    'url' => admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . (int) $post_id . '&acf_group=' . $group_key),
+                ];
+            }
+        }
+    }
+    return $summary;
 }
 
 function koto_ocr_ajax_create_draft()
