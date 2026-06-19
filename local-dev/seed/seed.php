@@ -39,6 +39,51 @@ if (!function_exists('kotodaman_local_upsert_term')) {
     }
 }
 
+if (!function_exists('kotodaman_local_seed_production_terms')) {
+    function kotodaman_local_seed_production_terms($path)
+    {
+        if (!is_readable($path)) {
+            return;
+        }
+
+        $payload = json_decode((string) file_get_contents($path), true);
+        if (!is_array($payload) || empty($payload['taxonomies']) || !is_array($payload['taxonomies'])) {
+            throw new RuntimeException('Invalid production terms fixture: ' . $path);
+        }
+
+        foreach ($payload['taxonomies'] as $taxonomy => $terms) {
+            if (!taxonomy_exists($taxonomy) || !is_array($terms)) {
+                continue;
+            }
+
+            $term_by_source_id = [];
+            foreach ($terms as $term) {
+                if (empty($term['id']) || empty($term['slug']) || empty($term['name'])) {
+                    continue;
+                }
+                $term_by_source_id[(int) $term['id']] = $term;
+            }
+
+            foreach ($terms as $term) {
+                if (empty($term['slug']) || empty($term['name'])) {
+                    continue;
+                }
+                $parent_slug = null;
+                $parent_id = (int) ($term['parent'] ?? 0);
+                if ($parent_id && !empty($term_by_source_id[$parent_id]['slug'])) {
+                    $parent_slug = (string) $term_by_source_id[$parent_id]['slug'];
+                }
+                kotodaman_local_upsert_term(
+                    $taxonomy,
+                    (string) $term['slug'],
+                    (string) $term['name'],
+                    $parent_slug
+                );
+            }
+        }
+    }
+}
+
 if (!function_exists('kotodaman_local_upsert_page')) {
     function kotodaman_local_upsert_page($slug, $title, $template = '', $meta = [])
     {
@@ -112,7 +157,7 @@ if (!function_exists('kotodaman_local_upsert_character')) {
     }
 }
 
-$seed_version = 3;
+$seed_version = 4;
 $existing_seed_version = (int) get_option('kotodaman_local_seed_version', 0);
 
 if ($existing_seed_version >= $seed_version) {
@@ -177,6 +222,8 @@ $terms = [
 foreach ($terms as [$taxonomy, $slug, $name, $parent_slug]) {
     kotodaman_local_upsert_term($taxonomy, $slug, $name, $parent_slug);
 }
+
+kotodaman_local_seed_production_terms(__DIR__ . '/production-terms.json');
 
 $characters = [
     [
