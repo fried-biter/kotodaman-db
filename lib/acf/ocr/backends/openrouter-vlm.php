@@ -41,6 +41,14 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
     {
         $merged_images = [];
         $warnings = [];
+        $usage = [
+            'prompt_tokens' => 0,
+            'completion_tokens' => 0,
+            'total_tokens' => 0,
+            'cost' => 0.0,
+            'currency' => 'USD',
+            'requests' => 0,
+        ];
         $first_image_index = 1;
         foreach (array_chunk($images, $chunk_size) as $chunk) {
             $payload = $this->recognize_batch($chunk, $first_image_index);
@@ -72,6 +80,9 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
                 $first_image_index += count($chunk);
                 continue;
             }
+            if (!empty($payload['_openrouter_usage']) && is_array($payload['_openrouter_usage'])) {
+                $usage = $this->merge_usage($usage, $payload['_openrouter_usage']);
+            }
             foreach (array_values($payload['images']) as $local_index => $image_payload) {
                 if (!is_array($image_payload)) {
                     $image_payload = [];
@@ -86,7 +97,23 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
         if (!empty($warnings)) {
             $payload['warnings'] = $warnings;
         }
+        if ($usage['requests'] > 0) {
+            $payload['_openrouter_usage'] = $usage;
+        }
         return $payload;
+    }
+
+    private function merge_usage(array $total, array $usage)
+    {
+        foreach (['prompt_tokens', 'completion_tokens', 'total_tokens'] as $key) {
+            $total[$key] = (int) ($total[$key] ?? 0) + (int) ($usage[$key] ?? 0);
+        }
+        $total['cost'] = (float) ($total['cost'] ?? 0) + (float) ($usage['cost'] ?? 0);
+        $total['requests'] = (int) ($total['requests'] ?? 0) + 1;
+        if (!empty($usage['currency'])) {
+            $total['currency'] = (string) $usage['currency'];
+        }
+        return $total;
     }
 
     private function recognize_batch(array $images, $first_image_index)
@@ -160,11 +187,26 @@ class Koto_Ocr_Openrouter_Vlm implements Koto_Ocr_Backend_Interface
         }
         $payload = $this->normalize_decoded_payload($payload);
 
+        if (!empty($decoded['usage']) && is_array($decoded['usage'])) {
+            $payload['_openrouter_usage'] = $this->normalize_usage($decoded['usage']);
+        }
+
         if (koto_ocr_debug_enabled()) {
             $payload['_debug_openrouter_response'] = $body;
         }
 
         return $payload;
+    }
+
+    private function normalize_usage(array $usage)
+    {
+        return [
+            'prompt_tokens' => (int) ($usage['prompt_tokens'] ?? 0),
+            'completion_tokens' => (int) ($usage['completion_tokens'] ?? 0),
+            'total_tokens' => (int) ($usage['total_tokens'] ?? 0),
+            'cost' => (float) ($usage['cost'] ?? $usage['total_cost'] ?? 0),
+            'currency' => (string) ($usage['currency'] ?? 'USD'),
+        ];
     }
 
     private function decode_json_content($text)

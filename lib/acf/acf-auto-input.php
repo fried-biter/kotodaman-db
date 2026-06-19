@@ -516,6 +516,46 @@ function koto_parse_trait($text, $grouped_csv, $input_key = '')
     return $results;
 }
 
+function koto_parse_blessing($text, $grouped_csv, $input_key = '')
+{
+    $parts = koto_split_by_circled_numbers($text);
+    $results = [];
+    $blessing_rows = $grouped_csv['祝福'] ?? [];
+
+    foreach ($parts as $part) {
+        $part = trim(preg_replace('/^(?:祝福とくせい|祝福特性|Lv\.?\s*\d+|レベル\s*\d+|必要\s*\d+pt)[:：\s]*/u', '', $part));
+        if ($part === '' || preg_match('/^(?:祝福とくせい|祝福特性|Lv\.?|レベル|必要pt?)$/u', $part)) {
+            continue;
+        }
+
+        $match = koto_match_csv_template($part, $blessing_rows, $input_key, 'suffix');
+        $rows = koto_is_csv_template_match($match)
+            ? koto_ensure_acf_data_list($match['acf_data'])
+            : [];
+
+        if (empty($rows)) {
+            $rows = [[
+                'trait_type' => 'other_traits',
+                'pt_pattern' => 'default',
+                'other_traits' => 'other',
+                'other_text' => $part,
+            ]];
+        }
+
+        foreach ($rows as $row) {
+            if (!is_array($row) || empty($row)) {
+                continue;
+            }
+            if (empty($row['pt_pattern'])) {
+                $row['pt_pattern'] = 'default';
+            }
+            $results[] = $row;
+        }
+    }
+
+    return $results;
+}
+
 function koto_parse_text_by_type($text, $type, $grouped_csv, $input_key = '')
 {
     $text = koto_preprocess_text($text);
@@ -524,9 +564,11 @@ function koto_parse_text_by_type($text, $type, $grouped_csv, $input_key = '')
         case 'とくせい':
             return koto_parse_trait($text, $grouped_csv, $input_key);
 
+        case '祝福':
+            return koto_parse_blessing($text, $grouped_csv, $input_key);
+
         case 'わざ':
         case 'すごわざ条件':
-        case '祝福':
         case 'リーダーとくせい':
             // $trait_rows = $grouped_csv[$type] ?? [];
             // $match = koto_match_csv_template($text, $trait_rows, $input_key);

@@ -63,7 +63,11 @@ function koto_ocr_normalize_payload($payload, $expected_count = 1)
         return new WP_Error('koto_ocr_all_text_empty', '全画像のOCR本文が空です。');
     }
 
-    return ['images' => $images, 'warnings' => $warnings];
+    $normalized = ['images' => $images, 'warnings' => $warnings];
+    if (!empty($payload['_openrouter_usage']) && is_array($payload['_openrouter_usage'])) {
+        $normalized['_openrouter_usage'] = $payload['_openrouter_usage'];
+    }
+    return $normalized;
 }
 
 function koto_ocr_warning($field, $code, $message)
@@ -93,5 +97,9 @@ function koto_ocr_lightweight_normalized(array $normalized)
             'blocks' => $blocks,
         ];
     }
-    return ['images' => $images];
+    $lightweight = ['images' => $images];
+    if (!empty($normalized['_openrouter_usage']) && is_array($normalized['_openrouter_usage'])) {
+        $lightweight['_openrouter_usage'] = $normalized['_openrouter_usage'];
+    }
+    return $lightweight;
 }
