@@ -13,15 +13,20 @@ function koto_ocr_extract_fields(array $normalized)
     $classifications = [];
     $seen_waza_modal = false;
     $seen_sugowaza_modal = false;
+    $skill_previews = koto_ocr_collect_main_skill_previews($normalized);
 
     foreach ($normalized['images'] ?? [] as $image) {
         $classification = koto_ocr_classify_image($image);
         $type = $classification['screen_type'];
-        if (($type === 'sugowaza' || $type === 'unknown') && koto_ocr_image_has_skill_modal_body($image)) {
-            if (!$seen_waza_modal) {
+        if (in_array($type, ['waza', 'sugowaza', 'unknown'], true) && koto_ocr_image_has_skill_modal_body($image)) {
+            $preview_type = koto_ocr_match_skill_preview_type($image, $skill_previews);
+            if ($preview_type !== '') {
+                $type = $preview_type;
+                $classification = ['screen_type' => $type, 'confidence' => 0.9, 'reason' => 'main_skill_preview_match'];
+            } elseif (($type === 'sugowaza' || $type === 'unknown') && !$seen_waza_modal) {
                 $type = 'waza';
                 $classification = ['screen_type' => 'waza', 'confidence' => 0.65, 'reason' => 'skill_modal_order:first'];
-            } elseif (!$seen_sugowaza_modal) {
+            } elseif ($type === 'unknown' && !$seen_sugowaza_modal) {
                 $type = 'sugowaza';
                 $classification = ['screen_type' => 'sugowaza', 'confidence' => 0.65, 'reason' => 'skill_modal_order:second'];
             }
@@ -35,11 +40,14 @@ function koto_ocr_extract_fields(array $normalized)
         }
 
         if ($type === 'main') {
-            $name = koto_ocr_extract_name($image);
+            $reliable_main = koto_ocr_is_reliable_main_image($image);
+            $name = $reliable_main ? koto_ocr_extract_name($image) : '';
             if ($name !== '') {
                 $fields['character_name'][] = ['source_image' => $source, 'text' => $name];
             }
-            koto_ocr_append_basic_terms($fields, $source, $text, $image);
+            if ($reliable_main) {
+                koto_ocr_append_basic_terms($fields, $source, $text, $image);
+            }
             $chars = koto_ocr_extract_chars_from_image($image);
             if (!empty($chars)) {
                 $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
@@ -49,7 +57,6 @@ function koto_ocr_extract_fields(array $normalized)
             $fields['waza'][] = ['source_image' => $source, 'text' => $text];
             $name = koto_ocr_extract_skill_name($image, ['わざ名', '技名', '名称']);
             if ($name !== '') $fields['waza_name'][] = ['source_image' => $source, 'text' => $name];
-            koto_ocr_append_basic_terms($fields, $source, $text, $image);
         } elseif ($type === 'sugowaza') {
             $seen_sugowaza_modal = true;
             $fields['sugowaza'][] = ['source_image' => $source, 'text' => $text];
@@ -59,7 +66,6 @@ function koto_ocr_extract_fields(array $normalized)
             if ($condition !== '') $fields['sugowaza_condition'][] = ['source_image' => $source, 'text' => $condition];
             $chars = koto_ocr_extract_quoted_chars($condition);
             if (!empty($chars)) $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
-            koto_ocr_append_basic_terms($fields, $source, $text, $image);
         } elseif ($type === 'trait') {
             $trait_text = koto_ocr_extract_block_text($image, ['trait_body'], $text);
             koto_ocr_append_split_traits($fields, $source, $trait_text);
@@ -67,7 +73,6 @@ function koto_ocr_extract_fields(array $normalized)
             if (!empty($chars)) {
                 $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
             }
-            koto_ocr_append_basic_terms($fields, $source, $trait_text, $image);
         } elseif ($type === 'blessing') {
             $blessing_text = koto_ocr_extract_block_text($image, ['blessing_body'], $text);
             $fields['blessing'][] = ['source_image' => $source, 'text' => $blessing_text];
@@ -75,11 +80,70 @@ function koto_ocr_extract_fields(array $normalized)
             if (!empty($chars)) $fields['chars'][] = ['source_image' => $source, 'text' => implode('・', $chars), 'items' => $chars];
         } elseif (in_array($type, ['leader', 'kotowaza', 'EX_skill', 'charge_skill'], true)) {
             $fields[$type][] = ['source_image' => $source, 'text' => $text];
-            koto_ocr_append_basic_terms($fields, $source, $text, $image);
+        }
+
+        $cv = koto_ocr_extract_cv($text);
+        if ($cv !== '') {
+            $fields['cv'][] = ['source_image' => $source, 'text' => $cv];
         }
     }
 
     return ['fields' => $fields, 'classifications' => $classifications];
+}
+
+function koto_ocr_collect_main_skill_previews(array $normalized)
+{
+    $previews = ['waza' => '', 'sugowaza' => ''];
+    foreach ($normalized['images'] ?? [] as $image) {
+        foreach ($image['blocks'] ?? [] as $block) {
+            $region = $block['region'] ?? '';
+            $text = trim((string) ($block['text'] ?? ''));
+            if ($text === '') {
+                continue;
+            }
+            if ($region === 'main_waza_preview' && $previews['waza'] === '') {
+                $previews['waza'] = koto_ocr_clean_skill_name($text);
+            } elseif ($region === 'main_sugowaza_preview' && $previews['sugowaza'] === '') {
+                $previews['sugowaza'] = koto_ocr_clean_skill_name($text);
+            }
+        }
+    }
+    return $previews;
+}
+
+function koto_ocr_match_skill_preview_type(array $image, array $previews)
+{
+    $name = koto_ocr_extract_skill_name($image, ['わざ名', 'すごわざ名', '技名', '名称']);
+    if ($name === '') {
+        return '';
+    }
+    foreach (['waza', 'sugowaza'] as $type) {
+        if (($previews[$type] ?? '') !== '' && $name === $previews[$type]) {
+            return $type;
+        }
+    }
+    return '';
+}
+
+function koto_ocr_is_reliable_main_image(array $image)
+{
+    foreach ($image['blocks'] ?? [] as $block) {
+        if (in_array($block['region'] ?? '', ['main_attribute_icon', 'main_species_icon', 'main_waza_preview', 'main_sugowaza_preview'], true)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function koto_ocr_extract_cv($text)
+{
+    if (preg_match('/CV[:：]\s*([\p{Han}\p{Hiragana}\p{Katakana}ー・]+?)(?=(?:暖かな|言霊|$|\s|[。,.、]))/u', (string) $text, $m)) {
+        return trim($m[1]);
+    }
+    if (preg_match('/CV[:：]\s*([^\s　\r\n。,.、]+)/u', (string) $text, $m)) {
+        return trim($m[1]);
+    }
+    return '';
 }
 
 function koto_ocr_extract_block_text(array $image, array $regions, $fallback = '')

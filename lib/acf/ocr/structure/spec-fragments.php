@@ -28,6 +28,9 @@ function koto_ocr_build_spec_fragments(array $extracted)
     if (!empty($fields['species'][0]['slug'])) {
         $fragment['species'] = $fields['species'][0]['slug'];
     }
+    if (!empty($fields['cv'][0]['text'])) {
+        $fragment['cv'] = $fields['cv'][0]['text'];
+    }
     if (!empty($fields['waza'][0]['text'])) {
         $fragment['waza'] = [
             'name' => $fields['waza_name'][0]['text'] ?? '',

@@ -121,6 +121,37 @@ function koto_ocr_webui_report_usage($post_id)
     ] : [];
 }
 
+function koto_ocr_webui_report_term_value($post_id, $field_name)
+{
+    $value = get_field($field_name, $post_id);
+    if (is_object($value) && isset($value->slug)) {
+        return (string) $value->slug;
+    }
+    if (is_array($value) && isset($value['slug'])) {
+        return (string) $value['slug'];
+    }
+    return $value ? (string) $value : '';
+}
+
+function koto_ocr_webui_report_skill_detail_status($field_name, $post_id)
+{
+    $rows = get_field($field_name, $post_id) ?: [];
+    $detail_count = 0;
+    $blank_value_count = 0;
+    foreach ($rows as $row) {
+        foreach (($row['sugo_detail_loop'] ?? []) as $detail) {
+            if (!is_array($detail)) {
+                continue;
+            }
+            $detail_count++;
+            if (($detail['waza_value'] ?? '') === '' && ($detail['waza_value_last'] ?? '') === '') {
+                $blank_value_count++;
+            }
+        }
+    }
+    return ['detail_count' => $detail_count, 'blank_value_count' => $blank_value_count];
+}
+
 function koto_ocr_webui_report_row($case, $post_id, array $spec)
 {
     $expected_chars = koto_ocr_webui_report_expected_chars($spec);
@@ -128,6 +159,9 @@ function koto_ocr_webui_report_row($case, $post_id, array $spec)
     $waza_name = get_field('waza_name', $post_id) ?: '';
     $sugowaza_name = get_field('sugowaza_name', $post_id) ?: '';
     $blessing_rows = get_field('blessing_trait_loop', $post_id) ?: [];
+    $waza_detail = koto_ocr_webui_report_skill_detail_status('waza_group_loop', $post_id);
+    $sugowaza_detail = koto_ocr_webui_report_skill_detail_status('sugowaza_group_loop', $post_id);
+    $expected_rarity = !empty($spec['rarity_detail']) && $spec['rarity_detail'] !== 'none' ? (string) $spec['rarity_detail'] : (string) ($spec['rarity'] ?? '');
 
     return [
         'case' => $case,
@@ -139,6 +173,14 @@ function koto_ocr_webui_report_row($case, $post_id, array $spec)
         'expectedAttribute' => (string) ($spec['attribute'] ?? ''),
         'species' => koto_ocr_webui_report_term_slug($post_id, 'species'),
         'expectedSpecies' => (string) ($spec['species'] ?? ''),
+        'rarity' => koto_ocr_webui_report_term_value($post_id, 'rarity'),
+        'expectedRarity' => $expected_rarity,
+        'rarityOk' => $expected_rarity === '' || koto_ocr_webui_report_term_value($post_id, 'rarity') === $expected_rarity,
+        'nameRuby' => (string) (get_field('name_ruby', $post_id) ?: ''),
+        'expectedNameRuby' => (string) ($spec['name_ruby'] ?? ''),
+        'voiceActor' => (string) (get_field('voice_actor', $post_id) ?: ''),
+        'expectedVoiceActor' => (string) ($spec['cv'] ?? ''),
+        'voiceActorOk' => (string) ($spec['cv'] ?? '') === '' || (string) (get_field('voice_actor', $post_id) ?: '') === (string) ($spec['cv'] ?? ''),
         'chars' => $chars,
         'expectedChars' => $expected_chars,
         'missingChars' => array_values(array_diff($expected_chars, $chars)),
@@ -146,15 +188,22 @@ function koto_ocr_webui_report_row($case, $post_id, array $spec)
         'expectedWazaName' => (string) ($spec['waza']['name'] ?? ''),
         'wazaNameOk' => $waza_name === (string) ($spec['waza']['name'] ?? ''),
         'wazaRows' => count(get_field('waza_group_loop', $post_id) ?: []),
+        'wazaDetailCount' => $waza_detail['detail_count'],
+        'wazaBlankValueCount' => $waza_detail['blank_value_count'],
         'sugowazaName' => $sugowaza_name,
         'expectedSugowazaName' => (string) ($spec['sugowaza']['name'] ?? ''),
         'sugowazaNameOk' => $sugowaza_name === (string) ($spec['sugowaza']['name'] ?? ''),
         'sugowazaRows' => count(get_field('sugowaza_group_loop', $post_id) ?: []),
+        'sugowazaDetailCount' => $sugowaza_detail['detail_count'],
+        'sugowazaBlankValueCount' => $sugowaza_detail['blank_value_count'],
         'sugowazaConditionRows' => count(get_field('sugowaza_condition', $post_id) ?: []),
         'trait1Rows' => count(get_field('first_trait_loop', $post_id) ?: []),
         'trait2Rows' => count(get_field('second_trait_loop', $post_id) ?: []),
         'blessingRows' => count($blessing_rows),
         'blessingSamples' => koto_ocr_webui_report_text_samples($blessing_rows, 4),
+        'exSkillLabel' => (string) (get_field('ex_skill_label', $post_id) ?: ''),
+        'exSkillDescription' => (string) (get_field('ex_skill_discription', $post_id) ?: ''),
+        'exSkillSaved' => (get_field('ex_skill_label', $post_id) ?: '') !== '' || (get_field('ex_skill_discription', $post_id) ?: '') !== '',
         'usage' => koto_ocr_webui_report_usage($post_id),
     ];
 }
@@ -167,10 +216,13 @@ function koto_ocr_webui_report_summary(array $rows)
         'title_ok_count' => 0,
         'attribute_ok_count' => 0,
         'species_ok_count' => 0,
+        'rarity_ok_count' => 0,
+        'voice_actor_ok_count' => 0,
         'chars_complete_count' => 0,
         'waza_name_ok_count' => 0,
         'sugowaza_name_ok_count' => 0,
         'blessing_nonzero_count' => 0,
+        'ex_skill_saved_count' => 0,
         'openrouter_cost' => 0.0,
         'openrouter_currency' => 'USD',
         'openrouter_requests' => 0,
@@ -179,10 +231,13 @@ function koto_ocr_webui_report_summary(array $rows)
         if ($row['titleOk']) $summary['title_ok_count']++;
         if ($row['attribute'] === $row['expectedAttribute']) $summary['attribute_ok_count']++;
         if ($row['species'] === $row['expectedSpecies']) $summary['species_ok_count']++;
+        if ($row['rarityOk']) $summary['rarity_ok_count']++;
+        if ($row['voiceActorOk']) $summary['voice_actor_ok_count']++;
         if (empty($row['missingChars'])) $summary['chars_complete_count']++;
         if ($row['wazaNameOk']) $summary['waza_name_ok_count']++;
         if ($row['sugowazaNameOk']) $summary['sugowaza_name_ok_count']++;
         if ($row['blessingRows'] > 0) $summary['blessing_nonzero_count']++;
+        if ($row['exSkillSaved']) $summary['ex_skill_saved_count']++;
         $usage = $row['usage'] ?? [];
         $summary['openrouter_cost'] += (float) ($usage['cost'] ?? 0);
         $summary['openrouter_requests'] += (int) ($usage['requests'] ?? 0);
@@ -202,24 +257,28 @@ function koto_ocr_webui_report_markdown(array $report)
     $lines[] = '- OpenRouter cost: `' . sprintf('%.6f', $summary['openrouter_cost']) . ' ' . $summary['openrouter_currency'] . '`';
     $lines[] = '- OpenRouter requests: `' . $summary['openrouter_requests'] . '`';
     $lines[] = '';
-    $lines[] = '| case | postId | title | attr | species | chars | waza | sugowaza | traits | blessing | cost |';
-    $lines[] = '|---|---:|---|---|---|---|---|---|---:|---:|---:|';
+    $lines[] = '| case | postId | title | attr | species | rarity | cv | chars | waza | sugowaza | values | traits | blessing | EX | cost |';
+    $lines[] = '|---|---:|---|---|---|---|---|---|---|---|---|---:|---:|---|---:|';
     foreach ($report['cases'] as $row) {
         $chars = empty($row['missingChars']) ? 'OK' : 'missing ' . implode(',', $row['missingChars']);
         $usage = $row['usage'] ?? [];
         $lines[] = sprintf(
-            '| `%s` | %d | %s | %s | %s | %s | %s | %s | %d/%d | %d | %.6f |',
+            '| `%s` | %d | %s | %s | %s | %s | %s | %s | %s | %s | %s | %d/%d | %d | %s | %.6f |',
             $row['case'],
             $row['postId'],
             $row['titleOk'] ? 'OK' : 'NG',
             $row['attribute'] === $row['expectedAttribute'] ? 'OK' : 'NG',
             $row['species'] === $row['expectedSpecies'] ? 'OK' : 'NG',
+            $row['rarityOk'] ? 'OK' : 'NG',
+            $row['voiceActorOk'] ? 'OK' : 'NG',
             $chars,
             $row['wazaNameOk'] ? 'OK' : 'NG',
             $row['sugowazaNameOk'] ? 'OK' : 'NG',
+            ($row['wazaBlankValueCount'] + $row['sugowazaBlankValueCount']) . ' blank',
             $row['trait1Rows'],
             $row['trait2Rows'],
             $row['blessingRows'],
+            $row['exSkillSaved'] ? 'OK' : 'NG',
             (float) ($usage['cost'] ?? 0)
         );
     }

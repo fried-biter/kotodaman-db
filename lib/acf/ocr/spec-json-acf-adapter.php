@@ -28,6 +28,12 @@ function koto_ocr_spec_to_acf_data(array $spec)
             }
         }
     }
+    if (!empty($spec['name'])) {
+        $acf['name_ruby'] = koto_ocr_name_to_ruby($spec['name']);
+    }
+    if (!empty($spec['cv'])) {
+        $acf['voice_actor'] = $spec['cv'];
+    }
     if (!empty($spec['waza'])) {
         if (!empty($spec['waza']['name'])) $acf['waza_name'] = $spec['waza']['name'];
         if (!empty($spec['waza']['raw_text'])) {
@@ -45,6 +51,59 @@ function koto_ocr_spec_to_acf_data(array $spec)
             $rows = koto_ocr_build_skill_group_rows($spec['sugowaza']['raw_text'], $spec['attribute'] ?? '');
             if (!empty($rows)) $acf['sugowaza_group_loop'] = $rows;
         }
+    }
+    if (!empty($spec['_ocr_placeholders']['EX_skill'])) {
+        $acf = array_merge($acf, koto_ocr_build_ex_skill_fields(koto_ocr_placeholder_text($spec['_ocr_placeholders']['EX_skill'])));
+    }
+    return $acf;
+}
+
+function koto_ocr_placeholder_text($placeholder)
+{
+    if (is_string($placeholder)) {
+        return $placeholder;
+    }
+    if (is_array($placeholder)) {
+        foreach ($placeholder as $item) {
+            if (is_array($item) && !empty($item['text'])) {
+                return (string) $item['text'];
+            }
+        }
+    }
+    return '';
+}
+
+function koto_ocr_name_to_ruby($name)
+{
+    $display = (string) $name;
+    if (strpos($display, '・') !== false) {
+        $parts = explode('・', $display);
+        $display = end($parts);
+    }
+    $display = preg_replace('/[\(（].*$/u', '', $display);
+    return mb_convert_kana(trim($display), 'c', 'UTF-8');
+}
+
+function koto_ocr_build_ex_skill_fields($raw_text)
+{
+    $text = trim(preg_replace('/n(?=【|[^\s])/u', "\n", (string) $raw_text));
+    if ($text === '') {
+        return [];
+    }
+
+    $label = '';
+    $description = $text;
+    if (preg_match('/^(?:EXスキル詳細\s*)?([^\n【]+)\s*(.*)$/su', $text, $m)) {
+        $label = trim($m[1]);
+        $description = trim($m[2] !== '' ? $m[2] : $text);
+    }
+
+    $acf = [];
+    if ($label !== '' && $label !== 'EXスキル詳細') {
+        $acf['ex_skill_label'] = $label;
+    }
+    if ($description !== '') {
+        $acf['ex_skill_discription'] = $description;
     }
     return $acf;
 }
