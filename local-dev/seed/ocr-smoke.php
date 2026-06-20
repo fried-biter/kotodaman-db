@@ -47,16 +47,24 @@ if (is_wp_error($result)) {
 
 $post_id = (int) $result['post_id'];
 $spec = json_decode((string) get_post_meta($post_id, '_spec_json', true), true);
+$source = json_decode((string) get_post_meta($post_id, '_koto_ocr_source', true), true);
+$fields = json_decode((string) get_post_meta($post_id, '_koto_ocr_fields', true), true);
 $warnings = json_decode((string) get_post_meta($post_id, '_koto_ocr_warnings', true), true);
 
 if (get_post_type($post_id) !== 'character' || get_post_status($post_id) !== 'draft') {
     WP_CLI::error('OCR draft post was not created correctly.');
 }
-if (($spec['name'] ?? '') !== 'テストキャラ') {
-    WP_CLI::error('_spec_json.name was not saved.');
+if (!is_array($source) || ($source['images'][0]['full_text'] ?? '') === '') {
+    WP_CLI::error('_koto_ocr_source was not saved.');
 }
-if (empty($spec['_ocr_placeholders']['trait1'][0]['text'])) {
-    WP_CLI::error('trait raw text placeholder was not saved.');
+if (!is_array($fields) || ($fields['fields']['character_name'][0]['text'] ?? '') !== 'テストキャラ') {
+    WP_CLI::error('_koto_ocr_fields character_name was not saved.');
+}
+if (empty($fields['fields']['trait1'][0]['text'])) {
+    WP_CLI::error('trait raw text field was not saved.');
+}
+if (!empty($spec)) {
+    WP_CLI::error('_spec_json should not be saved during OCR draft creation.');
 }
 if (!is_array($warnings) || empty($warnings)) {
     WP_CLI::error('_koto_ocr_warnings was not saved.');

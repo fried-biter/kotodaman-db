@@ -82,41 +82,43 @@ function koto_ocr_test_condition_loop($condition_text)
 function koto_ocr_test_assert_character_reading(array $case)
 {
     $id = $case['id'] ?? 'unknown';
-    $draft = koto_ocr_test_build_draft_from_normalized($case['normalized']);
-    $spec = $draft['spec'] ?? [];
+    $fields = koto_ocr_extract_fields($case['normalized'])['fields'] ?? [];
     $expected = $case['expected'];
 
-    koto_ocr_test_assert_same($expected['name'], $spec['name'] ?? null, $id . ' name mismatch');
-    koto_ocr_test_assert_same($expected['attribute'], $spec['attribute'] ?? null, $id . ' attribute mismatch');
-    koto_ocr_test_assert_same($expected['species'], $spec['species'] ?? null, $id . ' species mismatch');
-    koto_ocr_test_assert_same($expected['chars'], $spec['chars'] ?? null, $id . ' chars mismatch');
-    koto_ocr_test_assert_same($expected['waza_name'], $spec['waza']['name'] ?? null, $id . ' waza name mismatch');
+    koto_ocr_test_assert_same($expected['name'], koto_ocr_test_field_text($fields, 'character_name'), $id . ' name mismatch');
+    koto_ocr_test_assert_same($expected['attribute'], koto_ocr_test_field_slug($fields, 'attribute'), $id . ' attribute mismatch');
+    koto_ocr_test_assert_same($expected['species'], koto_ocr_test_field_slug($fields, 'species'), $id . ' species mismatch');
+    koto_ocr_test_assert_same($expected['chars'], koto_ocr_collect_extracted_chars($fields), $id . ' chars mismatch');
+    koto_ocr_test_assert_same($expected['waza_name'], koto_ocr_test_field_text($fields, 'waza_name'), $id . ' waza name mismatch');
     koto_ocr_test_assert_array_contains_assoc(
         $expected['waza_attack'],
-        koto_ocr_build_skill_detail_row($spec['waza']['raw_text'] ?? '', $expected['attribute']),
+        koto_ocr_build_skill_detail_row(koto_ocr_test_field_text($fields, 'waza'), $expected['attribute']),
         $id . ' waza attack mismatch'
     );
-    koto_ocr_test_assert_same($expected['sugowaza_name'], $spec['sugowaza']['name'] ?? null, $id . ' sugowaza name mismatch');
+    koto_ocr_test_assert_same($expected['sugowaza_name'], koto_ocr_test_field_text($fields, 'sugowaza_name'), $id . ' sugowaza name mismatch');
     koto_ocr_test_assert_same(
         $expected['sugowaza_condition'],
-        koto_ocr_test_condition_loop($spec['sugowaza']['condition'] ?? ''),
+        koto_ocr_test_condition_loop(koto_ocr_test_field_text($fields, 'sugowaza_condition')),
         $id . ' sugowaza condition mismatch'
     );
     koto_ocr_test_assert_array_contains_assoc(
         $expected['sugowaza_attack'],
-        koto_ocr_build_skill_detail_row($spec['sugowaza']['raw_text'] ?? '', $expected['attribute']),
+        koto_ocr_build_skill_detail_row(koto_ocr_test_field_text($fields, 'sugowaza'), $expected['attribute']),
         $id . ' sugowaza attack mismatch'
     );
-    koto_ocr_test_assert_same($expected['trait1_raw'], $spec['trait1']['raw_text'] ?? null, $id . ' trait1 mismatch');
-    koto_ocr_test_assert_same($expected['trait2_raw'], $spec['trait2']['raw_text'] ?? null, $id . ' trait2 mismatch');
-    koto_ocr_test_assert_same($expected['blessing_raw'], $spec['blessing']['raw_text'] ?? null, $id . ' blessing mismatch');
+    koto_ocr_test_assert_same($expected['trait1_raw'], koto_ocr_test_field_text($fields, 'trait1'), $id . ' trait1 mismatch');
+    koto_ocr_test_assert_same($expected['trait2_raw'], koto_ocr_test_field_text($fields, 'trait2'), $id . ' trait2 mismatch');
+    koto_ocr_test_assert_same($expected['blessing_raw'], koto_ocr_test_field_text($fields, 'blessing'), $id . ' blessing mismatch');
 }
 
-function koto_ocr_test_build_draft_from_normalized(array $normalized)
+function koto_ocr_test_field_text(array $fields, $field_name, $index = 0)
 {
-    $extracted = koto_ocr_extract_fields($normalized);
-    $fragment = koto_ocr_build_spec_fragments($extracted);
-    return koto_ocr_build_draft_spec($normalized, $extracted, $fragment);
+    return $fields[$field_name][$index]['text'] ?? null;
+}
+
+function koto_ocr_test_field_slug(array $fields, $field_name, $index = 0)
+{
+    return $fields[$field_name][$index]['slug'] ?? null;
 }
 
 function koto_ocr_test_cases()
@@ -127,11 +129,17 @@ function koto_ocr_test_cases()
             'name' => 'basic main normalized OCR builds draft spec',
             'run' => function () {
                 $fixture = koto_ocr_test_fixture('pipeline/basic-main.json');
-                $draft = koto_ocr_test_build_draft_from_normalized($fixture['normalized']);
+                $extracted = koto_ocr_extract_fields($fixture['normalized']);
+                $fields = $extracted['fields'] ?? [];
                 koto_ocr_test_assert_array_contains_assoc(
                     $fixture['expected']['spec'],
-                    $draft['spec'] ?? [],
-                    'draft spec mismatch'
+                    [
+                        'name' => koto_ocr_test_field_text($fields, 'character_name'),
+                        'attribute' => koto_ocr_test_field_slug($fields, 'attribute'),
+                        'species' => koto_ocr_test_field_slug($fields, 'species'),
+                        'chars' => koto_ocr_collect_extracted_chars($fields),
+                    ],
+                    'extracted fields mismatch'
                 );
             },
         ],
@@ -142,25 +150,23 @@ function koto_ocr_test_cases()
                 $fixture = koto_ocr_test_fixture('characters/synthetic-fire-god.json');
                 $normalized = $fixture['normalized'];
                 $extracted = koto_ocr_extract_fields($normalized);
-                $fragment = koto_ocr_build_spec_fragments($extracted);
-                $draft = koto_ocr_build_draft_spec($normalized, $extracted, $fragment);
-                $spec = $draft['spec'] ?? [];
+                $fields = $extracted['fields'] ?? [];
                 $expected_spec = $fixture['expected']['spec'];
 
-                koto_ocr_test_assert_same($expected_spec['name'], $spec['name'] ?? null, 'draft name mismatch');
-                koto_ocr_test_assert_same($expected_spec['attribute'], $spec['attribute'] ?? null, 'draft attribute mismatch');
-                koto_ocr_test_assert_same($expected_spec['species'], $spec['species'] ?? null, 'draft species mismatch');
-                koto_ocr_test_assert_same($expected_spec['chars'], $spec['chars'] ?? null, 'draft chars mismatch');
-                koto_ocr_test_assert_same($expected_spec['waza_name'], $spec['waza']['name'] ?? null, 'draft waza name mismatch');
-                koto_ocr_test_assert_same($expected_spec['waza_raw'], $spec['waza']['raw_text'] ?? null, 'draft waza raw mismatch');
-                koto_ocr_test_assert_same($expected_spec['sugowaza_name'], $spec['sugowaza']['name'] ?? null, 'draft sugowaza name mismatch');
-                koto_ocr_test_assert_same($expected_spec['sugowaza_condition'], $spec['sugowaza']['condition'] ?? null, 'draft sugowaza condition mismatch');
-                koto_ocr_test_assert_same($expected_spec['sugowaza_raw'], $spec['sugowaza']['raw_text'] ?? null, 'draft sugowaza raw mismatch');
-                koto_ocr_test_assert_same($expected_spec['trait1_raw'], $spec['trait1']['raw_text'] ?? null, 'draft trait1 raw mismatch');
-                koto_ocr_test_assert_same($expected_spec['trait2_raw'], $spec['trait2']['raw_text'] ?? null, 'draft trait2 raw mismatch');
-                koto_ocr_test_assert_same($expected_spec['blessing_raw'], $spec['blessing']['raw_text'] ?? null, 'draft blessing raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['name'], koto_ocr_test_field_text($fields, 'character_name'), 'field name mismatch');
+                koto_ocr_test_assert_same($expected_spec['attribute'], koto_ocr_test_field_slug($fields, 'attribute'), 'field attribute mismatch');
+                koto_ocr_test_assert_same($expected_spec['species'], koto_ocr_test_field_slug($fields, 'species'), 'field species mismatch');
+                koto_ocr_test_assert_same($expected_spec['chars'], koto_ocr_collect_extracted_chars($fields), 'field chars mismatch');
+                koto_ocr_test_assert_same($expected_spec['waza_name'], koto_ocr_test_field_text($fields, 'waza_name'), 'field waza name mismatch');
+                koto_ocr_test_assert_same($expected_spec['waza_raw'], koto_ocr_test_field_text($fields, 'waza'), 'field waza raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_name'], koto_ocr_test_field_text($fields, 'sugowaza_name'), 'field sugowaza name mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_condition'], koto_ocr_test_field_text($fields, 'sugowaza_condition'), 'field sugowaza condition mismatch');
+                koto_ocr_test_assert_same($expected_spec['sugowaza_raw'], koto_ocr_test_field_text($fields, 'sugowaza'), 'field sugowaza raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['trait1_raw'], koto_ocr_test_field_text($fields, 'trait1'), 'field trait1 raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['trait2_raw'], koto_ocr_test_field_text($fields, 'trait2'), 'field trait2 raw mismatch');
+                koto_ocr_test_assert_same($expected_spec['blessing_raw'], koto_ocr_test_field_text($fields, 'blessing'), 'field blessing raw mismatch');
 
-                $acf = koto_ocr_spec_to_acf_data($spec);
+                $acf = koto_ocr_extracted_fields_to_acf_data($fields);
                 koto_ocr_test_assert_has_keys(
                     ['available_moji_loop', 'attribute', 'species', 'waza_name', 'waza_group_loop', 'sugowaza_name', 'sugowaza_condition', 'sugowaza_group_loop'],
                     $acf,
@@ -312,7 +318,7 @@ function koto_ocr_test_cases()
             'suite' => 'module',
             'name' => 'icon regions and multiple char sources build one spec',
             'run' => function () {
-                $draft = koto_ocr_test_build_draft_from_normalized([
+                $extracted = koto_ocr_extract_fields([
                     'images' => [
                         [
                             'source_image' => 'image_1',
@@ -335,17 +341,17 @@ function koto_ocr_test_cases()
                         ],
                     ],
                 ]);
-                $spec = $draft['spec'] ?? [];
-                koto_ocr_test_assert_same('water', $spec['attribute'] ?? null, 'icon attribute mismatch');
-                koto_ocr_test_assert_same('beast', $spec['species'] ?? null, 'icon species mismatch');
-                koto_ocr_test_assert_same(['こ', 'ご', 'が', 'け', 'げ'], $spec['chars'] ?? null, 'union chars mismatch');
+                $fields = $extracted['fields'] ?? [];
+                koto_ocr_test_assert_same('water', koto_ocr_test_field_slug($fields, 'attribute'), 'icon attribute mismatch');
+                koto_ocr_test_assert_same('beast', koto_ocr_test_field_slug($fields, 'species'), 'icon species mismatch');
+                koto_ocr_test_assert_same(['こ', 'ご', 'が', 'け', 'げ'], koto_ocr_collect_extracted_chars($fields), 'union chars mismatch');
             },
         ],
         [
             'suite' => 'module',
             'name' => 'skill modal order corrects mislabeled waza screens',
             'run' => function () {
-                $draft = koto_ocr_test_build_draft_from_normalized([
+                $extracted = koto_ocr_extract_fields([
                     'images' => [
                         [
                             'source_image' => 'image_1',
@@ -375,9 +381,9 @@ function koto_ocr_test_cases()
                         ],
                     ],
                 ]);
-                $spec = $draft['spec'] ?? [];
-                koto_ocr_test_assert_same('通常わざ', $spec['waza']['name'] ?? null, 'ordered waza name mismatch');
-                koto_ocr_test_assert_same('超わざ', $spec['sugowaza']['name'] ?? null, 'ordered sugowaza name mismatch');
+                $fields = $extracted['fields'] ?? [];
+                koto_ocr_test_assert_same('通常わざ', koto_ocr_test_field_text($fields, 'waza_name'), 'ordered waza name mismatch');
+                koto_ocr_test_assert_same('超わざ', koto_ocr_test_field_text($fields, 'sugowaza_name'), 'ordered sugowaza name mismatch');
             },
         ],
         [
@@ -386,11 +392,10 @@ function koto_ocr_test_cases()
             'run' => function () {
                 $fixture = koto_ocr_test_fixture('module/waza-attack.json');
                 $extracted = koto_ocr_extract_fields($fixture['normalized']);
-                $fragment = koto_ocr_build_spec_fragments($extracted);
-                $spec = $fragment['fragment'];
-                koto_ocr_test_assert_same($fixture['expected']['waza_name'], $spec['waza']['name'] ?? null, 'waza name mismatch');
+                $fields = $extracted['fields'] ?? [];
+                koto_ocr_test_assert_same($fixture['expected']['waza_name'], koto_ocr_test_field_text($fields, 'waza_name'), 'waza name mismatch');
 
-                $detail = koto_ocr_build_skill_detail_row($spec['waza']['raw_text'] ?? '', $fixture['attribute']);
+                $detail = koto_ocr_build_skill_detail_row(koto_ocr_test_field_text($fields, 'waza'), $fixture['attribute']);
                 koto_ocr_test_assert_array_contains_assoc(
                     $fixture['expected']['attack_detail'],
                     $detail,
@@ -423,11 +428,11 @@ function koto_ocr_test_cases()
             'name' => 'two trait screens map to trait1 and trait2 without splitting numbered effects',
             'run' => function () {
                 $fixture = koto_ocr_test_fixture('module/traits-two-screens.json');
-                $draft = koto_ocr_test_build_draft_from_normalized($fixture['normalized']);
-                koto_ocr_test_assert_same($fixture['expected']['trait1'], $draft['spec']['trait1']['raw_text'] ?? null, 'trait1 text mismatch');
-                koto_ocr_test_assert_same($fixture['expected']['trait2'], $draft['spec']['trait2']['raw_text'] ?? null, 'trait2 text mismatch');
+                $fields = koto_ocr_extract_fields($fixture['normalized'])['fields'] ?? [];
+                koto_ocr_test_assert_same($fixture['expected']['trait1'], koto_ocr_test_field_text($fields, 'trait1'), 'trait1 text mismatch');
+                koto_ocr_test_assert_same($fixture['expected']['trait2'], koto_ocr_test_field_text($fields, 'trait2'), 'trait2 text mismatch');
                 koto_ocr_test_assert_true(
-                    mb_strpos($draft['spec']['trait1']['raw_text'] ?? '', '②') !== false,
+                    mb_strpos(koto_ocr_test_field_text($fields, 'trait1') ?? '', '②') !== false,
                     'trait1 numbered effect was split unexpectedly'
                 );
             },

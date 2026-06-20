@@ -109,8 +109,8 @@ function koto_ocr_webui_report_text_samples($rows, $limit = 5)
 
 function koto_ocr_webui_report_usage($post_id)
 {
-    $normalized = json_decode((string) get_post_meta($post_id, '_koto_ocr_normalized', true), true);
-    $usage = is_array($normalized) ? ($normalized['_openrouter_usage'] ?? []) : [];
+    $source = json_decode((string) get_post_meta($post_id, '_koto_ocr_source', true), true);
+    $usage = is_array($source) ? ($source['_openrouter_usage'] ?? []) : [];
     return is_array($usage) ? [
         'requests' => (int) ($usage['requests'] ?? 0),
         'prompt_tokens' => (int) ($usage['prompt_tokens'] ?? 0),

@@ -136,7 +136,7 @@ function koto_ocr_match_skill_preview_type(array $image, array $previews)
 function koto_ocr_is_reliable_main_image(array $image)
 {
     foreach ($image['blocks'] ?? [] as $block) {
-        if (in_array($block['region'] ?? '', ['main_attribute_icon', 'main_species_icon', 'main_waza_preview', 'main_sugowaza_preview'], true)) {
+        if (in_array($block['region'] ?? '', ['main_name_text', 'main_attribute_icon', 'main_species_icon', 'main_char_ball', 'main_waza_preview', 'main_sugowaza_preview'], true)) {
             return true;
         }
     }

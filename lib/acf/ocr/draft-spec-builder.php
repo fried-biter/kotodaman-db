@@ -1,39 +1,29 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-function koto_ocr_build_draft_spec(array $normalized, array $extracted, array $fragment_result)
+function koto_ocr_build_draft_summary(array $normalized, array $extracted)
 {
-    $fragment = $fragment_result['fragment'] ?? [];
     $fields = $extracted['fields'] ?? [];
-    $spec = $fragment;
-    $warnings = array_merge($normalized['warnings'] ?? [], $fragment_result['warnings'] ?? []);
-
-    foreach ($fields as $field => $items) {
-        foreach ($items as $item) {
-            if (!empty($item['text']) && !in_array($field, ['character_name', 'chars'], true)) {
-                if (isset($spec['_ocr_placeholders'][$field]) && !is_array($spec['_ocr_placeholders'][$field])) {
-                    $spec['_ocr_placeholders'][$field] = [[
-                        'source_image' => '',
-                        'text' => (string) $spec['_ocr_placeholders'][$field],
-                    ]];
-                }
-                $spec['_ocr_placeholders'][$field][] = [
-                    'source_image' => $item['source_image'] ?? '',
-                    'text' => $item['text'],
-                ];
-            }
-        }
-    }
-
-    $spec['_ocr_placeholders']['classifications'] = $extracted['classifications'] ?? [];
-    $title = trim((string) ($spec['name'] ?? ''));
+    $title = trim((string) ($fields['character_name'][0]['text'] ?? ''));
+    $warnings = $normalized['warnings'] ?? [];
     if ($title === '') {
         $title = 'OCR入力 ' . current_time('Y-m-d H:i');
         $warnings[] = koto_ocr_warning('character_name', 'missing_name', 'キャラ名を安全に確定できなかったため仮タイトルで下書きを作成しました。');
     }
+
+    foreach (['waza', 'sugowaza'] as $field) {
+        if (!empty($fields[$field][0]['text'])) {
+            $warnings[] = koto_ocr_warning($field, 'manual_numeric_required', '倍率/数値は画像本文から安全に確定できないため手入力してください。');
+        }
+    }
+    foreach (['trait1', 'trait2', 'blessing', 'leader', 'kotowaza', 'EX_skill', 'charge_skill'] as $field) {
+        if (!empty($fields[$field][0]['text'])) {
+            $warnings[] = koto_ocr_warning($field, 'raw_text_only', 'OCR本文を保存しました。公開前に内容を確認してください。');
+        }
+    }
     $warnings[] = koto_ocr_warning('draft', 'review_required', 'OCR下書きです。公開前に必須項目と数値を確認してください。');
 
-    return ['spec' => $spec, 'title' => $title, 'warnings' => koto_ocr_unique_warnings($warnings)];
+    return ['title' => $title, 'warnings' => koto_ocr_unique_warnings($warnings)];
 }
 
 function koto_ocr_unique_warnings(array $warnings)

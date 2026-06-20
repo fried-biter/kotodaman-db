@@ -259,19 +259,30 @@ function koto_ocr_live_fixture_expected_by_case($input_dir, array $cases)
     return $by_case;
 }
 
-function koto_ocr_live_skill_summary(array $spec, $key)
+function koto_ocr_live_field_text(array $fields, $field_name)
 {
-    $raw_text = (string) ($spec[$key]['raw_text'] ?? '');
+    return (string) ($fields[$field_name][0]['text'] ?? '');
+}
+
+function koto_ocr_live_field_slug(array $fields, $field_name)
+{
+    return (string) ($fields[$field_name][0]['slug'] ?? '');
+}
+
+function koto_ocr_live_skill_summary(array $fields, $key, $attribute)
+{
+    $raw_text = koto_ocr_live_field_text($fields, $key);
+    $name_key = $key === 'waza' ? 'waza_name' : 'sugowaza_name';
     return [
-        'name' => $spec[$key]['name'] ?? '',
+        'name' => koto_ocr_live_field_text($fields, $name_key),
         'raw_present' => $raw_text !== '',
-        'attack' => koto_ocr_build_skill_detail_row($raw_text, (string) ($spec['attribute'] ?? '')),
+        'attack' => koto_ocr_build_skill_detail_row($raw_text, $attribute),
     ];
 }
 
-function koto_ocr_live_condition_summary(array $spec)
+function koto_ocr_live_condition_summary(array $fields)
 {
-    $rows = koto_ocr_build_sugowaza_condition_rows((string) ($spec['sugowaza']['condition'] ?? ''));
+    $rows = koto_ocr_build_sugowaza_condition_rows(koto_ocr_live_field_text($fields, 'sugowaza_condition'));
     return $rows[0]['sugo_cond_loop'] ?? [];
 }
 
@@ -312,9 +323,8 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
     }
 
     $extracted = koto_ocr_extract_fields($normalized);
-    $fragment = koto_ocr_build_spec_fragments($extracted);
-    $draft = koto_ocr_build_draft_spec($normalized, $extracted, $fragment);
-    $spec = $draft['spec'] ?? [];
+    $fields = $extracted['fields'] ?? [];
+    $attribute = koto_ocr_live_field_slug($fields, 'attribute');
 
     $normalized_summary = array_map(function ($image) {
         return [
@@ -328,16 +338,16 @@ function koto_ocr_live_case_report($case, array $record_result, array $expected_
     }, $normalized['images'] ?? []);
 
     $actual = [
-        'name' => $spec['name'] ?? '',
-        'attribute' => $spec['attribute'] ?? '',
-        'species' => $spec['species'] ?? '',
-        'chars' => $spec['chars'] ?? [],
-        'waza' => koto_ocr_live_skill_summary($spec, 'waza'),
-        'sugowaza' => koto_ocr_live_skill_summary($spec, 'sugowaza'),
-        'sugowaza_condition' => koto_ocr_live_condition_summary($spec),
-        'trait1_present' => !empty($spec['trait1']['raw_text']),
-        'trait2_present' => !empty($spec['trait2']['raw_text']),
-        'blessing_present' => !empty($spec['blessing']['raw_text']),
+        'name' => koto_ocr_live_field_text($fields, 'character_name'),
+        'attribute' => $attribute,
+        'species' => koto_ocr_live_field_slug($fields, 'species'),
+        'chars' => koto_ocr_collect_extracted_chars($fields),
+        'waza' => koto_ocr_live_skill_summary($fields, 'waza', $attribute),
+        'sugowaza' => koto_ocr_live_skill_summary($fields, 'sugowaza', $attribute),
+        'sugowaza_condition' => koto_ocr_live_condition_summary($fields),
+        'trait1_present' => koto_ocr_live_field_text($fields, 'trait1') !== '',
+        'trait2_present' => koto_ocr_live_field_text($fields, 'trait2') !== '',
+        'blessing_present' => koto_ocr_live_field_text($fields, 'blessing') !== '',
         'classifications' => $extracted['classifications'] ?? [],
     ];
 

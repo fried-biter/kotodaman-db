@@ -1,17 +1,19 @@
 <?php
 if (!defined('ABSPATH')) exit;
 
-function koto_ocr_spec_to_acf_data(array $spec)
+function koto_ocr_extracted_fields_to_acf_data(array $fields)
 {
     $acf = [];
-    if (!empty($spec['chars']) && is_array($spec['chars'])) {
+    $chars = koto_ocr_collect_extracted_chars($fields);
+    $attribute_slug = (string) ($fields['attribute'][0]['slug'] ?? '');
+    if (!empty($chars)) {
         $rows = [];
-        foreach ($spec['chars'] as $char) {
+        foreach ($chars as $char) {
             $term = koto_ocr_resolve_available_moji_term((string) $char);
             if ($term && !is_wp_error($term)) {
                 $rows[] = [
                     'available_moji' => [$term->term_id],
-                    'moji_attr' => koto_ocr_resolve_term_id($spec['attribute'] ?? '', 'attribute'),
+                    'moji_attr' => koto_ocr_resolve_term_id($attribute_slug, 'attribute'),
                     'unlock_place' => 'default',
                 ];
             }
@@ -20,63 +22,56 @@ function koto_ocr_spec_to_acf_data(array $spec)
             $acf['available_moji_loop'] = $rows;
         }
     }
-    foreach (['attribute', 'species'] as $taxonomy) {
-        if (!empty($spec[$taxonomy])) {
-            $term = get_term_by('slug', (string) $spec[$taxonomy], $taxonomy);
+    foreach (['attribute', 'species', 'rarity'] as $taxonomy) {
+        if (!empty($fields[$taxonomy][0]['slug'])) {
+            $term = get_term_by('slug', (string) $fields[$taxonomy][0]['slug'], $taxonomy);
             if ($term && !is_wp_error($term)) {
                 $acf[$taxonomy] = $term->term_id;
             }
         }
     }
-    if (!empty($spec['rarity'])) {
-        $term = get_term_by('slug', (string) $spec['rarity'], 'rarity');
-        if ($term && !is_wp_error($term)) {
-            $acf['rarity'] = $term->term_id;
-        }
+    if (!empty($fields['character_name'][0]['text'])) {
+        $acf['name_ruby'] = koto_ocr_name_to_ruby($fields['character_name'][0]['text']);
     }
-    if (!empty($spec['name'])) {
-        $acf['name_ruby'] = koto_ocr_name_to_ruby($spec['name']);
+    if (!empty($fields['cv'][0]['text'])) {
+        $acf['voice_actor'] = $fields['cv'][0]['text'];
     }
-    if (!empty($spec['cv'])) {
-        $acf['voice_actor'] = $spec['cv'];
-    }
-    if (!empty($spec['waza'])) {
-        if (!empty($spec['waza']['name'])) $acf['waza_name'] = $spec['waza']['name'];
-        if (!empty($spec['waza']['raw_text'])) {
-            $rows = koto_ocr_build_skill_group_rows($spec['waza']['raw_text'], $spec['attribute'] ?? '');
+    if (!empty($fields['waza'][0]['text'])) {
+        if (!empty($fields['waza_name'][0]['text'])) $acf['waza_name'] = $fields['waza_name'][0]['text'];
+        if (!empty($fields['waza'][0]['text'])) {
+            $rows = koto_ocr_build_skill_group_rows($fields['waza'][0]['text'], $attribute_slug);
             if (!empty($rows)) $acf['waza_group_loop'] = $rows;
         }
     }
-    if (!empty($spec['sugowaza'])) {
-        if (!empty($spec['sugowaza']['name'])) $acf['sugowaza_name'] = $spec['sugowaza']['name'];
-        if (!empty($spec['sugowaza']['condition'])) {
-            $condition_rows = koto_ocr_build_sugowaza_condition_rows($spec['sugowaza']['condition']);
+    if (!empty($fields['sugowaza'][0]['text'])) {
+        if (!empty($fields['sugowaza_name'][0]['text'])) $acf['sugowaza_name'] = $fields['sugowaza_name'][0]['text'];
+        if (!empty($fields['sugowaza_condition'][0]['text'])) {
+            $condition_rows = koto_ocr_build_sugowaza_condition_rows($fields['sugowaza_condition'][0]['text']);
             if (!empty($condition_rows)) $acf['sugowaza_condition'] = $condition_rows;
         }
-        if (!empty($spec['sugowaza']['raw_text'])) {
-            $rows = koto_ocr_build_skill_group_rows($spec['sugowaza']['raw_text'], $spec['attribute'] ?? '');
+        if (!empty($fields['sugowaza'][0]['text'])) {
+            $rows = koto_ocr_build_skill_group_rows($fields['sugowaza'][0]['text'], $attribute_slug);
             if (!empty($rows)) $acf['sugowaza_group_loop'] = $rows;
         }
     }
-    if (!empty($spec['_ocr_placeholders']['EX_skill'])) {
-        $acf = array_merge($acf, koto_ocr_build_ex_skill_fields(koto_ocr_placeholder_text($spec['_ocr_placeholders']['EX_skill'])));
+    if (!empty($fields['EX_skill'][0]['text'])) {
+        $acf = array_merge($acf, koto_ocr_build_ex_skill_fields($fields['EX_skill'][0]['text']));
     }
     return $acf;
 }
 
-function koto_ocr_placeholder_text($placeholder)
+function koto_ocr_collect_extracted_chars(array $fields)
 {
-    if (is_string($placeholder)) {
-        return $placeholder;
-    }
-    if (is_array($placeholder)) {
-        foreach ($placeholder as $item) {
-            if (is_array($item) && !empty($item['text'])) {
-                return (string) $item['text'];
+    $chars = [];
+    foreach ($fields['chars'] ?? [] as $item) {
+        foreach ($item['items'] ?? [] as $char) {
+            $char = (string) $char;
+            if ($char !== '' && !in_array($char, $chars, true)) {
+                $chars[] = $char;
             }
         }
     }
-    return '';
+    return $chars;
 }
 
 function koto_ocr_name_to_ruby($name)

@@ -14,21 +14,13 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
 
     $warnings = $draft['warnings'] ?? [];
     update_post_meta($post_id, '_koto_ocr_draft', '1');
-
-    $raw_text = [];
-    foreach ($normalized['images'] ?? [] as $image) {
-        $raw_text[] = [
-            'source_image' => $image['source_image'] ?? '',
-            'text' => $image['fullText'] ?? '',
-        ];
-    }
-    update_post_meta($post_id, '_koto_ocr_raw_text', wp_json_encode($raw_text, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-    update_post_meta($post_id, '_koto_ocr_normalized', wp_json_encode(koto_ocr_lightweight_normalized($normalized), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    update_post_meta($post_id, '_koto_ocr_source', wp_json_encode(koto_ocr_build_source_meta($normalized, $backend), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    update_post_meta($post_id, '_koto_ocr_fields', wp_json_encode(koto_ocr_build_fields_meta($extracted), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     update_post_meta($post_id, '_koto_ocr_backend', $backend->get_name());
     update_post_meta($post_id, '_koto_ocr_model', $backend->get_model());
     update_post_meta($post_id, '_koto_ocr_generated_at', current_time('mysql'));
 
-    $acf_data = koto_ocr_spec_to_acf_data($draft['spec']);
+    $acf_data = koto_ocr_extracted_fields_to_acf_data($extracted['fields'] ?? []);
     foreach ($acf_data as $field_name => $value) {
         if (koto_ocr_is_empty_acf_value($value)) {
             continue;
@@ -44,7 +36,6 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
         koto_update_character_post_with_acf($post_id, $rule_data);
     }
 
-    update_post_meta($post_id, '_spec_json', wp_json_encode($draft['spec'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     update_post_meta($post_id, '_koto_ocr_warnings', wp_json_encode(koto_ocr_unique_warnings($warnings), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
     if (koto_ocr_debug_enabled()) {
@@ -56,6 +47,46 @@ function koto_ocr_create_draft(array $draft, array $normalized, array $extracted
     }
 
     return $post_id;
+}
+
+function koto_ocr_build_source_meta(array $normalized, Koto_Ocr_Backend_Interface $backend)
+{
+    $source = [
+        'version' => 1,
+        'backend' => $backend->get_name(),
+        'model' => $backend->get_model(),
+        'generated_at' => current_time('mysql'),
+        'images' => [],
+        'warnings' => $normalized['warnings'] ?? [],
+    ];
+    foreach ($normalized['images'] ?? [] as $image) {
+        $blocks = [];
+        foreach ($image['blocks'] ?? [] as $block) {
+            $blocks[] = [
+                'region' => (string) ($block['region'] ?? ''),
+                'text' => (string) ($block['text'] ?? ''),
+            ];
+        }
+        $source['images'][] = [
+            'source_image' => (string) ($image['source_image'] ?? ''),
+            'screen_type' => (string) ($image['screen_type'] ?? 'unknown'),
+            'full_text' => (string) ($image['fullText'] ?? ''),
+            'blocks' => $blocks,
+        ];
+    }
+    if (!empty($normalized['_openrouter_usage']) && is_array($normalized['_openrouter_usage'])) {
+        $source['_openrouter_usage'] = $normalized['_openrouter_usage'];
+    }
+    return $source;
+}
+
+function koto_ocr_build_fields_meta(array $extracted)
+{
+    return [
+        'version' => 1,
+        'fields' => $extracted['fields'] ?? [],
+        'classifications' => $extracted['classifications'] ?? [],
+    ];
 }
 
 function koto_ocr_is_empty_acf_value($value)
