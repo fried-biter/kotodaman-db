@@ -108,14 +108,19 @@
 
 .koto-ocr-review-panel {
     margin: 14px 0;
-    padding: 14px;
+    padding: 12px;
     border: 1px solid #f0c36d;
     border-left: 4px solid #dba617;
     background: #fff8e5;
 }
 
+.koto-ocr-review-panel__header {
+    margin-bottom: 8px;
+}
+
 .koto-ocr-review-panel h2 {
-    margin-top: 0;
+    margin: 0 0 4px;
+    font-size: 18px;
 }
 
 .koto-ocr-review-panel details {
@@ -126,7 +131,105 @@
 }
 
 .koto-ocr-review-panel pre {
-    max-height: 220px;
+    max-height: 160px;
     overflow: auto;
     white-space: pre-wrap;
+}
+
+.koto-ocr-review-items {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.koto-ocr-review-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding: 10px;
+    border: 1px solid #ead596;
+    border-radius: 6px;
+    background: #fffdf7;
+}
+
+.koto-ocr-review-item__head {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.koto-ocr-review-item__label {
+    color: #1d2327;
+}
+
+.koto-ocr-review-item__source,
+.koto-ocr-review-empty {
+    color: #646970;
+    font-size: 12px;
+}
+
+.koto-ocr-review-item__image {
+    grid-column: 2;
+    grid-row: 2;
+    width: 120px;
+    color: #646970;
+    font-size: 11px;
+    text-align: center;
+}
+
+.koto-ocr-review-item__image img {
+    display: block;
+    width: 120px;
+    max-height: 90px;
+    object-fit: cover;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.koto-ocr-review-item__image span {
+    display: block;
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.koto-ocr-review-item__text {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    padding: 8px;
+    border: 1px solid #f0e0aa;
+    background: #fff;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.koto-ocr-review-raw-summary {
+    margin-top: 10px;
+}
+
+.koto-ocr-review-raw-summary > summary {
+    color: #646970;
+    font-size: 12px;
+}
+
+@media screen and (max-width: 782px) {
+    .koto-ocr-review-item {
+        grid-template-columns: 1fr;
+    }
+
+    .koto-ocr-review-item__head,
+    .koto-ocr-review-item__image,
+    .koto-ocr-review-item__text {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .koto-ocr-review-item__image {
+        text-align: left;
+    }
 }

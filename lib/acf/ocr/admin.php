@@ -65,7 +65,7 @@ function koto_ocr_render_draft_panel()
     <?php
 }
 
-function koto_ocr_render_existing_draft_review($post_id)
+function koto_ocr_render_existing_draft_review($post_id, $current_group = '')
 {
     $post_id = (int) $post_id;
     if (!$post_id || get_post_meta($post_id, '_koto_ocr_draft', true) !== '1') {
@@ -75,11 +75,19 @@ function koto_ocr_render_existing_draft_review($post_id)
     $warnings = json_decode((string) get_post_meta($post_id, '_koto_ocr_warnings', true), true);
     $raw_text = json_decode((string) get_post_meta($post_id, '_koto_ocr_raw_text', true), true);
     $normalized = json_decode((string) get_post_meta($post_id, '_koto_ocr_normalized', true), true);
+    $spec = json_decode((string) get_post_meta($post_id, '_spec_json', true), true);
+    if (!is_array($warnings)) $warnings = [];
+    if (!is_array($raw_text)) $raw_text = [];
+    if (!is_array($normalized)) $normalized = [];
+    if (!is_array($spec)) $spec = [];
+    $review_items = koto_ocr_review_items_for_group($post_id, (string) $current_group, $spec, $normalized);
     $saved_summary = koto_ocr_saved_acf_summary($post_id);
     ?>
-    <div class="koto-ocr-review-panel">
-        <h2>OCR下書き確認</h2>
-        <p class="description">この投稿はOCRから作成された下書きです。公開前に、下のOCR raw textと警告を見ながらDBエディタで手修正してください。</p>
+    <div class="koto-ocr-review-panel" data-koto-ocr-review-panel>
+        <div class="koto-ocr-review-panel__header">
+            <h2>OCR下書き確認</h2>
+            <p class="description">この投稿はOCRから作成された下書きです。このタブで修正する項目をOCR断片と照合してください。</p>
+        </div>
         <?php if (!empty($saved_summary)) : ?>
             <div class="notice notice-info inline">
                 <p><strong>OCRから保存済みの主なACF:</strong></p>
@@ -95,7 +103,7 @@ function koto_ocr_render_existing_draft_review($post_id)
                 </ul>
             </div>
         <?php endif; ?>
-        <?php if (!empty($warnings) && is_array($warnings)) : ?>
+        <?php if (!empty($warnings)) : ?>
             <div class="notice notice-warning inline">
                 <ul>
                     <?php foreach ($warnings as $warning) : ?>
@@ -104,16 +112,14 @@ function koto_ocr_render_existing_draft_review($post_id)
                 </ul>
             </div>
         <?php endif; ?>
-        <?php if (!empty($raw_text) && is_array($raw_text)) : ?>
-            <div class="koto-ocr-review-panel__raw">
-                <?php foreach ($raw_text as $item) : ?>
-                    <details>
-                        <summary><?php echo esc_html($item['source_image'] ?? 'image'); ?> OCR raw text</summary>
-                        <pre><?php echo esc_html($item['text'] ?? ''); ?></pre>
-                    </details>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+        <div class="koto-ocr-review-items">
+            <?php if (!empty($review_items)) : ?>
+                <?php foreach ($review_items as $item) { $item['post_id'] = $post_id; koto_ocr_render_review_item($item); } ?>
+            <?php else : ?>
+                <p class="koto-ocr-review-empty">このタブ向けOCR断片はありません。</p>
+            <?php endif; ?>
+        </div>
+        <?php koto_ocr_render_raw_text_summary($raw_text); ?>
         <?php if (koto_ocr_debug_enabled() && !empty($normalized)) : ?>
             <details>
                 <summary>normalized OCR JSON</summary>
@@ -121,6 +127,151 @@ function koto_ocr_render_existing_draft_review($post_id)
             </details>
         <?php endif; ?>
     </div>
+    <?php
+}
+
+function koto_ocr_review_items_for_group($post_id, $current_group, array $spec, array $normalized)
+{
+    $items = [];
+    $add = function ($label, $text, $field_name = '', $extra = []) use (&$items, $normalized) {
+        $text = is_array($text) ? implode('・', array_filter(array_map('strval', $text))) : (string) $text;
+        if (trim($text) === '') return;
+        $items[] = koto_ocr_review_item($label, $text, $field_name !== '' ? koto_ocr_first_source_for_field($normalized, $field_name) : '', $extra);
+    };
+
+    if ($current_group === 'group_69204fa4dd82e') {
+        $add('キャラ名', $spec['name'] ?? '', 'character_name');
+        $add('文字', $spec['chars'] ?? [], 'chars');
+        $add('属性', $spec['attribute'] ?? '', 'attribute');
+        $add('種族', $spec['species'] ?? '', 'species');
+        $add('レアリティ', $spec['rarity'] ?? '', 'rarity');
+        $add('CV', $spec['cv'] ?? '', 'cv');
+        return $items;
+    }
+
+    if ($current_group === 'group_6937900895bf1') {
+        $add('わざ名', $spec['waza']['name'] ?? '', 'waza_name');
+        $add('わざraw', $spec['waza']['raw_text'] ?? '', 'waza');
+        $add('すごわざ名', $spec['sugowaza']['name'] ?? '', 'sugowaza_name');
+        $add('すごわざ条件', $spec['sugowaza']['condition'] ?? '', 'sugowaza_condition');
+        $add('すごわざraw', $spec['sugowaza']['raw_text'] ?? '', 'sugowaza');
+        if (!empty($spec['chars'])) {
+            $items[] = koto_ocr_review_item('抽出文字', implode('・', array_map('strval', (array) $spec['chars'])), koto_ocr_first_source_for_field($normalized, 'chars'));
+        }
+        return $items;
+    }
+
+    if ($current_group === 'group_693790ee221c3') {
+        $add('とくせい1 raw', $spec['trait1']['raw_text'] ?? '', 'trait1');
+        $add('とくせい2 raw', $spec['trait2']['raw_text'] ?? '', 'trait2');
+        return $items;
+    }
+
+    if ($current_group === 'group_693971a11a6b2') {
+        $add('祝福 raw', $spec['blessing']['raw_text'] ?? '', 'blessing');
+        return $items;
+    }
+
+    $placeholder_fields_by_group = [
+        'group_693790bd6b499' => ['kotowaza'],
+        'group_693969515ca4d' => ['leader'],
+        'group_693c070768756' => ['EX_skill'],
+        'group_69d4b6b256263' => ['charge_skill'],
+    ];
+    $field_names = $placeholder_fields_by_group[$current_group] ?? [];
+    return koto_ocr_raw_field_items($normalized, $spec['_ocr_placeholders'] ?? [], $field_names);
+}
+
+function koto_ocr_review_item($label, $text, $source_image = '', $extra = [])
+{
+    return array_merge($extra, [
+        'label' => (string) $label,
+        'text' => (string) $text,
+        'source_image' => (string) $source_image,
+    ]);
+}
+
+function koto_ocr_first_source_for_field(array $normalized, $field_name)
+{
+    $screen_types = [
+        'character_name' => ['main'],
+        'chars' => ['main', 'sugowaza', 'trait', 'blessing'],
+        'attribute' => ['main'],
+        'species' => ['main'],
+        'rarity' => ['main'],
+        'cv' => ['profile', 'main'],
+        'waza_name' => ['waza'],
+        'waza' => ['waza'],
+        'sugowaza_name' => ['sugowaza'],
+        'sugowaza_condition' => ['sugowaza'],
+        'sugowaza' => ['sugowaza'],
+        'trait1' => ['trait'],
+        'trait2' => ['trait'],
+        'blessing' => ['blessing'],
+        'leader' => ['leader'],
+        'kotowaza' => ['kotowaza'],
+        'EX_skill' => ['EX_skill'],
+        'charge_skill' => ['charge_skill'],
+    ];
+    foreach ($screen_types[$field_name] ?? [] as $screen_type) {
+        foreach ($normalized['images'] ?? [] as $image) {
+            if (($image['screen_type'] ?? '') === $screen_type && !empty($image['source_image'])) {
+                return (string) $image['source_image'];
+            }
+        }
+    }
+    return '';
+}
+
+function koto_ocr_raw_field_items(array $normalized, array $placeholders, array $field_names)
+{
+    $items = [];
+    foreach ($field_names as $field_name) {
+        $placeholder = $placeholders[$field_name] ?? null;
+        if (is_string($placeholder) && trim($placeholder) !== '') {
+            $items[] = koto_ocr_review_item($field_name . ' raw', $placeholder, koto_ocr_first_source_for_field($normalized, $field_name));
+        } elseif (is_array($placeholder)) {
+            foreach ($placeholder as $entry) {
+                if (!is_array($entry) || trim((string) ($entry['text'] ?? '')) === '') continue;
+                $items[] = koto_ocr_review_item($field_name . ' raw', $entry['text'], $entry['source_image'] ?? koto_ocr_first_source_for_field($normalized, $field_name));
+            }
+        }
+    }
+    return $items;
+}
+
+function koto_ocr_render_review_item(array $item)
+{
+    $source_image = (string) ($item['source_image'] ?? '');
+    ?>
+    <div class="koto-ocr-review-item" data-koto-ocr-source-image="<?php echo esc_attr($source_image); ?>" data-koto-ocr-post-id="<?php echo esc_attr((int) ($item['post_id'] ?? 0)); ?>">
+        <div class="koto-ocr-review-item__head">
+            <strong class="koto-ocr-review-item__label"><?php echo esc_html($item['label'] ?? 'OCR'); ?></strong>
+            <?php if ($source_image !== '') : ?>
+                <span class="koto-ocr-review-item__source">元画像: <?php echo esc_html($source_image); ?></span>
+            <?php endif; ?>
+        </div>
+        <?php if ($source_image !== '') : ?>
+            <div class="koto-ocr-review-item__image" data-koto-ocr-source-image-container>このブラウザに元画像なし</div>
+        <?php endif; ?>
+        <pre class="koto-ocr-review-item__text"><?php echo esc_html($item['text'] ?? ''); ?></pre>
+    </div>
+    <?php
+}
+
+function koto_ocr_render_raw_text_summary(array $raw_text)
+{
+    if (empty($raw_text)) return;
+    ?>
+    <details class="koto-ocr-review-raw-summary">
+        <summary>全文OCR raw text <?php echo esc_html(count($raw_text)); ?>件</summary>
+        <?php foreach ($raw_text as $item) : ?>
+            <details>
+                <summary><?php echo esc_html($item['source_image'] ?? 'image'); ?> OCR raw text</summary>
+                <pre><?php echo esc_html($item['text'] ?? ''); ?></pre>
+            </details>
+        <?php endforeach; ?>
+    </details>
     <?php
 }
 
@@ -191,6 +342,7 @@ function koto_ocr_ajax_create_draft()
     if (current_user_can('edit_post', $post_id)) {
         $links['editPost'] = get_edit_post_link($post_id, 'raw');
         $links['dbEditor'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_69204fa4dd82e');
+        $links['dbEditorSkills'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_6937900895bf1');
         $links['dbEditorTraits'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_693790ee221c3');
         $links['dbEditorBlessing'] = admin_url('admin.php?page=koto-acf-editor&edit_post_id=' . $post_id . '&acf_group=group_693971a11a6b2');
     }
